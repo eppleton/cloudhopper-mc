@@ -1,0 +1,10 @@
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/ApiOperation.java
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/deployment/config/api/TemplateDescriptor.java
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/deployment/config/api/HandlerContext.java
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/deployment/config/spi/DeploymentConfigGenerator.java
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/deployment/config/api/CloudRequestHandler.java
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/deployment/config/api/GenericDeploymentConfigGenerator.java
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/deployment/config/api/HandlerInfo.java
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/deployment/config/impl/TemplateValidator.java
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/deployment/config/api/ConfigGenerationException.java
+/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/deployment-config-api/src/main/java/com/cloudhopper/mc/Function.java

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.10.0">
+<file name="/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/provider-aws/src/main/java/com/cloudhopper/mc/provider/aws/AwsLambdaRequestHandler.java">
+<error line="33" column="1" severity="warning" message="Es fehlt ein Javadoc-Kommentar." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocTypeCheck"/>
+</file>
+</checkstyle>

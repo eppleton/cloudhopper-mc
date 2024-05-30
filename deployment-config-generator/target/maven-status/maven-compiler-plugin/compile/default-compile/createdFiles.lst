@@ -1,0 +1,4 @@
+com/cloudhopper/mc/deployment/config/generator/OperationProcessor.class
+com/cloudhopper/mc/deployment/config/generator/BaseDeploymentInfoProcessor.class
+META-INF/services/javax.annotation.processing.Processor
+com/cloudhopper/mc/deployment/config/generator/ServerlessFunctionProcessor.class

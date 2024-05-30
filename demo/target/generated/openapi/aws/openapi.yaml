@@ -1,0 +1,53 @@
+openapi: 3.0.1
+info:
+  title: Cloudhopper Demo API
+  version: "1.0"
+paths:
+  /hello:
+    get:
+      summary: Say Hello
+      description: Say Hello
+      operationId: say_hello
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        provisonedConcurrencyEnabled: "true"
+        cloud-provider: aws
+        httpMethod: POST
+        type: aws_proxy
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${GetTokenForNonceFunction_Arn}/invocations"
+        provisionedConcurrentExecutions: "2"
+components:
+  schemas:
+    HandlerContext:
+      type: object
+      properties:
+        requestId:
+          type: string
+        functionVersion:
+          type: string
+        invokedFunctionArn:
+          type: string
+        logGroupName:
+          type: string
+        logStreamName:
+          type: string
+        memoryLimitInMB:
+          type: integer
+          format: int32
+        functionName:
+          type: string
+        remainingTimeInMillis:
+          type: integer
+          format: int64

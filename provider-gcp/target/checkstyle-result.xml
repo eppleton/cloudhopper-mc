@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.10.0">
+<file name="/Users/antonepple/Entwicklung/Eppleton/cloudhopper-mc/cloudhopper-parent/provider-gcp/src/main/java/com/cloudhopper/mc/provider/gcp/GcpHttpRequestHandler.java">
+<error line="35" column="1" severity="warning" message="Zusätzliche Trennung in der Importgruppe vor &apos;java.io.BufferedReader&apos;" source="com.puppycrawl.tools.checkstyle.checks.imports.CustomImportOrderCheck"/>
+<error line="41" column="1" severity="warning" message="Es fehlt ein Javadoc-Kommentar." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocTypeCheck"/>
+<error line="51" severity="warning" message="Zeile ist 124 Zeichen lang (Obergrenze ist 100)." source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+<error line="82" column="41" severity="warning" message="Hinter &apos;{&apos; an Position 41 sollte ein Zeilenumbruch folgen." source="com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck"/>
+<error line="82" column="82" severity="warning" message="&apos;}&apos; an Position 82 sollte in einer eigenen Zeile stehen." source="RightCurlyAlone"/>
+<error line="85" column="44" severity="warning" message="Hinter &apos;{&apos; an Position 44 sollte ein Zeilenumbruch folgen." source="com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck"/>
+<error line="85" column="88" severity="warning" message="&apos;}&apos; an Position 88 sollte in einer eigenen Zeile stehen." source="RightCurlyAlone"/>
+<error line="88" column="47" severity="warning" message="Hinter &apos;{&apos; an Position 47 sollte ein Zeilenumbruch folgen." source="com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck"/>
+<error line="88" column="60" severity="warning" message="&apos;}&apos; an Position 60 sollte in einer eigenen Zeile stehen." source="RightCurlyAlone"/>
+<error line="91" column="41" severity="warning" message="Hinter &apos;{&apos; an Position 41 sollte ein Zeilenumbruch folgen." source="com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck"/>
+<error line="91" column="54" severity="warning" message="&apos;}&apos; an Position 54 sollte in einer eigenen Zeile stehen." source="RightCurlyAlone"/>
+<error line="94" column="42" severity="warning" message="Hinter &apos;{&apos; an Position 42 sollte ein Zeilenumbruch folgen." source="com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck"/>
+<error line="94" column="55" severity="warning" message="&apos;}&apos; an Position 55 sollte in einer eigenen Zeile stehen." source="RightCurlyAlone"/>
+<error line="97" column="48" severity="warning" message="Hinter &apos;{&apos; an Position 48 sollte ein Zeilenumbruch folgen." source="com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck"/>
+<error line="97" column="60" severity="warning" message="&apos;}&apos; an Position 60 sollte in einer eigenen Zeile stehen." source="RightCurlyAlone"/>
+<error line="100" severity="warning" message="Zeile ist 105 Zeichen lang (Obergrenze ist 100)." source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+<error line="100" column="41" severity="warning" message="Hinter &apos;{&apos; an Position 41 sollte ein Zeilenumbruch folgen." source="com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck"/>
+<error line="100" column="105" severity="warning" message="&apos;}&apos; an Position 105 sollte in einer eigenen Zeile stehen." source="RightCurlyAlone"/>
+</file>
+</checkstyle>
