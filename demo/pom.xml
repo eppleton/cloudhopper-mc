@@ -106,6 +106,7 @@
                         <arg>-AartifactId=${project.artifactId}</arg>
                         <arg>-Aversion=${project.version}</arg>
                         <arg>-Aclassifier=${jar.classifier}</arg>
+                        <arg>-AtargetDir=${project.build.directory}</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
@@ -147,6 +148,61 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>terraform-init</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>terraform</executable>
+                            <workingDirectory>${project.build.directory}/deployment-descriptors/${cloud.provider}</workingDirectory>
+                            <arguments>
+                                <argument>init</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>terraform-plan</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>terraform</executable>
+                            <workingDirectory>${project.build.directory}/deployment-descriptors/${cloud.provider}</workingDirectory>
+                            <arguments>
+                                <argument>plan</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-terraform-files</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/terraform/${cloud.provider}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/terraform/${cloud.provider}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>      
         </plugins>
     </build>
     <profiles>

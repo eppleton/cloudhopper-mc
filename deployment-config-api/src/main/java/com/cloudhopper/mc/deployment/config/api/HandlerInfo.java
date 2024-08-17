@@ -40,6 +40,7 @@ public class HandlerInfo {
     private final String artifactId;
     private final String version;
     private final String classifier;
+    private final String targetDir;
 
     public String getHandlerClassName() {
         return handlerClassName;
@@ -80,13 +81,16 @@ public class HandlerInfo {
     public String getClassifier() {
         return classifier;
     }
-    
-    
+
+    public String getTargetDir() {
+        return targetDir;
+    }
     
 
    public HandlerInfo(String functionId, String handlerClassName, String handlerFullyQualifiedName, 
                        String handlerPackage, String handlerMethod, String inputType, String outputType,
-                       String artifactId, String version, String classifier) {
+                       String artifactId, String version, String classifier, String targetDir) {
+       this.targetDir = targetDir;
         this.artifactId = artifactId;
         this.version = version;
         this.classifier = classifier;     

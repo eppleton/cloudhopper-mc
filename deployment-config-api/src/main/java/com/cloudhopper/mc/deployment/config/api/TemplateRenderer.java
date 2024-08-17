@@ -69,7 +69,7 @@ public class TemplateRenderer {
         this.freemarkerConfig.setClassForTemplateLoading(this.getClass(), templateDir);
     }
 
-    protected void renderTemplate(TemplateDescriptor templateDescriptor, String outputDirName, Map<String, Object> dataModel) throws ConfigGenerationException {
+    protected void renderTemplate(TemplateDescriptor templateDescriptor, String outputDirName, Map<String, Object> dataModel, String fileName) throws ConfigGenerationException {
         try {
             Template template = freemarkerConfig.getTemplate(templateDescriptor.getTemplateName());
             StringWriter writer = new StringWriter();
@@ -79,12 +79,24 @@ public class TemplateRenderer {
             Path outputDir = Path.of(outputDirName, templateDescriptor.getOutputSubDirectory());
             Files.createDirectories(outputDir);
 
-            String outputFileName = templateDescriptor.getTemplateName().replace(".ftl", "." + templateDescriptor.getOutputFileExtension());
+            String baseFileName = fileName + "." + templateDescriptor.getOutputFileExtension();
+            String outputFileName = baseFileName;
+            int suffix = 1;
+
+            // Handle potential naming conflicts
+            while (Files.exists(outputDir.resolve(outputFileName))) {
+                outputFileName = fileName + "_" + suffix + "." + templateDescriptor.getOutputFileExtension();
+                suffix++;
+            }
+
             Path outputPath = outputDir.resolve(outputFileName);
 
             try (FileWriter fileWriter = new FileWriter(outputPath.toFile())) {
                 fileWriter.write(output);
             }
+
+            System.out.println("Generated file: " + outputPath.toString());
+
         } catch (IOException | TemplateException e) {
             throw new ConfigGenerationException("Failed to render template: " + templateDescriptor.getTemplateName(), e);
         }

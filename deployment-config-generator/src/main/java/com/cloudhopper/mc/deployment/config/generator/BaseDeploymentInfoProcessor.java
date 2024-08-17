@@ -66,6 +66,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
     protected String artifactId;
     protected String classifier;
     protected String version;
+    protected String targetDir;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -84,6 +85,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
         artifactId = processingEnv.getOptions().getOrDefault("artifactId", "default-artifactId");
         classifier = processingEnv.getOptions().getOrDefault("classifier", "default-classifier");
         version = processingEnv.getOptions().getOrDefault("version", "default-version");
+        targetDir = processingEnv.getOptions().getOrDefault("targetDir", "./target");
 
 
         if ("default-artifactId".equals(artifactId) || "default-classifier".equals(classifier) || "default-version".equals(version)) {

@@ -63,12 +63,13 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         dataModel.put("version", handlerInfo.getVersion());
         dataModel.put("artifactId", handlerInfo.getArtifactId());
         dataModel.put("classifier", handlerInfo.getClassifier());
+        dataModel.put("targetDir", handlerInfo.getTargetDir());
         try {
             for (TemplateDescriptor templateDescriptor : REQUIRED_TEMPLATES) {
                 if (templateDescriptor.isJavaFile()) {
                     templateRenderer.generateJavaFile(processingEnv, templateDescriptor, dataModel, handlerInfo);
                 } else {
-                    templateRenderer.renderTemplate(templateDescriptor, configOutputDir, dataModel);
+                    templateRenderer.renderTemplate(templateDescriptor, configOutputDir, dataModel, handlerInfo.getFunctionId());
                 }
             }
         } catch (ConfigGenerationException e) {

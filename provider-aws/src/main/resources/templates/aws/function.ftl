@@ -1,10 +1,10 @@
 resource "aws_lambda_function" "${functionId}" {
   filename      = "${artifactId}-${version}-${classifier}.jar"
   function_name = "${functionId}"
-  role          = aws_iam_role.lambda_exec.arn
+  role          = aws_iam_role.${functionId}_lambda_exec.arn
   handler       = "${handlerFullyQualifiedName}::handleRequest"
   
-  source_code_hash = filebase64sha256("${artifactId}-${version}-${classifier}.jar")
+  source_code_hash = filebase64sha256("${targetDir}/${artifactId}-${version}-${classifier}.jar")
   
   runtime = "java11"
 
@@ -15,7 +15,7 @@ resource "aws_lambda_function" "${functionId}" {
   }
 }
 
-resource "aws_iam_role" "lambda_exec" {
+resource "aws_iam_role" "${functionId}_lambda_exec" {
   name = "${functionId}_lambda_role"
 
   assume_role_policy = jsonencode({
@@ -30,8 +30,8 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_policy" {
-  role       = aws_iam_role.lambda_exec.name
+resource "aws_iam_role_policy_attachment" "${functionId}_lambda_policy" {
+  role       = aws_iam_role.${functionId}_lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 

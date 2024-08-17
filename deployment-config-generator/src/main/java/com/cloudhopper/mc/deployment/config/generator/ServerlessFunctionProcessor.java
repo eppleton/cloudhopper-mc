@@ -112,7 +112,8 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                                         outputType.toString(),
                                         artifactId,
                                         version,
-                                        classifier
+                                        classifier,
+                                        targetDir
                                 ));
                     } else {
                         // Generate the corresponding class with @Operation annotation
@@ -186,7 +187,8 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                 methodElement.getReturnType().toString(), 
                 artifactId,
                 version,
-                classifier
+                classifier,
+                targetDir
         ));
     }
 
