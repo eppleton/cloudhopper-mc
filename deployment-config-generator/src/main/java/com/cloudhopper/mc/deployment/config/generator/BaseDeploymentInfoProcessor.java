@@ -46,11 +46,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
 
 /**
  *
@@ -61,17 +63,32 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
     protected List<DeploymentConfigGenerator> generators;
     protected String providerName;
     protected String configOutputDir = "target/generated-config";
+    protected String artifactId;
+    protected String classifier;
+    protected String version;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
+        Messager messager = processingEnv.getMessager();
+        messager.printMessage(Diagnostic.Kind.NOTE, "Initializing BaseDeploymentInfoProcessor");
+
         super.init(processingEnv);
         ServiceLoader<DeploymentConfigGenerator> loader = ServiceLoader.load(DeploymentConfigGenerator.class, ServerlessFunctionProcessor.class.getClassLoader());
         generators = new ArrayList<>();
         for (DeploymentConfigGenerator generator : loader) {
             generators.add(generator);
         }
+
         providerName = processingEnv.getOptions().getOrDefault("cloudprovider", "aws");
-        configOutputDir = processingEnv.getOptions().getOrDefault("configOutputDir", "aws");
+        configOutputDir = processingEnv.getOptions().getOrDefault("configOutputDir", "target/generated-config");
+        artifactId = processingEnv.getOptions().getOrDefault("artifactId", "default-artifactId");
+        classifier = processingEnv.getOptions().getOrDefault("classifier", "default-classifier");
+        version = processingEnv.getOptions().getOrDefault("version", "default-version");
+
+
+        if ("default-artifactId".equals(artifactId) || "default-classifier".equals(classifier) || "default-version".equals(version)) {
+            messager.printMessage(Diagnostic.Kind.WARNING, "One or more required compiler arguments (artifactId, classifier, version) are using default values. Please ensure these are provided.");
+        }
     }
 
     protected DeploymentConfigGenerator getDeploymentGenerator() {
@@ -90,7 +107,6 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
     }
 
     protected boolean implementsInterface(TypeElement classElement, String interfaceName) {
-        System.err.println("Checking class " + classElement.toString() + " for interface " + interfaceName);
         Types typeUtils = processingEnv.getTypeUtils();
         Elements elementUtils = processingEnv.getElementUtils();
 
@@ -106,7 +122,6 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
 
         for (TypeMirror implementedInterface : classElement.getInterfaces()) {
             TypeMirror rawImplementedInterface = typeUtils.erasure(implementedInterface);
-            System.err.println("Class implements interface " + implementedInterface.toString() + " (raw: " + rawImplementedInterface.toString() + ")");
             if (typeUtils.isSameType(rawImplementedInterface, rawRequiredInterface)) {
                 return true;
             }

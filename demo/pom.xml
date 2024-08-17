@@ -103,6 +103,9 @@
                     <compilerArgs>
                         <arg>-Acloudprovider=${cloud.provider}</arg>
                         <arg>-AconfigOutputDir=${project.build.directory}/deployment-descriptors/${cloud.provider}</arg>
+                        <arg>-AartifactId=${project.artifactId}</arg>
+                        <arg>-Aversion=${project.version}</arg>
+                        <arg>-Aclassifier=${jar.classifier}</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

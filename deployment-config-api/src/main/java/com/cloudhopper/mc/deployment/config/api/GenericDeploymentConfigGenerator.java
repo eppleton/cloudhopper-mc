@@ -56,10 +56,13 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("functionId", handlerInfo.getFunctionId());
         dataModel.put("handler", handlerInfo.getHandlerClassName());
-        dataModel.put("handlerImport", handlerInfo.getHandlerFullyQualifiedName());
+        dataModel.put("handlerFullyQualifiedName", handlerInfo.getHandlerFullyQualifiedName());
         dataModel.put("package", handlerInfo.getHandlerPackage());
         dataModel.put("inputType", handlerInfo.getInputType());
         dataModel.put("outputType", handlerInfo.getOutputType());
+        dataModel.put("version", handlerInfo.getVersion());
+        dataModel.put("artifactId", handlerInfo.getArtifactId());
+        dataModel.put("classifier", handlerInfo.getClassifier());
         try {
             for (TemplateDescriptor templateDescriptor : REQUIRED_TEMPLATES) {
                 if (templateDescriptor.isJavaFile()) {

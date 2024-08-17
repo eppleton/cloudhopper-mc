@@ -2,7 +2,7 @@ package ${package};
 
 import ${inputType};
 import ${outputType};
-import ${handlerImport};
+import ${handlerFullyQualifiedName};
 import com.cloudhopper.mc.provider.aws.AwsLambdaRequestHandler;
 
 

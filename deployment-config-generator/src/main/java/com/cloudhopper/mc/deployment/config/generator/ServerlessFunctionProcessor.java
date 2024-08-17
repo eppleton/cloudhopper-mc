@@ -102,13 +102,25 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                     if (apiOperation.operationId().equals(Function.NO_OP_ID)) {
                         // Generate configuration for the function
                         deploymentGenerator.generateConfig(providerName, configOutputDir,
-                                new HandlerInfo(functionAnnotation.name(), handlerSimpleName, handlerFQN, packageName, methodName, inputType.toString(), outputType.toString()));
+                                new HandlerInfo(
+                                        functionAnnotation.name(),
+                                        handlerSimpleName,
+                                        handlerFQN,
+                                        packageName,
+                                        methodName,
+                                        inputType.toString(),
+                                        outputType.toString(),
+                                        artifactId,
+                                        version,
+                                        classifier
+                                ));
                     } else {
                         // Generate the corresponding class with @Operation annotation
                         generateApiIntegrationClass(classElement, methodElement, functionAnnotation, apiOperation, inputType, outputType);
                     }
                 } catch (ConfigGenerationException e) {
                     processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                    MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
                 }
             }
         }
@@ -161,7 +173,7 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
         }
 
         dataModel.put("parameters", parameters);
-        
+
         TemplateDescriptor templateDescriptor = new TemplateDescriptor("apiIntegrationClass.ftl", "", "java", true);
 
         templateRenderer.generateJavaFile(processingEnv, templateDescriptor, dataModel, new HandlerInfo(
@@ -171,7 +183,10 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                 getPackageName(classElement),
                 methodElement.getSimpleName().toString(),
                 methodElement.getParameters().isEmpty() ? null : methodElement.getParameters().get(0).asType().toString(),
-                methodElement.getReturnType().toString()
+                methodElement.getReturnType().toString(), 
+                artifactId,
+                version,
+                classifier
         ));
     }
 

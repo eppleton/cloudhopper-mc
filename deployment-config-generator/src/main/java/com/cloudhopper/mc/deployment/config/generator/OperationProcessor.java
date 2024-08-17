@@ -29,6 +29,7 @@ import com.cloudhopper.mc.deployment.config.spi.DeploymentConfigGenerator;
 import com.cloudhopper.mc.deployment.config.api.ConfigGenerationException;
 import com.cloudhopper.mc.deployment.config.api.GenericDeploymentConfigGenerator;
 import com.cloudhopper.mc.deployment.config.api.HandlerInfo;
+import com.cloudhopper.mc.deployment.config.api.TemplateRenderer;
 import com.google.auto.service.AutoService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -55,6 +57,12 @@ import javax.tools.Diagnostic;
 public class OperationProcessor extends BaseDeploymentInfoProcessor {
 
     @Override
+    public void init(ProcessingEnvironment processingEnv) {
+        super.init(processingEnv);
+
+    }
+
+    @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         DeploymentConfigGenerator deploymentGenerator = getDeploymentGenerator();
 
@@ -70,9 +78,12 @@ public class OperationProcessor extends BaseDeploymentInfoProcessor {
                 Operation operation = element.getAnnotation(Operation.class);
                 try {
                     deploymentGenerator.generateConfig(providerName, configOutputDir,
-                            new HandlerInfo(operation.operationId(), handlerSimpleName, handlerFQN, packageName, methodName, inputType.toString(), outputType.toString()));
+                            new HandlerInfo(operation.operationId(), handlerSimpleName, handlerFQN, packageName, methodName, inputType.toString(), outputType.toString(), artifactId,
+                                    version,
+                                    classifier));
                 } catch (ConfigGenerationException e) {
                     processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                    MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
                 }
             }
         }

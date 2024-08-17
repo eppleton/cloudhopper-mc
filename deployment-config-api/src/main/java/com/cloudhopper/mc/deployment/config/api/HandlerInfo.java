@@ -24,13 +24,12 @@ package com.cloudhopper.mc.deployment.config.api;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 /**
  *
  * @author antonepple
  */
 public class HandlerInfo {
-    
+
     private final String functionId;
     private final String handlerClassName;
     private final String handlerFullyQualifiedName;
@@ -38,6 +37,9 @@ public class HandlerInfo {
     private final String handlerMethod;
     private final String inputType;
     private final String outputType;
+    private final String artifactId;
+    private final String version;
+    private final String classifier;
 
     public String getHandlerClassName() {
         return handlerClassName;
@@ -67,7 +69,27 @@ public class HandlerInfo {
         return functionId;
     }
 
-    public HandlerInfo(String functionId, String handlerClassName, String handlerFullyQualifiedName, String handlerPackage, String handlerMethod, String inputType, String outputType) {
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getClassifier() {
+        return classifier;
+    }
+    
+    
+    
+
+   public HandlerInfo(String functionId, String handlerClassName, String handlerFullyQualifiedName, 
+                       String handlerPackage, String handlerMethod, String inputType, String outputType,
+                       String artifactId, String version, String classifier) {
+        this.artifactId = artifactId;
+        this.version = version;
+        this.classifier = classifier;     
         this.functionId = functionId;
         this.handlerClassName = handlerClassName;
         this.handlerFullyQualifiedName = handlerFullyQualifiedName;
@@ -77,7 +99,4 @@ public class HandlerInfo {
         this.outputType = outputType;
     }
 
- 
-
-    
 }
