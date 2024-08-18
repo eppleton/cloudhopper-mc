@@ -1,15 +1,20 @@
 package ${package};
 
-import ${inputType};
-import ${outputType};
-import ${handlerImport};
-import com.cloudhopper.mc.provider.gcp.GcpHttpRequestHandler;
+import ${inputTypeImport};
+import ${outputTypeImport};
+import ${handlerFullyQualifiedName};
 
+import com.cloudhopper.mc.provider.gcp.GcpCloudFunctionRequestHandler;
+import com.google.cloud.functions.HttpFunction;
+import com.google.cloud.functions.HttpRequest;
+import com.google.cloud.functions.HttpResponse;
+import com.google.gson.reflect.TypeToken;
 
-public class GcpFunctions${handler}Handler extends GcpHttpRequestHandler<${inputType}, ${outputType}> {
+public class Gcp${handler}Function extends GcpCloudFunctionRequestHandler<${inputType}, ${outputType}> {
 
-    public GcpFunctions${handler}Handler() {
-        super(new ${handler}());
+    public Gcp${handler}Function() {
+        super(new ${handler}(), new TypeToken<${inputType}>() {});
     }
-}
 
+ 
+}

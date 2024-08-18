@@ -1,12 +1,12 @@
 resource "aws_lambda_function" "${functionId}" {
-  filename      = "${artifactId}-${version}-${classifier}.jar"
+  filename      = "${targetDir}/${artifactId}-${version}-${classifier}.jar"
   function_name = "${functionId}"
   role          = aws_iam_role.${functionId}_lambda_exec.arn
-  handler       = "${handlerFullyQualifiedName}::handleRequest"
+  handler       = "${handlerWrapperFullyQualifiedName}::handleRequest"
   
   source_code_hash = filebase64sha256("${targetDir}/${artifactId}-${version}-${classifier}.jar")
-  
-  runtime = "java11"
+  timeout = 30
+  runtime = "java21"
 
   environment {
     variables = {

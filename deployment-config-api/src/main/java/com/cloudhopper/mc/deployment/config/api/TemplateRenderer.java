@@ -111,8 +111,9 @@ public class TemplateRenderer {
             StringWriter writer = new StringWriter();
             template.process(dataModel, writer);
             String fileContent = writer.toString();
-
-            createClassFile(processingEnv, handlerInfo.getHandlerPackage(), extractClassName(fileContent), fileContent);
+            final String extractedClassName = extractClassName(fileContent);
+            handlerInfo.setWrapperClassName(extractedClassName);
+            createClassFile(processingEnv, handlerInfo.getHandlerPackage(), extractedClassName, fileContent);
         } catch (IOException | TemplateException e) {
             e.printStackTrace();
             throw new ConfigGenerationException("Failed to generate Java file from template: " + templateDescriptor.getTemplateName(), e);
@@ -136,7 +137,7 @@ public class TemplateRenderer {
     }
 
     private static String extractClassName(String fileContent) {
-
+        System.err.println(fileContent);
         CompilationUnit cu = StaticJavaParser.parse(fileContent);
         List<ClassOrInterfaceDeclaration> classes = cu.findAll(ClassOrInterfaceDeclaration.class);
         if (!classes.isEmpty()) {

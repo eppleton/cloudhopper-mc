@@ -46,6 +46,29 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>${jar.classifier}</shadedClassifierName>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.cloudhopper.mc.demo.HelloWorldHandler</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
                 <version>2.2.22</version>
@@ -92,8 +115,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
+                    <release>11</release>  
                     <encoding>UTF-8</encoding>
                     <generatedSourcesDirectory>${output.dir}</generatedSourcesDirectory>
                     <annotationProcessors>
@@ -102,7 +126,7 @@
                     </annotationProcessors>
                     <compilerArgs>
                         <arg>-Acloudprovider=${cloud.provider}</arg>
-                        <arg>-AconfigOutputDir=${project.build.directory}/deployment-descriptors/${cloud.provider}</arg>
+                        <arg>-AconfigOutputDir=${project.build.directory}/deployment/${cloud.provider}</arg>
                         <arg>-AartifactId=${project.artifactId}</arg>
                         <arg>-Aversion=${project.version}</arg>
                         <arg>-Aclassifier=${jar.classifier}</arg>
@@ -160,8 +184,8 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>terraform</executable>
-                            <workingDirectory>${project.build.directory}/deployment-descriptors/${cloud.provider}</workingDirectory>
+                            <executable>/opt/homebrew/bin/terraform</executable>
+                            <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
                             <arguments>
                                 <argument>init</argument>
                             </arguments>
@@ -174,13 +198,30 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>terraform</executable>
-                            <workingDirectory>${project.build.directory}/deployment-descriptors/${cloud.provider}</workingDirectory>
+                            <executable>/opt/homebrew/bin/terraform</executable>
+                            <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
                             <arguments>
                                 <argument>plan</argument>
                             </arguments>
                         </configuration>
                     </execution>
+                    <!--                    <execution>
+                        <id>terraform-apply</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>terraform</executable>
+                            <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
+                            <arguments>
+                                <argument>apply</argument>
+                                <argument>-auto-approve</argument>
+                                 If you want to use a specific var file 
+                                 <argument>-var-file=${project.basedir}/terraform.tfvars</argument> 
+                            </arguments>
+                        </configuration>
+                    </execution>-->
                 </executions>
             </plugin>
             <plugin>
@@ -193,10 +234,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/terraform/${cloud.provider}</outputDirectory>
+                            <outputDirectory>${project.build.directory}/deployment/${cloud.provider}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources/terraform/${cloud.provider}</directory>
+                                    <directory>src/main/resources/deployment/${cloud.provider}</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -208,6 +249,9 @@
     <profiles>
         <profile>
             <id>gcp</id>
+            <activation>      
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <cloud.provider>gcp</cloud.provider>
                 <output.dir>target/generated-sources/gcp</output.dir>
@@ -223,9 +267,6 @@
         </profile>
         <profile>
             <id>aws</id>
-            <activation>      
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <cloud.provider>aws</cloud.provider>
                 <output.dir>target/generated-sources/aws</output.dir>

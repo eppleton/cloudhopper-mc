@@ -41,6 +41,31 @@ public class HandlerInfo {
     private final String version;
     private final String classifier;
     private final String targetDir;
+    private String wrapperFullyQualifiedName;
+
+    public String getWrapperFullyQualifiedName() {
+        return wrapperFullyQualifiedName;
+    }
+
+    public String getInputTypeImport() {
+        return stripGenericArguments(inputType);
+    }
+
+    public String getOutputTypeImport() {
+        return stripGenericArguments(outputType);
+    }
+    
+    private String stripGenericArguments(String type) {
+        int genericStart = type.indexOf('<');
+        if (genericStart != -1) {
+            return type.substring(0, genericStart);
+        }
+        return type;
+    }
+
+    public void setWrapperClassName(String wrapperFullyQualifiedName) {
+        this.wrapperFullyQualifiedName = handlerPackage + "." + wrapperFullyQualifiedName;
+    }
 
     public String getHandlerClassName() {
         return handlerClassName;
@@ -85,15 +110,14 @@ public class HandlerInfo {
     public String getTargetDir() {
         return targetDir;
     }
-    
 
-   public HandlerInfo(String functionId, String handlerClassName, String handlerFullyQualifiedName, 
-                       String handlerPackage, String handlerMethod, String inputType, String outputType,
-                       String artifactId, String version, String classifier, String targetDir) {
-       this.targetDir = targetDir;
+    public HandlerInfo(String functionId, String handlerClassName, String handlerFullyQualifiedName,
+            String handlerPackage, String handlerMethod, String inputType, String outputType,
+            String artifactId, String version, String classifier, String targetDir) {
+        this.targetDir = targetDir;
         this.artifactId = artifactId;
         this.version = version;
-        this.classifier = classifier;     
+        this.classifier = classifier;
         this.functionId = functionId;
         this.handlerClassName = handlerClassName;
         this.handlerFullyQualifiedName = handlerFullyQualifiedName;

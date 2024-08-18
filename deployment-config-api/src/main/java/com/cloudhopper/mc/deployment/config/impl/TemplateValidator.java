@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 
 public class TemplateValidator {
     public static List<String> validateTemplates(ClassLoader classLoader, String templateDir, Set<TemplateDescriptor> requiredTemplates) {
-        // Implement validation logic
         return requiredTemplates.stream()
                 .map(TemplateDescriptor::getTemplateName)
                 .filter(templateName -> classLoader.getResource(templateDir + "/" + templateName) == null)

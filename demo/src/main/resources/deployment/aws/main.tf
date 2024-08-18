@@ -1,3 +1,11 @@
+terraform {
+  backend "s3" {
+    bucket = "cloudhopper-demo-terraform-state-bucket"
+    key    = "state/terraform.tfstate"
+    region = "eu-central-1"
+  }
+}
+
 # Configure the AWS Provider
 provider "aws" {
   region = var.aws_region
@@ -32,7 +40,7 @@ variable "aws_region" {
 variable "aws_profile" {
   description = "AWS profile to use"
   type        = string
-  default     = "default"
+  default     = "dukehoff"
 }
 
 variable "project_name" {
@@ -47,4 +55,4 @@ variable "environment" {
   default     = "dev"
 }
 
-# ... rest of your Terraform configuration ...
+

@@ -28,6 +28,7 @@ import com.cloudhopper.mc.deployment.config.api.CloudRequestHandler;
 import com.cloudhopper.mc.deployment.config.api.HandlerContext;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import java.util.Map;
 import javax.ws.rs.Path;
 
 @OpenAPIDefinition(info = @Info(title = "Cloudhopper Demo API",
@@ -35,7 +36,7 @@ import javax.ws.rs.Path;
         version = "1.0"
 ))
 @Path("/hello")
-public class HelloWorldHandler implements CloudRequestHandler<String, String> {
+public class HelloWorld implements CloudRequestHandler<Map<String,Object>, String> {
 
     @io.swagger.v3.oas.annotations.Operation(summary = "Say Hello",
             description = "Say Hello",
@@ -56,7 +57,7 @@ public class HelloWorldHandler implements CloudRequestHandler<String, String> {
     )
     @javax.ws.rs.GET
     @Override
-    public String handleRequest(String input, HandlerContext context) {
+    public String handleRequest(Map<String,Object> input, HandlerContext context) {
         return "hello";
     }
 

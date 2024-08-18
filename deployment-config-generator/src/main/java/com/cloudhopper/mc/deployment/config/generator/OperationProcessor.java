@@ -71,7 +71,14 @@ public class OperationProcessor extends BaseDeploymentInfoProcessor {
                 Operation operation = element.getAnnotation(Operation.class);
                 try {
                     deploymentGenerator.generateConfig(providerName, configOutputDir,
-                            new HandlerInfo(operation.operationId(), handlerSimpleName, handlerFQN, packageName, methodName, inputType.toString(), outputType.toString(), artifactId,
+                            new HandlerInfo(operation.operationId(), 
+                                    handlerSimpleName, 
+                                    handlerFQN, 
+                                    packageName,
+                                    methodName, 
+                                    inputType.toString(),
+                                    outputType.toString(),
+                                    artifactId,
                                     version,
                                     classifier,
                                     targetDir));

@@ -27,7 +27,7 @@ package com.cloudhopper.mc.deployment.config.api;
 import com.cloudhopper.mc.deployment.config.impl.TemplateValidator;
 import com.cloudhopper.mc.deployment.config.spi.DeploymentConfigGenerator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,12 +36,14 @@ import javax.annotation.processing.ProcessingEnvironment;
 public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerator {
 
     private final ProcessingEnvironment processingEnv;
-    private static final Set<TemplateDescriptor> REQUIRED_TEMPLATES = new HashSet<>();
+    private static final Set<TemplateDescriptor> REQUIRED_TEMPLATES = new LinkedHashSet<>();
     private final TemplateRenderer templateRenderer;
+    protected static final TemplateDescriptor HANDLER_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("handler.ftl", "java", "generated-sources", true);
+    protected static final TemplateDescriptor FUNCTION_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("function.ftl", "tf", "", false);
 
     static {
-        REQUIRED_TEMPLATES.add(new TemplateDescriptor("function.ftl", "tf", "", false));
-        REQUIRED_TEMPLATES.add(new TemplateDescriptor("handler.ftl", "java", "generated-sources", true));
+        REQUIRED_TEMPLATES.add(HANDLER_TEMPLATE_DESCRIPTOR);
+        REQUIRED_TEMPLATES.add(FUNCTION_TEMPLATE_DESCRIPTOR);
     }
 
     public GenericDeploymentConfigGenerator(ProcessingEnvironment processingEnv) {
@@ -57,26 +59,24 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         dataModel.put("functionId", handlerInfo.getFunctionId());
         dataModel.put("handler", handlerInfo.getHandlerClassName());
         dataModel.put("handlerFullyQualifiedName", handlerInfo.getHandlerFullyQualifiedName());
+
         dataModel.put("package", handlerInfo.getHandlerPackage());
         dataModel.put("inputType", handlerInfo.getInputType());
         dataModel.put("outputType", handlerInfo.getOutputType());
+        dataModel.put("inputTypeImport", handlerInfo.getInputTypeImport());
+        dataModel.put("outputTypeImport", handlerInfo.getOutputTypeImport());
         dataModel.put("version", handlerInfo.getVersion());
         dataModel.put("artifactId", handlerInfo.getArtifactId());
         dataModel.put("classifier", handlerInfo.getClassifier());
         dataModel.put("targetDir", handlerInfo.getTargetDir());
         try {
-            for (TemplateDescriptor templateDescriptor : REQUIRED_TEMPLATES) {
-                if (templateDescriptor.isJavaFile()) {
-                    templateRenderer.generateJavaFile(processingEnv, templateDescriptor, dataModel, handlerInfo);
-                } else {
-                    templateRenderer.renderTemplate(templateDescriptor, configOutputDir, dataModel, handlerInfo.getFunctionId());
-                }
-            }
+            templateRenderer.generateJavaFile(processingEnv, HANDLER_TEMPLATE_DESCRIPTOR, dataModel, handlerInfo);
+            dataModel.put("handlerWrapperFullyQualifiedName", handlerInfo.getWrapperFullyQualifiedName());
+            templateRenderer.renderTemplate(FUNCTION_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, handlerInfo.getFunctionId());
         } catch (ConfigGenerationException e) {
             throw new ConfigGenerationException("Failed to generate config for provider: " + providerName, e);
         }
     }
-
 
     @Override
     public boolean supportsProvider(String providerName) {
