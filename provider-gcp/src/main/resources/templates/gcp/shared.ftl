@@ -8,7 +8,7 @@ resource "google_storage_bucket" "function_bucket" {
 
 # Shared JAR file for all functions
 resource "google_storage_bucket_object" "shared_function_archive" {
-  name   = "${artifactId}-${version}-${classifier}.jar"
+  name   = "${artifactId}-${version}-${classifier}.zip"
   bucket = google_storage_bucket.function_bucket.name
-  source = "${targetDir}/${artifactId}-${version}-${classifier}.jar"
+  source = "${targetDir}/${artifactId}-${version}-${classifier}.zip"
 }
