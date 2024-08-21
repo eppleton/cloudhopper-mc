@@ -60,6 +60,9 @@ import javax.tools.Diagnostic;
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
 
+
+    
+    
     private TemplateRenderer templateRenderer;
 
     @Override
@@ -71,7 +74,6 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        DeploymentConfigGenerator deploymentGenerator = getDeploymentGenerator();
 
         for (Element element : roundEnv.getElementsAnnotatedWith(Function.class)) {
             if (element.getKind() == ElementKind.METHOD) {

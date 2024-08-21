@@ -47,17 +47,16 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("io.swagger.v3.oas.annotations.Operation")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
-public class OperationProcessor extends BaseDeploymentInfoProcessor {
+public class OperationProcessor extends BaseDeploymentInfoProcessor {    
+
 
     @Override
     public void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        DeploymentConfigGenerator deploymentGenerator = getDeploymentGenerator();
 
         for (Element element : roundEnv.getElementsAnnotatedWith(Operation.class)) {
             if (element.getKind() == ElementKind.METHOD) {

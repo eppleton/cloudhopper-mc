@@ -40,7 +40,8 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     private final TemplateRenderer templateRenderer;
     protected static final TemplateDescriptor HANDLER_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("handler.ftl", "java", "generated-sources", true);
     protected static final TemplateDescriptor FUNCTION_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("function.ftl", "tf", "", false);
-
+    protected static final TemplateDescriptor SHARED_RESOURCES_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("shared.ftl", "tf", "", false);
+    private boolean sharedConfigGenerated;
     static {
         REQUIRED_TEMPLATES.add(HANDLER_TEMPLATE_DESCRIPTOR);
         REQUIRED_TEMPLATES.add(FUNCTION_TEMPLATE_DESCRIPTOR);
@@ -49,6 +50,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     public GenericDeploymentConfigGenerator(ProcessingEnvironment processingEnv) {
         this.processingEnv = processingEnv;
         this.templateRenderer = new TemplateRenderer();
+        this.sharedConfigGenerated = false;
     }
 
     @Override
@@ -70,12 +72,24 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         dataModel.put("classifier", handlerInfo.getClassifier());
         dataModel.put("targetDir", handlerInfo.getTargetDir());
         try {
+            if (!sharedConfigGenerated){
+                sharedConfigGenerated = generateSharedConfig(providerName, configOutputDir, dataModel, handlerInfo);
+            }
             templateRenderer.generateJavaFile(processingEnv, HANDLER_TEMPLATE_DESCRIPTOR, dataModel, handlerInfo);
             dataModel.put("handlerWrapperFullyQualifiedName", handlerInfo.getWrapperFullyQualifiedName());
             templateRenderer.renderTemplate(FUNCTION_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, handlerInfo.getFunctionId());
         } catch (ConfigGenerationException e) {
             throw new ConfigGenerationException("Failed to generate config for provider: " + providerName, e);
         }
+    }
+    
+    private boolean generateSharedConfig(String providerName, String configOutputDir, Map<String, Object> dataModel, HandlerInfo handlerInfo) {
+        try {
+            templateRenderer.renderTemplate(SHARED_RESOURCES_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, "shared-resources");
+        } catch (ConfigGenerationException e) { // shared config is optional, so we catch the exception and only print a warning
+            processingEnv.getMessager().printWarning("Could not generate shared config " +e.getMessage());
+        }
+        return true;
     }
 
     @Override

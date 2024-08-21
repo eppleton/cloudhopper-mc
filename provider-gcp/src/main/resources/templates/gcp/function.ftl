@@ -1,13 +1,4 @@
-resource "google_storage_bucket" "${functionId}_bucket" {
-  name     = "${functionId}-bucket"
-  location = "US"  # Adjust as needed
-}
-
-resource "google_storage_bucket_object" "${functionId}_archive" {
-  name   = "${artifactId}-${version}-${classifier}.jar"
-  bucket = google_storage_bucket.${functionId}_bucket.name
-  source = "${targetDir}/${artifactId}-${version}-${classifier}.jar"
-}
+# Function-specific resources
 
 resource "google_cloudfunctions_function" "${functionId}" {
   name        = "${functionId}"
@@ -15,8 +6,8 @@ resource "google_cloudfunctions_function" "${functionId}" {
   runtime     = "java21"
 
   available_memory_mb   = 256
-  source_archive_bucket = google_storage_bucket.${functionId}_bucket.name
-  source_archive_object = google_storage_bucket_object.${functionId}_archive.name
+  source_archive_bucket = google_storage_bucket.function_bucket.name
+  source_archive_object = google_storage_bucket_object.shared_function_archive.name
   trigger_http          = true
   entry_point           = "${handlerWrapperFullyQualifiedName}"
   

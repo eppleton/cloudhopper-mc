@@ -72,6 +72,7 @@ public class TemplateRenderer {
     protected void renderTemplate(TemplateDescriptor templateDescriptor, String outputDirName, Map<String, Object> dataModel, String fileName) throws ConfigGenerationException {
         try {
             Template template = freemarkerConfig.getTemplate(templateDescriptor.getTemplateName());
+            
             StringWriter writer = new StringWriter();
             template.process(dataModel, writer);
             String output = writer.toString();

@@ -61,6 +61,7 @@ import javax.tools.Diagnostic;
 public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
 
     protected List<DeploymentConfigGenerator> generators;
+    protected DeploymentConfigGenerator deploymentGenerator;
     protected String providerName;
     protected String configOutputDir = "target/generated-config";
     protected String artifactId;
@@ -87,10 +88,10 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
         version = processingEnv.getOptions().getOrDefault("version", "default-version");
         targetDir = processingEnv.getOptions().getOrDefault("targetDir", "./target");
 
-
         if ("default-artifactId".equals(artifactId) || "default-classifier".equals(classifier) || "default-version".equals(version)) {
             messager.printMessage(Diagnostic.Kind.WARNING, "One or more required compiler arguments (artifactId, classifier, version) are using default values. Please ensure these are provided.");
         }
+        deploymentGenerator = getDeploymentGenerator();
     }
 
     protected DeploymentConfigGenerator getDeploymentGenerator() {
