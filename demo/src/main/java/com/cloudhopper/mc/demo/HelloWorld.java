@@ -40,13 +40,13 @@ public class HelloWorld implements CloudRequestHandler<Map<String,Object>, Strin
 
     @io.swagger.v3.oas.annotations.Operation(summary = "Say Hello",
             description = "Say Hello",
-            operationId = "say_hello",
+            operationId = "say-hello",
             extensions = {
                 @io.swagger.v3.oas.annotations.extensions.Extension(
                         name = "x-amazon-apigateway-integration",
                         properties = {
                             @io.swagger.v3.oas.annotations.extensions.ExtensionProperty(name = "cloud-provider", value = "aws"),
-                            @io.swagger.v3.oas.annotations.extensions.ExtensionProperty(name = "uri", value = "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${GetTokenForNonceFunction_Arn}/invocations"),
+                            @io.swagger.v3.oas.annotations.extensions.ExtensionProperty(name = "uri", value = "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${HelloWorld_Arn}/invocations"),
                             @io.swagger.v3.oas.annotations.extensions.ExtensionProperty(name = "passthroughBehavior", value = "when_no_match"),
                             @io.swagger.v3.oas.annotations.extensions.ExtensionProperty(name = "httpMethod", value = "POST"),
                             @io.swagger.v3.oas.annotations.extensions.ExtensionProperty(name = "type", value = "aws_proxy"),

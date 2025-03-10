@@ -25,7 +25,6 @@ package com.cloudhopper.mc.deployment.config.generator;
  * #L%
  */
 // Annotation Processor
-import com.cloudhopper.mc.deployment.config.spi.DeploymentConfigGenerator;
 import com.cloudhopper.mc.deployment.config.api.ConfigGenerationException;
 import com.cloudhopper.mc.deployment.config.api.HandlerInfo;
 import com.google.auto.service.AutoService;
@@ -47,8 +46,7 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("io.swagger.v3.oas.annotations.Operation")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
-public class OperationProcessor extends BaseDeploymentInfoProcessor {    
-
+public class OperationProcessor extends BaseDeploymentInfoProcessor {
 
     @Override
     public void init(ProcessingEnvironment processingEnv) {
@@ -57,33 +55,40 @@ public class OperationProcessor extends BaseDeploymentInfoProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-
-        for (Element element : roundEnv.getElementsAnnotatedWith(Operation.class)) {
-            if (element.getKind() == ElementKind.METHOD) {
-                ExecutableElement methodElement = (ExecutableElement) element;
-                String methodName = methodElement.getSimpleName().toString();
-                String handlerFQN = ((TypeElement) methodElement.getEnclosingElement()).getQualifiedName().toString();
-                String packageName = handlerFQN.substring(0, handlerFQN.lastIndexOf('.'));
-                String handlerSimpleName = ((TypeElement) methodElement.getEnclosingElement()).getSimpleName().toString();
-                TypeMirror inputType = methodElement.getParameters().isEmpty() ? null : methodElement.getParameters().get(0).asType();
-                TypeMirror outputType = methodElement.getReturnType();
-                Operation operation = element.getAnnotation(Operation.class);
-                try {
-                    deploymentGenerator.generateConfig(providerName, configOutputDir,
-                            new HandlerInfo(operation.operationId(), 
-                                    handlerSimpleName, 
-                                    handlerFQN, 
-                                    packageName,
-                                    methodName, 
-                                    inputType.toString(),
-                                    outputType.toString(),
-                                    artifactId,
-                                    version,
-                                    classifier,
-                                    targetDir));
-                } catch (ConfigGenerationException e) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-                    MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
+        if (roundEnv.processingOver()) {
+            try {
+                deploymentGenerator.finalizeConfig(providerName, configOutputDir);
+            } catch (ConfigGenerationException e) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);            }
+        } else {
+            for (Element element : roundEnv.getElementsAnnotatedWith(Operation.class)) {
+                if (element.getKind() == ElementKind.METHOD) {
+                    ExecutableElement methodElement = (ExecutableElement) element;
+                    String methodName = methodElement.getSimpleName().toString();
+                    String handlerFQN = ((TypeElement) methodElement.getEnclosingElement()).getQualifiedName().toString();
+                    String packageName = handlerFQN.substring(0, handlerFQN.lastIndexOf('.'));
+                    String handlerSimpleName = ((TypeElement) methodElement.getEnclosingElement()).getSimpleName().toString();
+                    TypeMirror inputType = methodElement.getParameters().isEmpty() ? null : methodElement.getParameters().get(0).asType();
+                    TypeMirror outputType = methodElement.getReturnType();
+                    Operation operation = element.getAnnotation(Operation.class);
+                    try {
+                        deploymentGenerator.generateConfig(providerName, configOutputDir,
+                                new HandlerInfo(operation.operationId(),
+                                        handlerSimpleName,
+                                        handlerFQN,
+                                        packageName,
+                                        methodName,
+                                        inputType.toString(),
+                                        outputType.toString(),
+                                        artifactId,
+                                        version,
+                                        classifier,
+                                        targetDir));
+                    } catch (ConfigGenerationException e) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                        MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
+                    }
                 }
             }
         }

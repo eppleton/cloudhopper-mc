@@ -59,9 +59,6 @@ import javax.tools.Diagnostic;
 @SupportedAnnotationTypes("com.cloudhopper.mc.Function")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
-
-
-    
     
     private TemplateRenderer templateRenderer;
 

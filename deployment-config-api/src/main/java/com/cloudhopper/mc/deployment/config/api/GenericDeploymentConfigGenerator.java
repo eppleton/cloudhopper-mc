@@ -26,6 +26,7 @@ package com.cloudhopper.mc.deployment.config.api;
  */
 import com.cloudhopper.mc.deployment.config.impl.TemplateValidator;
 import com.cloudhopper.mc.deployment.config.spi.DeploymentConfigGenerator;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,7 +42,11 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     protected static final TemplateDescriptor HANDLER_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("handler.ftl", "java", "generated-sources", true);
     protected static final TemplateDescriptor FUNCTION_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("function.ftl", "tf", "", false);
     protected static final TemplateDescriptor SHARED_RESOURCES_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("shared.ftl", "tf", "", false);
+    protected static final TemplateDescriptor LOCALS_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("api.ftl", "tf", "", false);
+
     private boolean sharedConfigGenerated;
+    private static final List<HandlerInfo> collectedHandlerInfos = new ArrayList<>();
+
     static {
         REQUIRED_TEMPLATES.add(HANDLER_TEMPLATE_DESCRIPTOR);
         REQUIRED_TEMPLATES.add(FUNCTION_TEMPLATE_DESCRIPTOR);
@@ -61,7 +66,6 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         dataModel.put("functionId", handlerInfo.getFunctionId());
         dataModel.put("handler", handlerInfo.getHandlerClassName());
         dataModel.put("handlerFullyQualifiedName", handlerInfo.getHandlerFullyQualifiedName());
-
         dataModel.put("package", handlerInfo.getHandlerPackage());
         dataModel.put("inputType", handlerInfo.getInputType());
         dataModel.put("outputType", handlerInfo.getOutputType());
@@ -72,22 +76,25 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         dataModel.put("classifier", handlerInfo.getClassifier());
         dataModel.put("targetDir", handlerInfo.getTargetDir());
         try {
-            if (!sharedConfigGenerated){
+            if (!sharedConfigGenerated) {
                 sharedConfigGenerated = generateSharedConfig(providerName, configOutputDir, dataModel, handlerInfo);
             }
             templateRenderer.generateJavaFile(processingEnv, HANDLER_TEMPLATE_DESCRIPTOR, dataModel, handlerInfo);
             dataModel.put("handlerWrapperFullyQualifiedName", handlerInfo.getWrapperFullyQualifiedName());
             templateRenderer.renderTemplate(FUNCTION_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, handlerInfo.getFunctionId());
+            collectedHandlerInfos.add(handlerInfo);
         } catch (ConfigGenerationException e) {
             throw new ConfigGenerationException("Failed to generate config for provider: " + providerName, e);
         }
     }
-    
+
     private boolean generateSharedConfig(String providerName, String configOutputDir, Map<String, Object> dataModel, HandlerInfo handlerInfo) {
+
         try {
             templateRenderer.renderTemplate(SHARED_RESOURCES_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, "shared-resources");
         } catch (ConfigGenerationException e) { // shared config is optional, so we catch the exception and only print a warning
-            processingEnv.getMessager().printWarning("Could not generate shared config " +e.getMessage());
+            //e.printStackTrace();
+            // processingEnv.getMessager().printError("Could not generate shared config " + e.getMessage());
         }
         return true;
     }
@@ -108,4 +115,32 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     protected String getTemplateDirectory(String providerName) {
         return "/templates/" + providerName.toLowerCase();
     }
+
+    @Override
+    public void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException {
+        templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(providerName));
+
+        Map<String, String> lambdaMap = new HashMap<>();
+        for (HandlerInfo hi : collectedHandlerInfos) {
+            String key = hi.getHandlerClassName()+"_Arn";
+            String value = hi.getFunctionId().toLowerCase();
+            lambdaMap.put(key, value);
+        }
+
+        Map<String, Object> dataModel = new HashMap<>();
+        dataModel.put("lambdaMap", lambdaMap);
+
+        try {
+
+            templateRenderer.renderTemplate(
+                    LOCALS_TEMPLATE_DESCRIPTOR,
+                    configOutputDir,
+                    dataModel,
+                    "api" 
+            );
+        } catch (ConfigGenerationException e) {
+            throw new ConfigGenerationException("Failed to finalize config for provider: " + providerName, e);
+        }
+    }
+
 }

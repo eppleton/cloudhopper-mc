@@ -74,7 +74,7 @@
                 <version>2.2.22</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
-                    <outputPath>${project.build.directory}/generated/openapi/${cloud.provider}</outputPath>
+                    <outputPath>${project.build.directory}/deployment/${cloud.provider}</outputPath>
                     <outputFormat>JSONANDYAML</outputFormat>
                     <resourcePackages combine.children="append">
                         <package>com.cloudhopper.mc.demo</package>
@@ -103,7 +103,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.build.directory}/generated/openapi/${cloud.provider}/openapi.json</inputSpec>
+                            <inputSpec>${project.build.directory}/deployment/${cloud.provider}/openapi.json</inputSpec>
                             <language>html2</language>
                             <output>${project.build.directory}/generated-docs/${cloud.provider}</output>
                         </configuration>
@@ -189,6 +189,9 @@
                             <arguments>
                                 <argument>init</argument>
                             </arguments>
+                            <environmentVariables>
+                                <AWS_PROFILE>dukehoff</AWS_PROFILE>
+                            </environmentVariables>
                         </configuration>
                     </execution>
                     <execution>
@@ -203,6 +206,9 @@
                             <arguments>
                                 <argument>plan</argument>
                             </arguments>
+                            <environmentVariables>
+                                <AWS_PROFILE>dukehoff</AWS_PROFILE>
+                            </environmentVariables>
                         </configuration>
                     </execution>
                     <!--                    <execution>
@@ -249,9 +255,7 @@
     <profiles>
         <profile>
             <id>gcp</id>
-            <activation>      
-                <activeByDefault>true</activeByDefault>
-            </activation>
+
             <properties>
                 <cloud.provider>gcp</cloud.provider>
                 <output.dir>target/generated-sources/gcp</output.dir>
@@ -295,6 +299,9 @@
         </profile>
         <profile>
             <id>aws</id>
+            <activation>      
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <cloud.provider>aws</cloud.provider>
                 <output.dir>target/generated-sources/aws</output.dir>
@@ -329,6 +336,9 @@
                 <cloud.provider>azure</cloud.provider>
                 <output.dir>target/generated-sources/azure</output.dir>
                 <jar.classifier>azure</jar.classifier>
+                <azure.functions.maven.plugin.version>1.24.0</azure.functions.maven.plugin.version>
+                <azure.functions.java.library.version>2.2.0</azure.functions.java.library.version>
+                <functionAppName>azure-20240826151154500</functionAppName>
             </properties>
             <dependencies>
                 <dependency>
@@ -336,7 +346,115 @@
                     <artifactId>provider-azure</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+                <dependency>
+                    <groupId>com.microsoft.azure.functions</groupId>
+                    <artifactId>azure-functions-java-library</artifactId>
+                    <version>${azure.functions.java.library.version}</version>
+                </dependency>
+                <!-- Test -->
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter</artifactId>
+                    <version>5.4.2</version>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                    <version>2.23.4</version>
+                    <scope>test</scope>
+                </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.1</version>
+                        <configuration>
+                            <source>${java.version}</source>
+                            <target>${java.version}</target>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.microsoft.azure</groupId>
+                        <artifactId>azure-functions-maven-plugin</artifactId>
+                        <version>${azure.functions.maven.plugin.version}</version>
+                        <configuration>
+                            <!-- function app name -->
+                            <appName>${functionAppName}</appName>
+                            <!-- function app resource group -->
+                            <resourceGroup>java-functions-group</resourceGroup>
+                            <!-- function app service plan name -->
+                            <appServicePlanName>java-functions-app-service-plan</appServicePlanName>
+                            <!-- function app region-->
+                            <!-- refers https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions:-Configuration-Details#supported-regions for all valid values -->
+                            <region>westus</region>
+                            <!-- function pricingTier, default to be consumption if not specified -->
+                            <!-- refers https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions:-Configuration-Details#supported-pricing-tiers for all valid values -->
+                            <!-- <pricingTier></pricingTier> -->
+                            <!-- Whether to disable application insights, default is false -->
+                            <!-- refers https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions:-Configuration-Details for all valid configurations for application insights-->
+                            <!-- <disableAppInsights></disableAppInsights> -->
+                            <runtime>
+                                <!-- runtime os, could be windows, linux or docker-->
+                                <os>linux</os>
+                                <javaVersion>11</javaVersion>
+                            </runtime>
+                            <appSettings>
+                                <property>
+                                    <name>FUNCTIONS_EXTENSION_VERSION</name>
+                                    <value>~4</value>
+                                </property>
+                            </appSettings>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>package-functions</id>
+                                <goals>
+                                    <goal>package</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!--Remove obj folder generated by .NET SDK in maven clean-->
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>obj</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>make-zip</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/assembly/azure-zip.xml</descriptor>
+                                    </descriptors>
+                                    <finalName>${project.artifactId}-${project.version}-${jar.classifier}</finalName>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

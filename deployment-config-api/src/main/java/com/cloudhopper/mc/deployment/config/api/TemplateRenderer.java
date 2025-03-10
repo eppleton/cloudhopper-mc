@@ -71,8 +71,10 @@ public class TemplateRenderer {
 
     protected void renderTemplate(TemplateDescriptor templateDescriptor, String outputDirName, Map<String, Object> dataModel, String fileName) throws ConfigGenerationException {
         try {
+            //System.out.println("Generating file: " + fileName);
+
             Template template = freemarkerConfig.getTemplate(templateDescriptor.getTemplateName());
-            
+
             StringWriter writer = new StringWriter();
             template.process(dataModel, writer);
             String output = writer.toString();
@@ -82,13 +84,13 @@ public class TemplateRenderer {
 
             String baseFileName = fileName + "." + templateDescriptor.getOutputFileExtension();
             String outputFileName = baseFileName;
-            int suffix = 1;
-
-            // Handle potential naming conflicts
-            while (Files.exists(outputDir.resolve(outputFileName))) {
-                outputFileName = fileName + "_" + suffix + "." + templateDescriptor.getOutputFileExtension();
-                suffix++;
-            }
+//            int suffix = 1;
+//
+//            // Handle potential naming conflicts
+//            while (Files.exists(outputDir.resolve(outputFileName))) {
+//                outputFileName = fileName + "_" + suffix + "." + templateDescriptor.getOutputFileExtension();
+//                suffix++;
+//            }
 
             Path outputPath = outputDir.resolve(outputFileName);
 

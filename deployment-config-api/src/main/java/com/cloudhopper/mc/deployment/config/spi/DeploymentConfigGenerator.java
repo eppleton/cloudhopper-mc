@@ -31,4 +31,5 @@ import com.cloudhopper.mc.deployment.config.api.HandlerInfo;
 public interface DeploymentConfigGenerator {
     boolean supportsProvider(String provider);
     void generateConfig(String providerName, String configOutputDir, HandlerInfo handlerInfo ) throws ConfigGenerationException;
+    void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException;
 }
