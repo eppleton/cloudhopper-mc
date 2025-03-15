@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "${functionId}" {
   filename      = "${targetDir}/${artifactId}-${version}-${classifier}.jar"
   function_name = "${functionId}"
-  role          = aws_iam_role.${functionId}_lambda_exec.arn
+  role          = aws_iam_role.lambda_exec.arn
   handler       = "${handlerWrapperFullyQualifiedName}::handleRequest"
   
   source_code_hash = filebase64sha256("${targetDir}/${artifactId}-${version}-${classifier}.jar")
@@ -15,23 +15,11 @@ resource "aws_lambda_function" "${functionId}" {
   }
 }
 
-resource "aws_iam_role" "${functionId}_lambda_exec" {
-  name = "${functionId}_lambda_role"
+resource "aws_lambda_permission" "${functionId}_invoke" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.${functionId}.function_name
+  principal     = "apigateway.amazonaws.com"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = {
-        Service = "lambda.amazonaws.com"
-      }
-    }]
-  })
+  source_arn = "${"$"}{aws_api_gateway_rest_api.public-api.execution_arn}/*/*"
 }
-
-resource "aws_iam_role_policy_attachment" "${functionId}_lambda_policy" {
-  role       = aws_iam_role.${functionId}_lambda_exec.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-

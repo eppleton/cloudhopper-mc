@@ -93,7 +93,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         try {
             templateRenderer.renderTemplate(SHARED_RESOURCES_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, "shared-resources");
         } catch (ConfigGenerationException e) { // shared config is optional, so we catch the exception and only print a warning
-            //e.printStackTrace();
+            e.printStackTrace();
             // processingEnv.getMessager().printError("Could not generate shared config " + e.getMessage());
         }
         return true;
@@ -122,8 +122,9 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
 
         Map<String, String> lambdaMap = new HashMap<>();
         for (HandlerInfo hi : collectedHandlerInfos) {
-            String key = hi.getHandlerClassName()+"_Arn";
+            String key = hi.getHandlerClassName() + "_Arn";
             String value = hi.getFunctionId().toLowerCase();
+
             lambdaMap.put(key, value);
         }
 
@@ -136,7 +137,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
                     LOCALS_TEMPLATE_DESCRIPTOR,
                     configOutputDir,
                     dataModel,
-                    "api" 
+                    "api"
             );
         } catch (ConfigGenerationException e) {
             throw new ConfigGenerationException("Failed to finalize config for provider: " + providerName, e);
