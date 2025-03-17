@@ -2,7 +2,7 @@ resource "aws_lambda_function" "${functionId}" {
   filename      = "${targetDir}/${artifactId}-${version}-${classifier}.jar"
   function_name = "${functionId}"
   role          = aws_iam_role.lambda_exec.arn
-  handler       = "${handlerWrapperFullyQualifiedName}::handleRequest"
+  handler       = "${handlerWrapperFullyQualifiedName}$ApiProxy::handleRequest"
   
   source_code_hash = filebase64sha256("${targetDir}/${artifactId}-${version}-${classifier}.jar")
   timeout = 30

@@ -9,6 +9,7 @@ resource "aws_api_gateway_rest_api" "public-api" {
     "application/json"
   ]
   body = local.apidescription
+  disable_execute_api_endpoint = false
 
   tags = {
     applicationRole = "api"

@@ -8,6 +8,27 @@
     </parent>
     <artifactId>provider-aws</artifactId>
     <packaging>jar</packaging>
+    <properties>
+        <aws.lambda.java.core.version>1.2.3</aws.lambda.java.core.version>
+        <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
+        <cloudhopper.provider.id>aws-terraform-java21</cloudhopper.provider.id>
+        <cloudhopper.provider.name>aws</cloudhopper.provider.name>
+        <cloudhopper.provider.version>latest</cloudhopper.provider.version>
+        <cloudhopper.deployment.tool>terraform</cloudhopper.deployment.tool>
+        <cloudhopper.deployment.version>1.7.4</cloudhopper.deployment.version>
+        <cloudhopper.java.version>21</cloudhopper.java.version>
+        <cloudhopper.native.support>graalvm</cloudhopper.native.support>
+        <cloudhopper.description>AWS Lambda Deployment via Terraform (Java 21 + GraalVM)</cloudhopper.description>
+    </properties>    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <!-- Konfiguration geerbt vom Parent -->
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
@@ -18,11 +39,18 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-core</artifactId>
-            <version>1.2.1</version>
-            <type>jar</type>
+            <version>${aws.lambda.java.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-events</artifactId>
+            <version>3.15.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${com.google.code.gson.version}</version>
         </dependency>
     </dependencies>
-    <properties>
-        <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
-    </properties>
+
 </project>

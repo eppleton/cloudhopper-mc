@@ -26,15 +26,28 @@ package com.cloudhopper.mc.deployment.config.api;
  */
 import com.cloudhopper.mc.deployment.config.impl.TemplateValidator;
 import com.cloudhopper.mc.deployment.config.spi.DeploymentConfigGenerator;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.tools.Diagnostic;
+import javax.tools.StandardLocation;
 
 public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerator {
+
+    private static final String CONFIG_FILE = "META-INF/handler-info.properties";
 
     private final ProcessingEnvironment processingEnv;
     private static final Set<TemplateDescriptor> REQUIRED_TEMPLATES = new LinkedHashSet<>();
@@ -45,7 +58,6 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     protected static final TemplateDescriptor LOCALS_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("api.ftl", "tf", "", false);
 
     private boolean sharedConfigGenerated;
-    private static final List<HandlerInfo> collectedHandlerInfos = new ArrayList<>();
 
     static {
         REQUIRED_TEMPLATES.add(HANDLER_TEMPLATE_DESCRIPTOR);
@@ -82,7 +94,8 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
             templateRenderer.generateJavaFile(processingEnv, HANDLER_TEMPLATE_DESCRIPTOR, dataModel, handlerInfo);
             dataModel.put("handlerWrapperFullyQualifiedName", handlerInfo.getWrapperFullyQualifiedName());
             templateRenderer.renderTemplate(FUNCTION_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, handlerInfo.getFunctionId());
-            collectedHandlerInfos.add(handlerInfo);
+            // Persist handler info
+            saveHandlerInfo(handlerInfo);
         } catch (ConfigGenerationException e) {
             throw new ConfigGenerationException("Failed to generate config for provider: " + providerName, e);
         }
@@ -116,29 +129,79 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         return "/templates/" + providerName.toLowerCase();
     }
 
+    private File getConfigFile() throws IOException {
+        // Get the CLASS_OUTPUT location directly from the processing environment
+        String outputDir = processingEnv.getOptions().get("classOutputDir");
+
+        if (outputDir == null) {
+            // Use default class output location
+            outputDir = processingEnv.getFiler().getResource(StandardLocation.CLASS_OUTPUT, "", "dummy").toUri()
+                    .getPath()
+                    .replace("/dummy", ""); // Remove the dummy file reference
+        }
+
+        Path metaInfPath = Paths.get(outputDir, "META-INF");
+        if (!Files.exists(metaInfPath)) {
+            Files.createDirectories(metaInfPath); // Ensure META-INF exists
+        }
+
+        return new File(metaInfPath.toFile(), "handler-info.properties");
+    }
+
+    private Properties loadProperties() {
+        Properties properties = new Properties();
+        try {
+            File configFile = getConfigFile();
+            if (configFile.exists()) {
+                try (InputStream is = new FileInputStream(configFile)) {
+                    properties.load(is);
+                }
+            }
+        } catch (IOException e) {
+            // Ignore: the file may not exist yet
+        }
+        return properties;
+    }
+
+    private void saveProperties(Properties properties) {
+        try {
+            File configFile = getConfigFile();
+            try (OutputStream os = new FileOutputStream(configFile)) {
+                properties.store(os, "Generated Handler Info");
+            }
+        } catch (IOException e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Error writing properties file: " + e.getMessage());
+        }
+    }
+
+    private void saveHandlerInfo(HandlerInfo handlerInfo) {
+        Properties properties = loadProperties();
+
+        String key = handlerInfo.getHandlerClassName() + "_Arn";
+        String value = handlerInfo.getFunctionId().toLowerCase();
+
+        properties.setProperty(key, value);
+        saveProperties(properties);
+    }
+
     @Override
     public void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException {
         templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(providerName));
+        System.err.println("######## finalize config was called");
 
+        Properties properties = loadProperties();
         Map<String, String> lambdaMap = new HashMap<>();
-        for (HandlerInfo hi : collectedHandlerInfos) {
-            String key = hi.getHandlerClassName() + "_Arn";
-            String value = hi.getFunctionId().toLowerCase();
 
-            lambdaMap.put(key, value);
+        for (String key : properties.stringPropertyNames()) {
+            lambdaMap.put(key, properties.getProperty(key));
+            System.err.println(key + " -> " + properties.getProperty(key));
         }
 
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("lambdaMap", lambdaMap);
 
         try {
-
-            templateRenderer.renderTemplate(
-                    LOCALS_TEMPLATE_DESCRIPTOR,
-                    configOutputDir,
-                    dataModel,
-                    "api"
-            );
+            templateRenderer.renderTemplate(LOCALS_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, "api");
         } catch (ConfigGenerationException e) {
             throw new ConfigGenerationException("Failed to finalize config for provider: " + providerName, e);
         }

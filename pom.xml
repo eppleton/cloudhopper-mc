@@ -14,6 +14,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <swagger.version>2.2.22</swagger.version>
+        <com.google.code.gson.version>2.10.1</com.google.code.gson.version>
         <license.header.path>${project.basedir}/src/license/header.txt</license.header.path>
     </properties>
 
@@ -58,8 +59,7 @@
     </modules>
     <build>
         <pluginManagement>
-            <plugins>
-               
+            <plugins>            
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
@@ -115,6 +115,38 @@
                             <goals>
                                 <goal>check</goal>
                             </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+ 
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>templating-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                    <executions>
+                        <execution>
+                            <id>generate-provider-properties</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>filter-sources</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDirectory>${project.parent.basedir}/src/main/cloudhopper-templates</sourceDirectory>
+                                <outputDirectory>${project.build.outputDirectory}/META-INF/cloudhopper</outputDirectory>
+                                <includes>
+                                    <include>provider.properties</include>
+                                </includes>
+                                <filterProperties>
+                                    <provider.id>${cloudhopper.provider.id}</provider.id>
+                                    <provider.name>${cloudhopper.provider.name}</provider.name>
+                                    <provider.version>${cloudhopper.provider.version}</provider.version>
+                                    <deployment.tool>${cloudhopper.deployment.tool}</deployment.tool>
+                                    <deployment.version>${cloudhopper.deployment.version}</deployment.version>
+                                    <java.version>${cloudhopper.java.version}</java.version>
+                                    <native.support>${cloudhopper.native.support}</native.support>
+                                    <description>${cloudhopper.description}</description>
+                                </filterProperties>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
