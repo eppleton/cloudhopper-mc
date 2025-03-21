@@ -39,7 +39,7 @@ public class HelloWorld2 implements CloudRequestHandler<Integer, String>{
     @Function(  name = "hello_world_2"
     ,apiIntegration = @ApiOperation(
             description = "dummy description",
-            operationId = "asw",
+            operationId = "helloworld2",
             method = "GET",
             path = "/hello2/{id}",
             summary = "bla",

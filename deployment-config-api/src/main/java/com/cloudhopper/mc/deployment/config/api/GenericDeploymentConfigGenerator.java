@@ -95,7 +95,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
             dataModel.put("handlerWrapperFullyQualifiedName", handlerInfo.getWrapperFullyQualifiedName());
             templateRenderer.renderTemplate(FUNCTION_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, handlerInfo.getFunctionId());
             // Persist handler info
-            saveHandlerInfo(handlerInfo);
+            saveHandlerInfo(handlerInfo, configOutputDir);
         } catch (ConfigGenerationException e) {
             throw new ConfigGenerationException("Failed to generate config for provider: " + providerName, e);
         }
@@ -129,29 +129,16 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         return "/templates/" + providerName.toLowerCase();
     }
 
-    private File getConfigFile() throws IOException {
-        // Get the CLASS_OUTPUT location directly from the processing environment
-        String outputDir = processingEnv.getOptions().get("classOutputDir");
-
-        if (outputDir == null) {
-            // Use default class output location
-            outputDir = processingEnv.getFiler().getResource(StandardLocation.CLASS_OUTPUT, "", "dummy").toUri()
-                    .getPath()
-                    .replace("/dummy", ""); // Remove the dummy file reference
-        }
-
-        Path metaInfPath = Paths.get(outputDir, "META-INF");
-        if (!Files.exists(metaInfPath)) {
-            Files.createDirectories(metaInfPath); // Ensure META-INF exists
-        }
-
+    private File getConfigFile(String configOutputDir) throws IOException {
+        Path metaInfPath = Paths.get(configOutputDir, "META-INF");
+        Files.createDirectories(metaInfPath);      
         return new File(metaInfPath.toFile(), "handler-info.properties");
     }
 
-    private Properties loadProperties() {
+    private Properties loadProperties(String configOutputDir) {
         Properties properties = new Properties();
         try {
-            File configFile = getConfigFile();
+            File configFile = getConfigFile(configOutputDir);
             if (configFile.exists()) {
                 try (InputStream is = new FileInputStream(configFile)) {
                     properties.load(is);
@@ -163,9 +150,9 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         return properties;
     }
 
-    private void saveProperties(Properties properties) {
+    private void saveProperties(Properties properties, String configOutputDir) {
         try {
-            File configFile = getConfigFile();
+            File configFile = getConfigFile(configOutputDir);
             try (OutputStream os = new FileOutputStream(configFile)) {
                 properties.store(os, "Generated Handler Info");
             }
@@ -174,27 +161,25 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         }
     }
 
-    private void saveHandlerInfo(HandlerInfo handlerInfo) {
-        Properties properties = loadProperties();
+    private void saveHandlerInfo(HandlerInfo handlerInfo, String configOutputDir) {
+        Properties properties = loadProperties(configOutputDir);
 
         String key = handlerInfo.getHandlerClassName() + "_Arn";
         String value = handlerInfo.getFunctionId().toLowerCase();
 
         properties.setProperty(key, value);
-        saveProperties(properties);
+        saveProperties(properties, configOutputDir);
     }
 
     @Override
     public void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException {
         templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(providerName));
-        System.err.println("######## finalize config was called");
 
-        Properties properties = loadProperties();
+        Properties properties = loadProperties(configOutputDir);
         Map<String, String> lambdaMap = new HashMap<>();
 
         for (String key : properties.stringPropertyNames()) {
             lambdaMap.put(key, properties.getProperty(key));
-            System.err.println(key + " -> " + properties.getProperty(key));
         }
 
         Map<String, Object> dataModel = new HashMap<>();
