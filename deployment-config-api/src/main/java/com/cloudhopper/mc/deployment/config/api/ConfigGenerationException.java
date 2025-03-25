@@ -24,7 +24,6 @@ package com.cloudhopper.mc.deployment.config.api;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 /**
  *
  * @author antonepple
@@ -34,5 +33,9 @@ public class ConfigGenerationException extends Exception {
     public ConfigGenerationException(String par, Exception e) {
         super(par, e);
     }
-    
+
+    ConfigGenerationException(String string) {
+        super(string);
+    }
+
 }

@@ -6,11 +6,28 @@
         <artifactId>cloudhopper-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>provider-gcp</artifactId>
+    <artifactId>generator-gcp-terraform</artifactId>
     <packaging>jar</packaging>
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
+        <cloudhopper.generator.id>gcp-terraform-java21</cloudhopper.generator.id>
+        <cloudhopper.integration.strategy>configFile</cloudhopper.integration.strategy>
+        <cloudhopper.provider.name>gcp</cloudhopper.provider.name>
+        <cloudhopper.provider.version>latest</cloudhopper.provider.version>
+        <cloudhopper.deployment.tool>terraform</cloudhopper.deployment.tool>
+        <cloudhopper.deployment.version>1.7.4</cloudhopper.deployment.version>
+        <cloudhopper.java.version>21</cloudhopper.java.version>
+        <cloudhopper.native.support>graalvm</cloudhopper.native.support>
+        <cloudhopper.description>AWS Lambda Deployment via Terraform (Java 21 + GraalVM).</cloudhopper.description>
     </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
@@ -30,4 +47,5 @@
             <type>jar</type>
         </dependency>
     </dependencies>
+    <name>generator-gcp-terraform</name>
 </project>

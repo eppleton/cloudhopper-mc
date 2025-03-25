@@ -62,7 +62,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
 
     protected List<DeploymentConfigGenerator> generators;
     protected DeploymentConfigGenerator deploymentGenerator;
-    protected String providerName;
+    protected String generatorID;
     protected String configOutputDir = "target/generated-config";
     protected String artifactId;
     protected String classifier;
@@ -81,7 +81,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
             generators.add(generator);
         }
 
-        providerName = processingEnv.getOptions().getOrDefault("cloudprovider", "aws");
+        generatorID = processingEnv.getOptions().getOrDefault("cloudprovider", "aws");
         configOutputDir = processingEnv.getOptions().getOrDefault("configOutputDir", "target/generated-config");
         artifactId = processingEnv.getOptions().getOrDefault("artifactId", "default-artifactId");
         classifier = processingEnv.getOptions().getOrDefault("classifier", "default-classifier");
@@ -97,7 +97,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
     protected DeploymentConfigGenerator getDeploymentGenerator() {
         DeploymentConfigGenerator deploymentGenerator = null;
         for (DeploymentConfigGenerator generator : generators) {
-            if (generator.supportsProvider(providerName)) {
+            if (generator.supportsGenerator(generatorID)) {
                 deploymentGenerator = generator;
                 break;
             }

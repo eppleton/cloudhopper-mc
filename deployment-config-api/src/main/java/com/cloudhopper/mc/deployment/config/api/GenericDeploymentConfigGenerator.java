@@ -24,8 +24,10 @@ package com.cloudhopper.mc.deployment.config.api;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+import com.cloudhopper.mc.ApiOperation;
 import com.cloudhopper.mc.deployment.config.impl.TemplateValidator;
 import com.cloudhopper.mc.deployment.config.spi.DeploymentConfigGenerator;
+import io.swagger.v3.oas.annotations.Parameter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,45 +37,113 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.Diagnostic;
-import javax.tools.StandardLocation;
 
 public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerator {
 
-    private static final String CONFIG_FILE = "META-INF/handler-info.properties";
+    private static final String CONFIG_FILE = "handler-info.properties";
 
-    private final ProcessingEnvironment processingEnv;
-    private static final Set<TemplateDescriptor> REQUIRED_TEMPLATES = new LinkedHashSet<>();
+    TemplateDescriptor handlerTemplate;
+    TemplateDescriptor functionTemplate;
+    TemplateDescriptor sharedTemplate;
+    TemplateDescriptor apiTemplate;
+    TemplateDescriptor apiIntegration;
+
     private final TemplateRenderer templateRenderer;
-    protected static final TemplateDescriptor HANDLER_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("handler.ftl", "java", "generated-sources", true);
-    protected static final TemplateDescriptor FUNCTION_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("function.ftl", "tf", "", false);
-    protected static final TemplateDescriptor SHARED_RESOURCES_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("shared.ftl", "tf", "", false);
-    protected static final TemplateDescriptor LOCALS_TEMPLATE_DESCRIPTOR = new TemplateDescriptor("api.ftl", "tf", "", false);
-
+    private final ProcessingEnvironment processingEnv;
     private boolean sharedConfigGenerated;
-
-    static {
-        REQUIRED_TEMPLATES.add(HANDLER_TEMPLATE_DESCRIPTOR);
-        REQUIRED_TEMPLATES.add(FUNCTION_TEMPLATE_DESCRIPTOR);
-    }
+    private final GeneratorProperties generatorProperties;
 
     public GenericDeploymentConfigGenerator(ProcessingEnvironment processingEnv) {
         this.processingEnv = processingEnv;
         this.templateRenderer = new TemplateRenderer();
         this.sharedConfigGenerated = false;
+        this.generatorProperties = new GeneratorProperties(processingEnv, "META-INF/cloudhopper/generic-deployment-generator.properties");
+        String strategy = generatorProperties.getProperty("integration.strategy", "apiClass");
+
+        this.handlerTemplate = loadTemplateDescriptor("handler", new TemplateDescriptor("handler.ftl", "java", "generated-sources", true));
+        this.functionTemplate = loadTemplateDescriptor("function", new TemplateDescriptor("function.ftl", "tf", "", false));
+        this.sharedTemplate = loadTemplateDescriptor("shared", new TemplateDescriptor("shared.ftl", "tf", "", false));
+        this.apiTemplate = loadTemplateDescriptor("api", new TemplateDescriptor("api.ftl", "tf", "", false));
+        this.apiIntegration = loadTemplateDescriptor("apiIntegration", strategy.equalsIgnoreCase("configFile")
+                ? new TemplateDescriptor("apiIntegration.ftl", "tf", "", false) 
+                : new TemplateDescriptor("apiIntegrationClass.ftl", "java", "generated-sources", true));
     }
 
     @Override
-    public void generateConfig(String providerName, String configOutputDir, HandlerInfo handlerInfo) throws ConfigGenerationException {
+    public boolean supportsGenerator(String providerName) {
+        String templateDir = getTemplateDirectory(providerName);
+        return TemplateValidator.validateTemplates(getClass().getClassLoader(), templateDir, Set.of(functionTemplate)).isEmpty();
+    }
+
+    @Override
+    public void generateServerlessFunctionConfiguration(String generatorId, String outputDir, HandlerInfo handlerInfo, ProcessingEnvironment env) throws ConfigGenerationException {
+        templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(generatorId));
+
+        Map<String, Object> dataModel = createBaseDataModel(handlerInfo);
+
+        try {
+            if (!sharedConfigGenerated) {
+                sharedConfigGenerated = generateSharedConfig(generatorId, outputDir, dataModel, handlerInfo);
+            }
+            templateRenderer.generateJavaFile(env, handlerTemplate, dataModel, handlerInfo);
+            dataModel.put("handlerWrapperFullyQualifiedName", handlerInfo.getWrapperFullyQualifiedName());
+            templateRenderer.renderTemplate(functionTemplate, outputDir, dataModel, handlerInfo.getFunctionId());
+            saveHandlerInfo(handlerInfo, outputDir);
+        } catch (ConfigGenerationException e) {
+            throw new ConfigGenerationException("Failed to generate function config for generator: " + generatorId, e);
+        }
+    }
+
+    @Override
+    public void generateApiResourceAndIntegration(String generatorId, String outputDir, HandlerInfo handlerInfo, ApiOperation apiOperation, ProcessingEnvironment env) throws ConfigGenerationException {
+        Map<String, Object> dataModel = getApiIntegrationDataModelForTemplateRendering(handlerInfo, apiOperation);
+
+        templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(generatorId));
+
+        if (apiIntegration.isJavaFile()) {
+            templateRenderer.generateJavaFile(env, apiIntegration, dataModel, handlerInfo);
+        } else {
+            templateRenderer.renderTemplate(apiIntegration, outputDir, dataModel, handlerInfo.getFunctionId() + "_api");
+        } 
+    }
+
+    @Override
+    public void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException {
         templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(providerName));
 
+        Properties properties = loadProperties(configOutputDir);
+        Map<String, Object> dataModel = new HashMap<>();
+        dataModel.put("lambdaMap", new HashMap<>(properties.stringPropertyNames().stream()
+                .collect(Collectors.toMap(k -> k, properties::getProperty))));
+
+        try {
+            templateRenderer.renderTemplate(apiTemplate, configOutputDir, dataModel, "api");
+        } catch (ConfigGenerationException e) {
+            throw new ConfigGenerationException("Failed to finalize config for provider: " + providerName, e);
+        }
+    }
+
+    protected boolean generateSharedConfig(String providerName, String configOutputDir, Map<String, Object> dataModel, HandlerInfo handlerInfo) {
+        try {
+            templateRenderer.renderTemplate(sharedTemplate, configOutputDir, dataModel, "shared-resources");
+        } catch (ConfigGenerationException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    protected Map<String, Object> createBaseDataModel(HandlerInfo handlerInfo) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("functionId", handlerInfo.getFunctionId());
         dataModel.put("handler", handlerInfo.getHandlerClassName());
@@ -87,42 +157,43 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         dataModel.put("artifactId", handlerInfo.getArtifactId());
         dataModel.put("classifier", handlerInfo.getClassifier());
         dataModel.put("targetDir", handlerInfo.getTargetDir());
-        try {
-            if (!sharedConfigGenerated) {
-                sharedConfigGenerated = generateSharedConfig(providerName, configOutputDir, dataModel, handlerInfo);
-            }
-            templateRenderer.generateJavaFile(processingEnv, HANDLER_TEMPLATE_DESCRIPTOR, dataModel, handlerInfo);
-            dataModel.put("handlerWrapperFullyQualifiedName", handlerInfo.getWrapperFullyQualifiedName());
-            templateRenderer.renderTemplate(FUNCTION_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, handlerInfo.getFunctionId());
-            // Persist handler info
-            saveHandlerInfo(handlerInfo, configOutputDir);
-        } catch (ConfigGenerationException e) {
-            throw new ConfigGenerationException("Failed to generate config for provider: " + providerName, e);
-        }
+        return dataModel;
     }
 
-    private boolean generateSharedConfig(String providerName, String configOutputDir, Map<String, Object> dataModel, HandlerInfo handlerInfo) {
+    protected Map<String, Object> getApiIntegrationDataModelForTemplateRendering(HandlerInfo handlerInfo, ApiOperation apiOp) {
+        Map<String, Object> dataModel = createBaseDataModel(handlerInfo);
+        dataModel.put("packageName", handlerInfo.getHandlerPackage());
+        dataModel.put("className", handlerInfo.getHandlerClassName() + "Api");
+        dataModel.put("methodName", handlerInfo.getHandlerMethod());
+        dataModel.put("summary", apiOp.summary());
+        dataModel.put("description", apiOp.description());
+        dataModel.put("operationId", apiOp.operationId());
+        dataModel.put("path", apiOp.path());
+        dataModel.put("httpMethod", apiOp.method().toUpperCase());
+        dataModel.put("handlerClassName", handlerInfo.getHandlerClassName());
+        dataModel.put("inputType", handlerInfo.getInputType());
+        dataModel.put("outputType", handlerInfo.getOutputType());
 
-        try {
-            templateRenderer.renderTemplate(SHARED_RESOURCES_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, "shared-resources");
-        } catch (ConfigGenerationException e) { // shared config is optional, so we catch the exception and only print a warning
-            e.printStackTrace();
-            // processingEnv.getMessager().printError("Could not generate shared config " + e.getMessage());
+        List<Map<String, String>> parameters = new ArrayList<>();
+        Matcher matcher = Pattern.compile("\\{([^}]+)}").matcher(apiOp.path());
+        while (matcher.find()) {
+            Map<String, String> param = new HashMap<>();
+            param.put("in", "PATH");
+            param.put("name", matcher.group(1));
+            parameters.add(param);
         }
-        return true;
-    }
 
-    @Override
-    public boolean supportsProvider(String providerName) {
-        String templateDir = getTemplateDirectory(providerName);
-
-        List<String> validationErrors = TemplateValidator.validateTemplates(getClass().getClassLoader(), templateDir, REQUIRED_TEMPLATES);
-        if (!validationErrors.isEmpty()) {
-            validationErrors.forEach(System.err::println);
-            return false;
+        for (Parameter param : apiOp.parameters()) {
+            Map<String, String> paramData = new HashMap<>();
+            paramData.put("in", param.in().name());
+            paramData.put("name", param.name());
+            paramData.put("description", param.description());
+            paramData.put("example", param.example());
+            parameters.add(paramData);
         }
 
-        return true;
+        dataModel.put("parameters", parameters);
+        return dataModel;
     }
 
     protected String getTemplateDirectory(String providerName) {
@@ -131,31 +202,22 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
 
     private File getConfigFile(String configOutputDir) throws IOException {
         Path metaInfPath = Paths.get(configOutputDir, "META-INF");
-        Files.createDirectories(metaInfPath);      
-        return new File(metaInfPath.toFile(), "handler-info.properties");
+        Files.createDirectories(metaInfPath);
+        return new File(metaInfPath.toFile(), CONFIG_FILE);
     }
 
     private Properties loadProperties(String configOutputDir) {
         Properties properties = new Properties();
-        try {
-            File configFile = getConfigFile(configOutputDir);
-            if (configFile.exists()) {
-                try (InputStream is = new FileInputStream(configFile)) {
-                    properties.load(is);
-                }
-            }
-        } catch (IOException e) {
-            // Ignore: the file may not exist yet
+        try (InputStream is = new FileInputStream(getConfigFile(configOutputDir))) {
+            properties.load(is);
+        } catch (IOException ignored) {
         }
         return properties;
     }
 
     private void saveProperties(Properties properties, String configOutputDir) {
-        try {
-            File configFile = getConfigFile(configOutputDir);
-            try (OutputStream os = new FileOutputStream(configFile)) {
-                properties.store(os, "Generated Handler Info");
-            }
+        try (OutputStream os = new FileOutputStream(getConfigFile(configOutputDir))) {
+            properties.store(os, "Generated Handler Info");
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Error writing properties file: " + e.getMessage());
         }
@@ -163,33 +225,18 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
 
     private void saveHandlerInfo(HandlerInfo handlerInfo, String configOutputDir) {
         Properties properties = loadProperties(configOutputDir);
-
-        String key = handlerInfo.getHandlerClassName() + "_Arn";
-        String value = handlerInfo.getFunctionId().toLowerCase();
-
-        properties.setProperty(key, value);
+        properties.setProperty(handlerInfo.getHandlerClassName() + "_Arn", handlerInfo.getFunctionId().toLowerCase());
         saveProperties(properties, configOutputDir);
     }
 
-    @Override
-    public void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException {
-        templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(providerName));
+    protected final TemplateDescriptor loadTemplateDescriptor(String keyPrefix, TemplateDescriptor fallback) {
+        String name = generatorProperties.getProperty("template." + keyPrefix + ".name", fallback.getTemplateName());
+        String ext = generatorProperties.getProperty("template." + keyPrefix + ".extension", fallback.getOutputFileExtension());
+        String folder = generatorProperties.getProperty("template." + keyPrefix + ".outputFolder", fallback.getOutputSubDirectory());
+        boolean isJava = Boolean.parseBoolean(generatorProperties.getProperty(
+                "template." + keyPrefix + ".isJava", Boolean.toString(fallback.isJavaFile())
+        ));
 
-        Properties properties = loadProperties(configOutputDir);
-        Map<String, String> lambdaMap = new HashMap<>();
-
-        for (String key : properties.stringPropertyNames()) {
-            lambdaMap.put(key, properties.getProperty(key));
-        }
-
-        Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("lambdaMap", lambdaMap);
-
-        try {
-            templateRenderer.renderTemplate(LOCALS_TEMPLATE_DESCRIPTOR, configOutputDir, dataModel, "api");
-        } catch (ConfigGenerationException e) {
-            throw new ConfigGenerationException("Failed to finalize config for provider: " + providerName, e);
-        }
+        return new TemplateDescriptor(name, ext, folder, isJava);
     }
-
 }

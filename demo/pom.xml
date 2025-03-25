@@ -120,6 +120,7 @@
                     </annotationProcessors>
                     <compilerArgs>
                         <arg>-Acloudprovider=${cloud.provider}</arg>
+                        <arg>-AgeneratorId=${generator.id}</arg>
                         <arg>-AconfigOutputDir=${project.build.directory}/deployment/${cloud.provider}</arg>
                         <arg>-AartifactId=${project.artifactId}</arg>
                         <arg>-Aversion=${project.version}</arg>
@@ -199,26 +200,30 @@
                             <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
                             <arguments>
                                 <argument>plan</argument>
+                                <argument>-var</argument>
+                                <argument>gcp_project_id=cloudhopper</argument>
                             </arguments>
                             <environmentVariables>
                                 <AWS_PROFILE>dukehoff</AWS_PROFILE>
                             </environmentVariables>
                         </configuration>
                     </execution>
-                    <!--                    <execution>
+<!--                    <execution>
                         <id>terraform-apply</id>
-                        <phase>pre-integration-test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>terraform</executable>
+                            <executable>${terraform.executable}</executable>
                             <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
                             <arguments>
                                 <argument>apply</argument>
                                 <argument>-auto-approve</argument>
-                                 If you want to use a specific var file 
-                                 <argument>-var-file=${project.basedir}/terraform.tfvars</argument> 
+                                <argument>-var</argument>
+                                <argument>gcp_project_id=cloudhopper</argument>
+                                If you want to use a specific var file 
+                                <argument>-var-file=${project.basedir}/terraform.tfvars</argument> 
                             </arguments>
                         </configuration>
                     </execution>-->
@@ -249,24 +254,24 @@
     <profiles>
         <profile>
             <id>gcp</id>
-
+            <activation>      
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <cloud.provider>gcp</cloud.provider>
+                <generator.id>gcp-terraform-java21</generator.id>
                 <output.dir>target/generated-sources/gcp</output.dir>
                 <jar.classifier>gcp</jar.classifier>
             </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.cloudhopper.mc</groupId>
-                    <artifactId>provider-gcp</artifactId>
+                    <artifactId>generator-gcp-terraform</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
             <build>
                 <plugins>
-                    <!-- Other plugins -->
-
-                    <!-- Plugin to create a ZIP file containing the JAR -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
@@ -293,9 +298,6 @@
         </profile>
         <profile>
             <id>aws</id>
-            <activation>      
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <cloud.provider>aws</cloud.provider>
                 <output.dir>target/generated-sources/aws</output.dir>

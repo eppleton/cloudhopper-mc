@@ -24,35 +24,34 @@ package com.cloudhopper.mc.demo;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 import com.cloudhopper.mc.ApiOperation;
 import com.cloudhopper.mc.Function;
 import com.cloudhopper.mc.deployment.config.api.CloudRequestHandler;
 import com.cloudhopper.mc.deployment.config.api.HandlerContext;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 
+@OpenAPIDefinition(info = @Info(title = "Cloudhopper Demo API",
+        description = "",
+        version = "1.0"
+))
+public class HelloWorld2 implements CloudRequestHandler<Integer, String> {
 
-public class HelloWorld2 implements CloudRequestHandler<Integer, String>{
-    
-    
-    @Function(  name = "hello_world_2"
-    ,apiIntegration = @ApiOperation(
-            description = "dummy description",
-            operationId = "helloworld2",
-            method = "GET",
-            path = "/hello2/{id}",
-            summary = "bla",
-            parameters = {
-                @Parameter(in = ParameterIn.PATH , name = "version", description = "APi Version", example = "2.0"),
-            }
-            
-    ))
+    @Function(name = "hello_world_2",
+             apiIntegration = @ApiOperation(
+                    description = "dummy description",
+                    operationId = "helloworld2",
+                    method = "GET",
+                    path = "/hello2/{id}",
+                    summary = "bla",
+                    parameters = {
+                        @Parameter(in = ParameterIn.PATH, name = "version", description = "APi Version", example = "2.0"),}
+            ))
     @Override
     public String handleRequest(Integer input, HandlerContext context) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    
-    
+
 }

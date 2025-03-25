@@ -25,6 +25,7 @@ package com.cloudhopper.mc.deployment.config.generator;
  * #L%
  */
 // Annotation Processor
+import com.cloudhopper.mc.ApiOperation;
 import com.cloudhopper.mc.deployment.config.api.ConfigGenerationException;
 import com.cloudhopper.mc.deployment.config.api.HandlerInfo;
 import com.google.auto.service.AutoService;
@@ -57,7 +58,7 @@ public class OperationProcessor extends BaseDeploymentInfoProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
             try {
-                deploymentGenerator.finalizeConfig(providerName, configOutputDir);
+                deploymentGenerator.finalizeConfig(generatorID, configOutputDir);
             } catch (ConfigGenerationException e) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);            }
@@ -73,7 +74,8 @@ public class OperationProcessor extends BaseDeploymentInfoProcessor {
                     TypeMirror outputType = methodElement.getReturnType();
                     Operation operation = element.getAnnotation(Operation.class);
                     try {
-                        deploymentGenerator.generateConfig(providerName, configOutputDir,
+                        deploymentGenerator.generateServerlessFunctionConfiguration(generatorID, configOutputDir,
+                               
                                 new HandlerInfo(operation.operationId(),
                                         handlerSimpleName,
                                         handlerFQN,
@@ -84,7 +86,9 @@ public class OperationProcessor extends BaseDeploymentInfoProcessor {
                                         artifactId,
                                         version,
                                         classifier,
-                                        targetDir));
+                                        targetDir),
+                                processingEnv
+                        );
                     } catch (ConfigGenerationException e) {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                         MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
@@ -94,5 +98,6 @@ public class OperationProcessor extends BaseDeploymentInfoProcessor {
         }
         return true;
     }
+
 
 }

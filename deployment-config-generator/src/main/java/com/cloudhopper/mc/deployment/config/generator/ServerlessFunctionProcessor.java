@@ -59,68 +59,71 @@ import javax.tools.Diagnostic;
 @SupportedAnnotationTypes("com.cloudhopper.mc.Function")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
-    
-    private TemplateRenderer templateRenderer;
 
+//    private TemplateRenderer templateRenderer;
     @Override
     public void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        templateRenderer = new TemplateRenderer();
-        templateRenderer.setClassForTemplateLoading(ServerlessFunctionProcessor.class, "/templates");
+//        templateRenderer = new TemplateRenderer();
+//        templateRenderer.setClassForTemplateLoading(ServerlessFunctionProcessor.class, "/templates");
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        if (roundEnv.processingOver()) {
+            try {
+                deploymentGenerator.finalizeConfig(generatorID, configOutputDir);
+            } catch (ConfigGenerationException e) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
+            }
+        } else {
+            for (Element element : roundEnv.getElementsAnnotatedWith(Function.class)) {
+                if (element.getKind() == ElementKind.METHOD) {
+                    ExecutableElement methodElement = (ExecutableElement) element;
+                    TypeElement classElement = (TypeElement) methodElement.getEnclosingElement();
 
-        for (Element element : roundEnv.getElementsAnnotatedWith(Function.class)) {
-            if (element.getKind() == ElementKind.METHOD) {
-                ExecutableElement methodElement = (ExecutableElement) element;
-                TypeElement classElement = (TypeElement) methodElement.getEnclosingElement();
-
-                // Check if the class implements CloudRequestHandler
-                if (!implementsInterface(classElement, CloudRequestHandler.class.getName())) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                            "Class " + classElement.getQualifiedName() + " must implement " + CloudRequestHandler.class.getName(),
-                            classElement);
-                    return true;
-                }
-
-                // Extract annotation information
-                Function functionAnnotation = element.getAnnotation(Function.class);
-                ApiOperation apiOperation = functionAnnotation.apiIntegration();
-
-                // Extract method and class details
-                String methodName = methodElement.getSimpleName().toString();
-                String handlerFQN = classElement.getQualifiedName().toString();
-                String packageName = handlerFQN.substring(0, handlerFQN.lastIndexOf('.'));
-                String handlerSimpleName = classElement.getSimpleName().toString();
-                TypeMirror inputType = methodElement.getParameters().isEmpty() ? null : methodElement.getParameters().get(0).asType();
-                TypeMirror outputType = methodElement.getReturnType();
-
-                try {
-                    if (apiOperation.operationId().equals(Function.NO_OP_ID)) {
-                        // Generate configuration for the function
-                        deploymentGenerator.generateConfig(providerName, configOutputDir,
-                                new HandlerInfo(
-                                        functionAnnotation.name(),
-                                        handlerSimpleName,
-                                        handlerFQN,
-                                        packageName,
-                                        methodName,
-                                        inputType.toString(),
-                                        outputType.toString(),
-                                        artifactId,
-                                        version,
-                                        classifier,
-                                        targetDir
-                                ));
-                    } else {
-                        // Generate the corresponding class with @Operation annotation
-                        generateApiIntegrationClass(classElement, methodElement, functionAnnotation, apiOperation, inputType, outputType);
+                    // Check if the class implements CloudRequestHandler
+                    if (!implementsInterface(classElement, CloudRequestHandler.class.getName())) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                "Class " + classElement.getQualifiedName() + " must implement " + CloudRequestHandler.class.getName(),
+                                classElement);
+                        return true;
                     }
-                } catch (ConfigGenerationException e) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-                    MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
+
+                    // Extract annotation information
+                    Function functionAnnotation = element.getAnnotation(Function.class);
+                    ApiOperation apiOperation = functionAnnotation.apiIntegration();
+
+                    // Extract method and class details
+                    String methodName = methodElement.getSimpleName().toString();
+                    String handlerFQN = classElement.getQualifiedName().toString();
+                    String packageName = handlerFQN.substring(0, handlerFQN.lastIndexOf('.'));
+                    String handlerSimpleName = classElement.getSimpleName().toString();
+                    TypeMirror inputType = methodElement.getParameters().isEmpty() ? null : methodElement.getParameters().get(0).asType();
+                    TypeMirror outputType = methodElement.getReturnType();
+                    final HandlerInfo handlerInfo = new HandlerInfo(
+                            functionAnnotation.name(),
+                            handlerSimpleName,
+                            handlerFQN,
+                            packageName,
+                            methodName,
+                            inputType.toString(),
+                            outputType.toString(),
+                            artifactId,
+                            version,
+                            classifier,
+                            targetDir
+                    );
+                    try {
+                        System.err.println("####deploymentGenerator.generateServerlessFunctionConfiguration");
+                        deploymentGenerator.generateServerlessFunctionConfiguration(generatorID, configOutputDir, handlerInfo, processingEnv);
+                        System.err.println("####deploymentGenerator.generateApiResourceAndIntegration");
+                        deploymentGenerator.generateApiResourceAndIntegration(generatorID, configOutputDir, handlerInfo, apiOperation, processingEnv);
+                    } catch (ConfigGenerationException e) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                        MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
+                    }
                 }
             }
         }
@@ -139,56 +142,55 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
         return pathParamsList.toArray(new String[0]);
     }
 
-    private void generateApiIntegrationClass(TypeElement classElement, ExecutableElement methodElement, Function functionAnnotation, ApiOperation apiOperation, TypeMirror inputType, TypeMirror outputType) throws ConfigGenerationException {
-        // Prepare data model for Freemarker template
-        Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("packageName", getPackageName(classElement));
-        dataModel.put("className", classElement.getSimpleName().toString() + "Api");
-        dataModel.put("methodName", methodElement.getSimpleName().toString());
-        dataModel.put("summary", apiOperation.summary());
-        dataModel.put("description", apiOperation.description());
-        dataModel.put("operationId", apiOperation.operationId());
-        dataModel.put("path", apiOperation.path());
-        dataModel.put("httpMethod", apiOperation.method().toUpperCase());
-        dataModel.put("handlerClassName", classElement.getSimpleName().toString());
-        dataModel.put("inputType", inputType.toString());
-        dataModel.put("outputType", outputType.toString());
-        // Extract path and query parameters
-        String[] pathParams = extractPathParams(apiOperation.path());
-        List<Map<String, String>> parameters = new ArrayList<>();
-        for (String pathParam : pathParams) {
-            Map<String, String> paramData = new HashMap<>();
-            paramData.put("in", "PATH");
-            paramData.put("name", pathParam);
-            parameters.add(paramData);
-        }
-
-        for (Parameter param : apiOperation.parameters()) {
-            Map<String, String> paramData = new HashMap<>();
-            paramData.put("in", param.in().name());
-            paramData.put("name", param.name());
-            paramData.put("description", param.description());
-            paramData.put("example", param.example());
-            parameters.add(paramData);
-        }
-
-        dataModel.put("parameters", parameters);
-
-        TemplateDescriptor templateDescriptor = new TemplateDescriptor("apiIntegrationClass.ftl", "", "java", true);
-
-        templateRenderer.generateJavaFile(processingEnv, templateDescriptor, dataModel, new HandlerInfo(
-                functionAnnotation.name(),
-                classElement.getSimpleName().toString(),
-                classElement.getQualifiedName().toString(),
-                getPackageName(classElement),
-                methodElement.getSimpleName().toString(),
-                methodElement.getParameters().isEmpty() ? null : methodElement.getParameters().get(0).asType().toString(),
-                methodElement.getReturnType().toString(), 
-                artifactId,
-                version,
-                classifier,
-                targetDir
-        ));
-    }
-
+//    private void generateApiIntegrationClass(TypeElement classElement, ExecutableElement methodElement, Function functionAnnotation, ApiOperation apiOperation, TypeMirror inputType, TypeMirror outputType) throws ConfigGenerationException {
+//        // Prepare data model for Freemarker template
+//        Map<String, Object> dataModel = new HashMap<>();
+//        dataModel.put("packageName", getPackageName(classElement));
+//        dataModel.put("className", classElement.getSimpleName().toString() + "Api");
+//        dataModel.put("methodName", methodElement.getSimpleName().toString());
+//        dataModel.put("summary", apiOperation.summary());
+//        dataModel.put("description", apiOperation.description());
+//        dataModel.put("operationId", apiOperation.operationId());
+//        dataModel.put("path", apiOperation.path());
+//        dataModel.put("httpMethod", apiOperation.method().toUpperCase());
+//        dataModel.put("handlerClassName", classElement.getSimpleName().toString());
+//        dataModel.put("inputType", inputType.toString());
+//        dataModel.put("outputType", outputType.toString());
+//        // Extract path and query parameters
+//        String[] pathParams = extractPathParams(apiOperation.path());
+//        List<Map<String, String>> parameters = new ArrayList<>();
+//        for (String pathParam : pathParams) {
+//            Map<String, String> paramData = new HashMap<>();
+//            paramData.put("in", "PATH");
+//            paramData.put("name", pathParam);
+//            parameters.add(paramData);
+//        }
+//
+//        for (Parameter param : apiOperation.parameters()) {
+//            Map<String, String> paramData = new HashMap<>();
+//            paramData.put("in", param.in().name());
+//            paramData.put("name", param.name());
+//            paramData.put("description", param.description());
+//            paramData.put("example", param.example());
+//            parameters.add(paramData);
+//        }
+//
+//        dataModel.put("parameters", parameters);
+//
+//        TemplateDescriptor templateDescriptor = new TemplateDescriptor("apiIntegrationClass.ftl", "", "java", true);
+//
+//        templateRenderer.generateJavaFile(processingEnv, templateDescriptor, dataModel, new HandlerInfo(
+//                functionAnnotation.name(),
+//                classElement.getSimpleName().toString(),
+//                classElement.getQualifiedName().toString(),
+//                getPackageName(classElement),
+//                methodElement.getSimpleName().toString(),
+//                methodElement.getParameters().isEmpty() ? null : methodElement.getParameters().get(0).asType().toString(),
+//                methodElement.getReturnType().toString(), 
+//                artifactId,
+//                version,
+//                classifier,
+//                targetDir
+//        ));
+//    }
 }

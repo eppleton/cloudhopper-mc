@@ -4,10 +4,28 @@ terraform {
     bucket = "cloudhopper-demo-terraform-state-bucket"
     prefix = "terraform/state"
   }
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = ">= 6.26.0"
+    }
+   local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
+    }
+  }
+
 }
+
 
 # Configure the Google Cloud provider
 provider "google" {
+  project = var.gcp_project_id
+  region  = var.gcp_region
+  zone    = var.gcp_zone
+}
+
+provider "google-beta" {
   project = var.gcp_project_id
   region  = var.gcp_region
   zone    = var.gcp_zone

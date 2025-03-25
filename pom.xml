@@ -54,8 +54,8 @@
         <module>provider-aws</module>
         <module>demo</module>
         <module>deployment-config-api</module>
-        <module>provider-gcp</module>
         <module>provider-azure</module>
+        <module>generator-gcp-terraform</module>
     </modules>
     <build>
         <pluginManagement>
@@ -134,11 +134,11 @@
                                 <sourceDirectory>${project.parent.basedir}/src/main/cloudhopper-templates</sourceDirectory>
                                 <outputDirectory>${project.build.outputDirectory}/META-INF/cloudhopper</outputDirectory>
                                 <includes>
-                                    <include>provider.properties</include>
+                                    <include>generator.properties</include>
                                 </includes>
                                 <filterProperties>
-                                    <provider.id>${cloudhopper.provider.id}</provider.id>
-                                    <provider.name>${cloudhopper.provider.name}</provider.name>
+                                    <generator.id>${cloudhopper.generator.id}</generator.id>
+                                    <provider.name>${cloudhopper.generator.name}</provider.name>
                                     <provider.version>${cloudhopper.provider.version}</provider.version>
                                     <deployment.tool>${cloudhopper.deployment.tool}</deployment.tool>
                                     <deployment.version>${cloudhopper.deployment.version}</deployment.version>
