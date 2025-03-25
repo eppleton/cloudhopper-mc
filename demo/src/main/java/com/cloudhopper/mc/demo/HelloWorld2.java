@@ -37,6 +37,7 @@ import io.swagger.v3.oas.annotations.info.Info;
         description = "",
         version = "1.0"
 ))
+
 public class HelloWorld2 implements CloudRequestHandler<Integer, String> {
 
     @Function(name = "hello_world_2",

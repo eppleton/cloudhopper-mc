@@ -28,15 +28,18 @@ import com.cloudhopper.mc.ApiOperation;
 import com.cloudhopper.mc.deployment.config.impl.TemplateValidator;
 import com.cloudhopper.mc.deployment.config.spi.DeploymentConfigGenerator;
 import io.swagger.v3.oas.annotations.Parameter;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +79,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         this.sharedTemplate = loadTemplateDescriptor("shared", new TemplateDescriptor("shared.ftl", "tf", "", false));
         this.apiTemplate = loadTemplateDescriptor("api", new TemplateDescriptor("api.ftl", "tf", "", false));
         this.apiIntegration = loadTemplateDescriptor("apiIntegration", strategy.equalsIgnoreCase("configFile")
-                ? new TemplateDescriptor("apiIntegration.ftl", "tf", "", false) 
+                ? new TemplateDescriptor("apiIntegration.ftl", "tf", "", false)
                 : new TemplateDescriptor("apiIntegrationClass.ftl", "java", "generated-sources", true));
     }
 
@@ -115,7 +118,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
             templateRenderer.generateJavaFile(env, apiIntegration, dataModel, handlerInfo);
         } else {
             templateRenderer.renderTemplate(apiIntegration, outputDir, dataModel, handlerInfo.getFunctionId() + "_api");
-        } 
+        }
     }
 
     @Override
@@ -129,6 +132,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
 
         try {
             templateRenderer.renderTemplate(apiTemplate, configOutputDir, dataModel, "api");
+            copyDocumentationResources(providerName, configOutputDir);
         } catch (ConfigGenerationException e) {
             throw new ConfigGenerationException("Failed to finalize config for provider: " + providerName, e);
         }
@@ -238,5 +242,40 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         ));
 
         return new TemplateDescriptor(name, ext, folder, isJava);
+    }
+
+    protected void copyDocumentationResources(String providerName, String outputDir) {
+        String basePath = getTemplateDirectory(providerName)+"/doc/";
+        try (InputStream indexStream = this.getClass().getResourceAsStream(basePath + "doc.index")) {
+            if (indexStream == null) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
+                        "No doc.index found — skipping documentation copy.");
+                return;
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(indexStream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
+                }
+                try (InputStream resourceStream = this.getClass().getResourceAsStream(basePath + line)) {
+                    if (resourceStream == null) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                "Missing documentation resource listed in doc.index: " + line);
+                        continue;
+                    }
+
+                    Path targetPath = Paths.get(outputDir, line);
+                    Files.createDirectories(targetPath.getParent());
+                    Files.copy(resourceStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+
+        } catch (IOException e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                    "Failed to copy documentation resources: " + e.getMessage());
+        }
     }
 }

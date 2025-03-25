@@ -116,9 +116,7 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                             targetDir
                     );
                     try {
-                        System.err.println("####deploymentGenerator.generateServerlessFunctionConfiguration");
                         deploymentGenerator.generateServerlessFunctionConfiguration(generatorID, configOutputDir, handlerInfo, processingEnv);
-                        System.err.println("####deploymentGenerator.generateApiResourceAndIntegration");
                         deploymentGenerator.generateApiResourceAndIntegration(generatorID, configOutputDir, handlerInfo, apiOperation, processingEnv);
                     } catch (ConfigGenerationException e) {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
