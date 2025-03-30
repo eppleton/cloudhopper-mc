@@ -51,11 +51,11 @@
     </scm>
     <modules>
         <module>deployment-config-generator</module>
-        <module>provider-aws</module>
         <module>demo</module>
         <module>deployment-config-api</module>
-        <module>provider-azure</module>
         <module>generator-gcp-terraform</module>
+        <module>generator-azure-terraform</module>
+        <module>generator-aws-terraform-openapi</module>
     </modules>
     <build>
         <pluginManagement>

@@ -71,15 +71,31 @@ public class TemplateRenderer {
         this.freemarkerConfig.setClassForTemplateLoading(this.getClass(), templateDir);
     }
 
+    public void renderFile(ProcessingEnvironment processingEnv,
+            TemplateDescriptor descriptor,
+            Map<String, Object> dataModel,
+            String outputDir,
+            HandlerInfo handlerInfo,
+            String fileName) throws ConfigGenerationException {
+        System.err.println("Generate "+descriptor.getTemplateName());
+        if (descriptor.isJavaFile()) {
+            generateJavaFile(processingEnv, descriptor, dataModel, handlerInfo);
+        } else {
+            renderTemplate(descriptor, outputDir, dataModel, fileName);
+        }
+    }
+
     protected void renderTemplate(TemplateDescriptor templateDescriptor, String outputDirName, Map<String, Object> dataModel, String fileName) throws ConfigGenerationException {
         try {
-
+            if (!templateDescriptor.isEnabled()) {
+                return;
+            }
             Template template = freemarkerConfig.getTemplate(templateDescriptor.getTemplateName());
 
             StringWriter writer = new StringWriter();
             template.process(dataModel, writer);
             String output = writer.toString();
- 
+
             Path outputDir = Path.of(outputDirName, templateDescriptor.getOutputSubDirectory());
             Files.createDirectories(outputDir);
 
@@ -99,7 +115,13 @@ public class TemplateRenderer {
         }
     }
 
-    public void generateJavaFile(ProcessingEnvironment processingEnv, TemplateDescriptor templateDescriptor, Map<String, Object> dataModel, HandlerInfo handlerInfo) throws ConfigGenerationException {
+    private void generateJavaFile(ProcessingEnvironment processingEnv, TemplateDescriptor templateDescriptor, Map<String, Object> dataModel, HandlerInfo handlerInfo) throws ConfigGenerationException {
+        if (!templateDescriptor.isEnabled()) {
+            System.err.println("Template: " + templateDescriptor.getTemplateName() + " is " + (templateDescriptor.isEnabled() ? "" : "not") + " enabled");
+
+            return;
+        }
+
         try {
             System.err.println("Template: " + templateDescriptor.getTemplateName());
             Template template = freemarkerConfig.getTemplate(templateDescriptor.getTemplateName());
@@ -117,7 +139,7 @@ public class TemplateRenderer {
         }
     }
 
-    public void createClassFile(ProcessingEnvironment processingEnv, String packageName, String fileName, String fileContent) {
+    private void createClassFile(ProcessingEnvironment processingEnv, String packageName, String fileName, String fileContent) {
         JavaFileObject builderFile;
         try {
             builderFile = processingEnv.getFiler().createSourceFile(packageName + "." + fileName);

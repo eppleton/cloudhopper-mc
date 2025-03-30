@@ -72,6 +72,11 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "cloudscheduler_service_account_email" {
+  description = "The service account to use for calling scheduled functions"
+  type        = string
+}
+
 # Output the bucket name
 output "terraform_state_bucket" {
   value = google_storage_bucket.terraform_state.name

@@ -10,6 +10,7 @@
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
         <terraform.executable>/opt/homebrew/bin/terraform</terraform.executable>
+        <path.extras>/opt/homebrew/bin/</path.extras>
     </properties>
     <dependencies>
         <dependency>
@@ -186,6 +187,7 @@
                             </arguments>
                             <environmentVariables>
                                 <AWS_PROFILE>dukehoff</AWS_PROFILE>
+                                <PATH>${path.extras}:${env.PATH}</PATH>
                             </environmentVariables>
                         </configuration>
                     </execution>
@@ -200,15 +202,14 @@
                             <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
                             <arguments>
                                 <argument>plan</argument>
-                                <argument>-var</argument>
-                                <argument>gcp_project_id=cloudhopper</argument>
                             </arguments>
                             <environmentVariables>
                                 <AWS_PROFILE>dukehoff</AWS_PROFILE>
+                                <PATH>${path.extras}:${env.PATH}</PATH>
                             </environmentVariables>
                         </configuration>
                     </execution>
-<!--                    <execution>
+                    <!--                    <execution>
                         <id>terraform-apply</id>
                         <phase>verify</phase>
                         <goals>
@@ -254,9 +255,7 @@
     <profiles>
         <profile>
             <id>gcp</id>
-            <activation>      
-                <activeByDefault>true</activeByDefault>
-            </activation>
+
             <properties>
                 <cloud.provider>gcp</cloud.provider>
                 <generator.id>gcp-terraform-java21</generator.id>
@@ -302,6 +301,7 @@
                 <cloud.provider>aws</cloud.provider>
                 <output.dir>target/generated-sources/aws</output.dir>
                 <jar.classifier>aws</jar.classifier>
+                <generator.id>aws-terraform-openapi-java21</generator.id>
             </properties>
             <build>
                 <plugins>
@@ -320,7 +320,7 @@
             <dependencies>        
                 <dependency>
                     <groupId>com.cloudhopper.mc</groupId>
-                    <artifactId>provider-aws</artifactId>
+                    <artifactId>generator-aws-terraform-openapi</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -335,8 +335,12 @@
         </profile>
         <profile>
             <id>azure</id>
+            <activation>      
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <cloud.provider>azure</cloud.provider>
+                <generator.id>azure-terraform-java21</generator.id>
                 <output.dir>target/generated-sources/azure</output.dir>
                 <jar.classifier>azure</jar.classifier>
                 <azure.functions.maven.plugin.version>1.24.0</azure.functions.maven.plugin.version>
@@ -346,7 +350,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.cloudhopper.mc</groupId>
-                    <artifactId>provider-azure</artifactId>
+                    <artifactId>generator-azure-terraform</artifactId>
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
@@ -412,6 +416,7 @@
                                     <value>~4</value>
                                 </property>
                             </appSettings>
+                            <skipInstallExtensions>true</skipInstallExtensions>
                         </configuration>
                         <executions>
                             <execution>

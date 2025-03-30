@@ -1,5 +1,5 @@
  -----------------------------
- Usage Notes (README.md.ftl)
+ Usage Notes
  -----------------------------
 
  ## Using Cloudhopper-Generated Terraform

@@ -17,8 +17,9 @@ public class Azure${handler}Function extends AzureBaseFunctionWrapper<${inputTyp
 
     @FunctionName("${functionId}")
     public HttpResponseMessage run(
-            @HttpTrigger(name = "req", methods = {HttpMethod.GET, HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<String> request,
+            HttpRequestMessage<String> request,
             final ExecutionContext context) {
         return handleRequest(request, context);
     }
 }
+

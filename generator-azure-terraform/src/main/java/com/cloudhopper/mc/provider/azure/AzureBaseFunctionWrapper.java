@@ -55,6 +55,15 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
             return createErrorResponse(request, e);
         }
     }
+    
+    // For Timer triggers
+    protected void handleScheduledRequest(ExecutionContext context) {
+        try {
+            handler.handleRequest(null, new AzureContextAdapter(context));
+        } catch (Exception e) {
+            context.getLogger().severe("Error in scheduled request: " + e.getMessage());
+        }
+    }
 
     private I parseInput(HttpRequestMessage<String> request) throws IOException {
         return gson.fromJson(request.getBody(), inputType);

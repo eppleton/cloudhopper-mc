@@ -30,7 +30,7 @@ public class ${className} implements CloudRequestHandler<${inputType}, ${outputT
             @io.swagger.v3.oas.annotations.extensions.Extension(
                 name = "x-google-backend",
                 properties = {
-                    @ExtensionProperty(name = "address", value = "https://${"$"}{region}-${"$"}{project}.cloudfunctions.net/${operationId}"),
+                    @ExtensionProperty(name = "address", value = "https://${"$"}{var.region}-${"$"}{var.project}.cloudfunctions.net/${operationId}"),
                     @ExtensionProperty(name = "protocol", value = "h2")
                 }
             )

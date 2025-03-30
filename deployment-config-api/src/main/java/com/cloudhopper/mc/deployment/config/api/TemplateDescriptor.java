@@ -31,12 +31,19 @@ public class TemplateDescriptor {
     private final String outputFileExtension;
     private final String outputSubDirectory;
     private final boolean isJavaFile;
+    private final boolean enabled; 
 
-    public TemplateDescriptor(String templateName, String outputFileExtension, String outputSubDirectory, boolean isJavaFile) {
+
+    public TemplateDescriptor(String templateName, String extension, String outputSubfolder, boolean isJavaFile, boolean enabled) {
         this.templateName = templateName;
-        this.outputFileExtension = outputFileExtension;
-        this.outputSubDirectory = outputSubDirectory;
+        this.outputFileExtension = extension;
+        this.outputSubDirectory = outputSubfolder;
         this.isJavaFile = isJavaFile;
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public String getTemplateName() {
@@ -54,4 +61,11 @@ public class TemplateDescriptor {
     public boolean isJavaFile() {
         return isJavaFile;
     }
+
+    @Override
+    public String toString() {
+        return "TemplateDescriptor{" + "templateName=" + templateName + ", outputFileExtension=" + outputFileExtension + ", outputSubDirectory=" + outputSubDirectory + ", isJavaFile=" + isJavaFile + ", enabled=" + enabled + '}';
+    }
+    
+    
 }

@@ -26,6 +26,7 @@ package com.cloudhopper.mc.deployment.config.spi;
  */
 
 import com.cloudhopper.mc.ApiOperation;
+import com.cloudhopper.mc.Schedule;
 import com.cloudhopper.mc.deployment.config.api.ConfigGenerationException;
 import com.cloudhopper.mc.deployment.config.api.HandlerInfo;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -35,4 +36,5 @@ public interface DeploymentConfigGenerator {
     public void generateServerlessFunctionConfiguration(String generatorId, String outputDir, HandlerInfo handlerInfo, ProcessingEnvironment env) throws ConfigGenerationException ;
     public void generateApiResourceAndIntegration(String generatorId, String outputDir, HandlerInfo handlerInfo, ApiOperation apiOperation, ProcessingEnvironment env) throws ConfigGenerationException;
     void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException;
+    public void generateScheduledTrigger(String generatorID, String configOutputDir, HandlerInfo handlerInfo, Schedule schedule, ProcessingEnvironment processingEnv);
 }

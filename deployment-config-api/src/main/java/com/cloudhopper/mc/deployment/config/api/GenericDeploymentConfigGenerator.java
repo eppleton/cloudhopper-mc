@@ -25,6 +25,7 @@ package com.cloudhopper.mc.deployment.config.api;
  * #L%
  */
 import com.cloudhopper.mc.ApiOperation;
+import com.cloudhopper.mc.Schedule;
 import com.cloudhopper.mc.deployment.config.impl.TemplateValidator;
 import com.cloudhopper.mc.deployment.config.spi.DeploymentConfigGenerator;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -60,7 +61,8 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     TemplateDescriptor functionTemplate;
     TemplateDescriptor sharedTemplate;
     TemplateDescriptor apiTemplate;
-    TemplateDescriptor apiIntegration;
+    TemplateDescriptor apiIntegrationTemplate;
+    TemplateDescriptor scheduleTemplate;
 
     private final TemplateRenderer templateRenderer;
     private final ProcessingEnvironment processingEnv;
@@ -74,13 +76,14 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         this.generatorProperties = new GeneratorProperties(processingEnv, "META-INF/cloudhopper/generic-deployment-generator.properties");
         String strategy = generatorProperties.getProperty("integration.strategy", "apiClass");
 
-        this.handlerTemplate = loadTemplateDescriptor("handler", new TemplateDescriptor("handler.ftl", "java", "generated-sources", true));
-        this.functionTemplate = loadTemplateDescriptor("function", new TemplateDescriptor("function.ftl", "tf", "", false));
-        this.sharedTemplate = loadTemplateDescriptor("shared", new TemplateDescriptor("shared.ftl", "tf", "", false));
-        this.apiTemplate = loadTemplateDescriptor("api", new TemplateDescriptor("api.ftl", "tf", "", false));
-        this.apiIntegration = loadTemplateDescriptor("apiIntegration", strategy.equalsIgnoreCase("configFile")
-                ? new TemplateDescriptor("apiIntegration.ftl", "tf", "", false)
-                : new TemplateDescriptor("apiIntegrationClass.ftl", "java", "generated-sources", true));
+        this.handlerTemplate = loadTemplateDescriptor("handler", new TemplateDescriptor("handler.ftl", "java", "generated-sources", true, true));
+        this.functionTemplate = loadTemplateDescriptor("function", new TemplateDescriptor("function.ftl", "tf", "", false, true));
+        this.sharedTemplate = loadTemplateDescriptor("shared", new TemplateDescriptor("shared.ftl", "tf", "", false, true));
+        this.apiTemplate = loadTemplateDescriptor("api", new TemplateDescriptor("api.ftl", "tf", "", false, true));
+        this.apiIntegrationTemplate = loadTemplateDescriptor("apiIntegration", strategy.equalsIgnoreCase("configFile")
+                ? new TemplateDescriptor("apiIntegration.ftl", "tf", "", false, true)
+                : new TemplateDescriptor("apiIntegrationClass.ftl", "java", "generated-sources", true, true));
+        this.scheduleTemplate = loadTemplateDescriptor("schedule", new TemplateDescriptor("schedule.ftl", "tf", "", false, true));
     }
 
     @Override
@@ -99,10 +102,10 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
             if (!sharedConfigGenerated) {
                 sharedConfigGenerated = generateSharedConfig(generatorId, outputDir, dataModel, handlerInfo);
             }
-            templateRenderer.generateJavaFile(env, handlerTemplate, dataModel, handlerInfo);
+//            templateRenderer.generateJavaFile(env, handlerTemplate, dataModel, handlerInfo);
             dataModel.put("handlerWrapperFullyQualifiedName", handlerInfo.getWrapperFullyQualifiedName());
-            templateRenderer.renderTemplate(functionTemplate, outputDir, dataModel, handlerInfo.getFunctionId());
-            saveHandlerInfo(handlerInfo, outputDir);
+//            templateRenderer.renderTemplate(functionTemplate, outputDir, dataModel, handlerInfo.getFunctionId().toLowerCase());
+            templateRenderer.renderFile(processingEnv, functionTemplate, dataModel, outputDir, handlerInfo, handlerInfo.getFunctionId().toLowerCase());
         } catch (ConfigGenerationException e) {
             throw new ConfigGenerationException("Failed to generate function config for generator: " + generatorId, e);
         }
@@ -113,12 +116,8 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         Map<String, Object> dataModel = getApiIntegrationDataModelForTemplateRendering(handlerInfo, apiOperation);
 
         templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(generatorId));
-
-        if (apiIntegration.isJavaFile()) {
-            templateRenderer.generateJavaFile(env, apiIntegration, dataModel, handlerInfo);
-        } else {
-            templateRenderer.renderTemplate(apiIntegration, outputDir, dataModel, handlerInfo.getFunctionId() + "_api");
-        }
+         saveHandlerInfo(handlerInfo, outputDir);
+        templateRenderer.renderFile(processingEnv, apiIntegrationTemplate, dataModel, outputDir, handlerInfo, handlerInfo.getFunctionId().toLowerCase() + "_api");
     }
 
     @Override
@@ -147,9 +146,25 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         return true;
     }
 
+    @Override
+    public void generateScheduledTrigger(String generatorID, String configOutputDir, HandlerInfo handlerInfo, Schedule schedule, ProcessingEnvironment processingEnv) {
+        templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(generatorID));
+
+        Map<String, Object> dataModel = createBaseDataModel(handlerInfo);
+        dataModel.put("scheduleExpression", schedule.cron());
+        dataModel.put("scheduleTimezone", schedule.timezone()); 
+
+        try {
+            templateRenderer.renderFile(processingEnv, scheduleTemplate, dataModel, configOutputDir, handlerInfo, handlerInfo.getFunctionId().toLowerCase() + "_schedule");
+            //templateRenderer.renderTemplate(scheduleTemplate, configOutputDir, dataModel, handlerInfo.getFunctionId().toLowerCase() + "_schedule");
+        } catch (ConfigGenerationException e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Failed to generate schedule for function " + handlerInfo.getFunctionId().toLowerCase() + ": " + e.getMessage());
+        }
+    }
+
     protected Map<String, Object> createBaseDataModel(HandlerInfo handlerInfo) {
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("functionId", handlerInfo.getFunctionId());
+        dataModel.put("functionId", handlerInfo.getFunctionId().toLowerCase());
         dataModel.put("handler", handlerInfo.getHandlerClassName());
         dataModel.put("handlerFullyQualifiedName", handlerInfo.getHandlerFullyQualifiedName());
         dataModel.put("package", handlerInfo.getHandlerPackage());
@@ -234,18 +249,23 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     }
 
     protected final TemplateDescriptor loadTemplateDescriptor(String keyPrefix, TemplateDescriptor fallback) {
+        System.err.println("load Template template." + keyPrefix + ".name");
         String name = generatorProperties.getProperty("template." + keyPrefix + ".name", fallback.getTemplateName());
         String ext = generatorProperties.getProperty("template." + keyPrefix + ".extension", fallback.getOutputFileExtension());
         String folder = generatorProperties.getProperty("template." + keyPrefix + ".outputFolder", fallback.getOutputSubDirectory());
         boolean isJava = Boolean.parseBoolean(generatorProperties.getProperty(
                 "template." + keyPrefix + ".isJava", Boolean.toString(fallback.isJavaFile())
         ));
-
-        return new TemplateDescriptor(name, ext, folder, isJava);
+        boolean isEnabled = Boolean.parseBoolean(generatorProperties.getProperty(
+                "template." + keyPrefix + ".enabled", Boolean.toString(fallback.isEnabled())
+        ));
+        TemplateDescriptor templateDescriptor = new TemplateDescriptor(name, ext, folder, isJava, isEnabled);
+        System.out.println(templateDescriptor.toString());
+        return templateDescriptor;
     }
 
     protected void copyDocumentationResources(String providerName, String outputDir) {
-        String basePath = getTemplateDirectory(providerName)+"/doc/";
+        String basePath = getTemplateDirectory(providerName) + "/doc/";
         try (InputStream indexStream = this.getClass().getResourceAsStream(basePath + "doc.index")) {
             if (indexStream == null) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
@@ -278,4 +298,6 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
                     "Failed to copy documentation resources: " + e.getMessage());
         }
     }
+
+  
 }

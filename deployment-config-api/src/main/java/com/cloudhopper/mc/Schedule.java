@@ -7,7 +7,7 @@ package com.cloudhopper.mc;
  * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
  * exception as provided in the README.md file that accompanies this code.
  * %%
- * Copyright (C) 2024 Eppleton IT Consulting
+ * Copyright (C) 2024 - 2025 Eppleton IT Consulting
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -25,18 +25,14 @@ package com.cloudhopper.mc;
  * #L%
  */
 
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.SOURCE)
+@Retention(SOURCE)
 @Target(ElementType.METHOD)
-public @interface Function {
-    String name();
-    int memory() default 128;
-    int timeout() default 30;
-    int provisionedConcurrency() default 1;
+public @interface Schedule {
+    String cron();
+    String timezone() default "UTC";
 }
-

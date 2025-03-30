@@ -38,10 +38,9 @@ import io.swagger.v3.oas.annotations.info.Info;
         version = "1.0"
 ))
 
-public class HelloWorld2 implements CloudRequestHandler<Integer, String> {
+public class ApiFunction implements CloudRequestHandler<Integer, String> {
 
-    @Function(name = "hello_world_2",
-             apiIntegration = @ApiOperation(
+    @ApiOperation(
                     description = "dummy description",
                     operationId = "helloworld2",
                     method = "GET",
@@ -49,7 +48,8 @@ public class HelloWorld2 implements CloudRequestHandler<Integer, String> {
                     summary = "bla",
                     parameters = {
                         @Parameter(in = ParameterIn.PATH, name = "version", description = "APi Version", example = "2.0"),}
-            ))
+            )
+    @Function(name = "hello_world_2")
     @Override
     public String handleRequest(Integer input, HandlerContext context) {
         throw new UnsupportedOperationException("Not supported yet.");
