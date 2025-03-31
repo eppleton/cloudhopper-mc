@@ -54,8 +54,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.JavaFileObject;
 
@@ -71,25 +69,9 @@ public class TemplateRenderer {
         this.freemarkerConfig.setClassForTemplateLoading(this.getClass(), templateDir);
     }
 
-    public void renderFile(ProcessingEnvironment processingEnv,
-            TemplateDescriptor descriptor,
-            Map<String, Object> dataModel,
-            String outputDir,
-            HandlerInfo handlerInfo,
-            String fileName) throws ConfigGenerationException {
-        System.err.println("Generate "+descriptor.getTemplateName());
-        if (descriptor.isJavaFile()) {
-            generateJavaFile(processingEnv, descriptor, dataModel, handlerInfo);
-        } else {
-            renderTemplate(descriptor, outputDir, dataModel, fileName);
-        }
-    }
-
     protected void renderTemplate(TemplateDescriptor templateDescriptor, String outputDirName, Map<String, Object> dataModel, String fileName) throws ConfigGenerationException {
         try {
-            if (!templateDescriptor.isEnabled()) {
-                return;
-            }
+  
             Template template = freemarkerConfig.getTemplate(templateDescriptor.getTemplateName());
 
             StringWriter writer = new StringWriter();
@@ -115,18 +97,9 @@ public class TemplateRenderer {
         }
     }
 
-    private void generateJavaFile(ProcessingEnvironment processingEnv, TemplateDescriptor templateDescriptor, Map<String, Object> dataModel, HandlerInfo handlerInfo) throws ConfigGenerationException {
-        if (!templateDescriptor.isEnabled()) {
-            System.err.println("Template: " + templateDescriptor.getTemplateName() + " is " + (templateDescriptor.isEnabled() ? "" : "not") + " enabled");
-
-            return;
-        }
-
+    protected void generateJavaFile(ProcessingEnvironment processingEnv, TemplateDescriptor templateDescriptor, Map<String, Object> dataModel, HandlerInfo handlerInfo) throws ConfigGenerationException {
         try {
-            System.err.println("Template: " + templateDescriptor.getTemplateName());
             Template template = freemarkerConfig.getTemplate(templateDescriptor.getTemplateName());
-            System.err.println("Template: " + template);
-
             StringWriter writer = new StringWriter();
             template.process(dataModel, writer);
             String fileContent = writer.toString();

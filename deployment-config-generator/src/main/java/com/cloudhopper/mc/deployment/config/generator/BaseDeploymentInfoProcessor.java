@@ -102,10 +102,19 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
                 break;
             }
         }
-        // If no registered generator is found, use the GenericDeploymentConfigGenerator
+        // If no registered generator is found, try the GenericDeploymentConfigGenerator
         if (deploymentGenerator == null) {
-            deploymentGenerator = new GenericDeploymentConfigGenerator(processingEnv);
+            System.err.println("No custom generator found for " + generatorID);
+            GenericDeploymentConfigGenerator genericDeploymentConfigGenerator = new GenericDeploymentConfigGenerator(processingEnv);
+//            if (genericDeploymentConfigGenerator.supportsGenerator(generatorID)) {
+//                System.err.println("GenericDeploymentConfigGenerator supports " + generatorID);
+                deploymentGenerator = genericDeploymentConfigGenerator;
+//            } else {
+//                System.err.println("GenericDeploymentConfigGenerator doesn't support " + generatorID);
+//                processingEnv.getMessager().printError("No generator found for provider " + generatorID);
+//            }
         }
+        
         return deploymentGenerator;
     }
 

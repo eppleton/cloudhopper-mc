@@ -25,29 +25,35 @@ package com.cloudhopper.mc.deployment.config.api;
  * #L%
  */
 
-
 public class TemplateDescriptor {
-    private final String templateName;
-    private final String outputFileExtension;
-    private final String outputSubDirectory;
-    private final boolean isJavaFile;
-    private final boolean enabled; 
+    private String templateName;
+    private String description;
+    private String outputFileExtension;
+    private String outputSubDirectory;
+    private boolean javaFile;
 
-
-    public TemplateDescriptor(String templateName, String extension, String outputSubfolder, boolean isJavaFile, boolean enabled) {
-        this.templateName = templateName;
-        this.outputFileExtension = extension;
-        this.outputSubDirectory = outputSubfolder;
-        this.isJavaFile = isJavaFile;
-        this.enabled = enabled;
+    public TemplateDescriptor() {
+        // Empty constructor for JSON deserialization
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public TemplateDescriptor(String templateName,
+                              String description,
+                              String outputFileExtension,
+                              String outputSubDirectory,
+                              boolean javaFile) {
+        this.templateName = templateName;
+        this.description = description;
+        this.outputFileExtension = outputFileExtension;
+        this.outputSubDirectory = outputSubDirectory;
+        this.javaFile = javaFile;
     }
 
     public String getTemplateName() {
         return templateName;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public String getOutputFileExtension() {
@@ -59,13 +65,17 @@ public class TemplateDescriptor {
     }
 
     public boolean isJavaFile() {
-        return isJavaFile;
+        return javaFile;
     }
 
     @Override
     public String toString() {
-        return "TemplateDescriptor{" + "templateName=" + templateName + ", outputFileExtension=" + outputFileExtension + ", outputSubDirectory=" + outputSubDirectory + ", isJavaFile=" + isJavaFile + ", enabled=" + enabled + '}';
+        return "TemplateDescriptor{" +
+                "templateName='" + templateName + '\'' +
+                ", description='" + description + '\'' +
+                ", outputFileExtension='" + outputFileExtension + '\'' +
+                ", outputSubDirectory='" + outputSubDirectory + '\'' +
+                ", javaFile=" + javaFile +
+                '}';
     }
-    
-    
 }

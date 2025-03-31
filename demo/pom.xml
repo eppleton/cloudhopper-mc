@@ -255,7 +255,9 @@
     <profiles>
         <profile>
             <id>gcp</id>
-
+            <activation>      
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <cloud.provider>gcp</cloud.provider>
                 <generator.id>gcp-terraform-java21</generator.id>
@@ -297,6 +299,7 @@
         </profile>
         <profile>
             <id>aws</id>
+
             <properties>
                 <cloud.provider>aws</cloud.provider>
                 <output.dir>target/generated-sources/aws</output.dir>
@@ -335,9 +338,6 @@
         </profile>
         <profile>
             <id>azure</id>
-            <activation>      
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <cloud.provider>azure</cloud.provider>
                 <generator.id>azure-terraform-java21</generator.id>
@@ -380,6 +380,7 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>3.8.1</version>
                         <configuration>
+                            
                             <source>${java.version}</source>
                             <target>${java.version}</target>
                             <encoding>${project.build.sourceEncoding}</encoding>
