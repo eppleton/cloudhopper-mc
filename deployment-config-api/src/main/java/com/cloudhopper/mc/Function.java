@@ -24,8 +24,6 @@ package com.cloudhopper.mc;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -34,9 +32,20 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface Function {
-    String name();
-    int memory() default 128;
-    int timeout() default 30;
-    int provisionedConcurrency() default 1;
-}
 
+    public static class FunctionAttribute {
+        public static final String NAME = "name";
+        public static final String MEMORY = "memory";
+        public static final String TIMEOUT = "timeout";
+        public static final String MIN_INSTANCES = "minInstances";
+    }
+
+    String name();
+
+    int memory() default 128;
+
+    int timeout() default 30;
+
+    int minInstances() default 0;
+
+}

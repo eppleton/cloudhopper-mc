@@ -1,10 +1,10 @@
-resource "aws_lambda_function" "${functionId}" {
-  filename      = "${targetDir}/${artifactId}-${version}-${classifier}.jar"
-  function_name = "${functionId}"
+resource "aws_lambda_function" "${handlerInfo.functionId}" {
+  filename      = "${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.jar"
+  function_name = "${handlerInfo.functionId}"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "${handlerWrapperFullyQualifiedName}$ApiProxy::handleRequest"
   
-  source_code_hash = filebase64sha256("${targetDir}/${artifactId}-${version}-${classifier}.jar")
+  source_code_hash = filebase64sha256("${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.jar")
   timeout = 30
   runtime = "java21"
 
@@ -15,11 +15,3 @@ resource "aws_lambda_function" "${functionId}" {
   }
 }
 
-resource "aws_lambda_permission" "${functionId}_invoke" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.${functionId}.function_name
-  principal     = "apigateway.amazonaws.com"
-
-  source_arn = "${"$"}{aws_api_gateway_rest_api.public-api.execution_arn}/*/*"
-}

@@ -37,6 +37,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,19 +59,21 @@ import javax.tools.Diagnostic;
 public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerator {
 
     private static final String API_HANDLER_FILE = "handler-info.properties";
-    private String GENERATOR_CONFIG_FILE = "META-INF/cloudhopper/generator-config.json";
+    private String GENERATOR_CONFIG_DIR = "META-INF/cloudhopper/";
 
     GeneratorConfig generatorConfig;
 
     private final TemplateRenderer templateRenderer;
     private final ProcessingEnvironment processingEnv;
     private boolean sharedConfigGenerated;
+    private String generatorId;
 
     public GenericDeploymentConfigGenerator(ProcessingEnvironment processingEnv) {
         this.processingEnv = processingEnv;
         this.templateRenderer = new TemplateRenderer();
         this.sharedConfigGenerated = false;
-        generatorConfig = GeneratorConfigLoader.loadGeneratorConfig(processingEnv, GENERATOR_CONFIG_FILE);
+        generatorId = processingEnv.getOptions().getOrDefault("generatorId", "").trim();
+        generatorConfig = GeneratorConfigLoader.loadGeneratorConfig(processingEnv, GENERATOR_CONFIG_DIR + generatorId + "-templates.json");
     }
 
     @Override
@@ -169,18 +175,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
 
     protected Map<String, Object> createBaseDataModel(HandlerInfo handlerInfo) {
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("functionId", handlerInfo.getFunctionId().toLowerCase());
-        dataModel.put("handler", handlerInfo.getHandlerClassName());
-        dataModel.put("handlerFullyQualifiedName", handlerInfo.getHandlerFullyQualifiedName());
-        dataModel.put("package", handlerInfo.getHandlerPackage());
-        dataModel.put("inputType", handlerInfo.getInputType());
-        dataModel.put("outputType", handlerInfo.getOutputType());
-        dataModel.put("inputTypeImport", handlerInfo.getInputTypeImport());
-        dataModel.put("outputTypeImport", handlerInfo.getOutputTypeImport());
-        dataModel.put("version", handlerInfo.getVersion());
-        dataModel.put("artifactId", handlerInfo.getArtifactId());
-        dataModel.put("classifier", handlerInfo.getClassifier());
-        dataModel.put("targetDir", handlerInfo.getTargetDir());
+        dataModel.put("handlerInfo", handlerInfo);
         return dataModel;
     }
 
@@ -286,6 +281,37 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     "Failed to copy documentation resources: " + e.getMessage());
         }
+    }
+
+    @Override
+    public String getGeneratorID() {
+        return generatorId;
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @Target({})
+    public static @interface Template {
+
+        GenerationPhase phase();
+
+        String templateName();
+
+        String description() default "";
+
+        String outputFileExtension();
+
+        String outputSubDirectory() default "";
+
+        boolean javaFile() default false;
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @Target(ElementType.TYPE)
+    public static @interface TemplateRegistration {
+
+        public String generatorId();
+
+        public Template[] templates();
     }
 
 }

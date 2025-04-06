@@ -20,11 +20,24 @@
         <cloudhopper.native.support>graalvm</cloudhopper.native.support>
         <cloudhopper.description>Azure Deployment via Terraform (Java 21)</cloudhopper.description>
     </properties>
-        <build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>templating-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                    <annotationProcessors>
+                        <annotationProcessor>com.cloudhopper.mc.deployment.config.generator.TemplateRegistrationProcessor</annotationProcessor>
+                        <annotationProcessor>com.cloudhopper.mc.deployment.config.generator.GeneratorFeatureProcessor</annotationProcessor>
+                    </annotationProcessors>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -34,6 +47,12 @@
             <artifactId>deployment-config-api</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>deployment-config-generator</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.microsoft.azure.functions</groupId>

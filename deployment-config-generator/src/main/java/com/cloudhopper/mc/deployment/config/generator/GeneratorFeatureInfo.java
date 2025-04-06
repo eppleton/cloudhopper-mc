@@ -1,8 +1,8 @@
-package com.cloudhopper.mc;
+package com.cloudhopper.mc.deployment.config.generator;
 
 /*-
  * #%L
- * deployment-config-api - a library from the "Cloudhopper" project.
+ * deployment-config-generator - a library from the "Cloudhopper" project.
  * 
  * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
  * exception as provided in the README.md file that accompanies this code.
@@ -25,19 +25,15 @@ package com.cloudhopper.mc;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
-import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 
-@Retention(SOURCE)
-@Target(ElementType.METHOD)
-public @interface Schedule {
-    String cron();
-    String timezone() default "UTC";
-    
-    public static class ScheduleAttribute{
-        public static final String CRON = "cron";
-        public static final String TIMEZONE = "timezone";
+public class GeneratorFeatureInfo {
+    public String generatorId;
+    public List<FeatureEntry> features = new ArrayList<>();
+
+    public static class FeatureEntry {
+        public String supportedAnnotation;
+        public List<String> supportedAttributes;
     }
 }

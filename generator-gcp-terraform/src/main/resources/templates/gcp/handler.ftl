@@ -1,8 +1,8 @@
-package ${package};
+package ${handlerInfo.handlerPackage};
 
-import ${inputTypeImport};
-import ${outputTypeImport};
-import ${handlerFullyQualifiedName};
+import ${handlerInfo.inputTypeImport};
+import ${handlerInfo.outputTypeImport};
+import ${handlerInfo.handlerFullyQualifiedName};
 
 import com.cloudhopper.mc.provider.gcp.GcpCloudFunctionRequestHandler;
 import com.google.cloud.functions.HttpFunction;
@@ -10,10 +10,10 @@ import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 import com.google.gson.reflect.TypeToken;
 
-public class Gcp${handler}Function extends GcpCloudFunctionRequestHandler<${inputType}, ${outputType}> {
+public class Gcp${handlerInfo.handlerClassName}Function extends GcpCloudFunctionRequestHandler<${handlerInfo.inputType}, ${handlerInfo.outputType}> {
 
-    public Gcp${handler}Function() {
-        super(new ${handler}(), new TypeToken<${inputType}>() {});
+    public Gcp${handlerInfo.handlerClassName}Function() {
+        super(new ${handlerInfo.handlerClassName}(), new TypeToken<${handlerInfo.inputType}>() {});
     }
 
  

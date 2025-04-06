@@ -1,4 +1,4 @@
-package com.cloudhopper.mc;
+package com.cloudhopper.mc.generator.features;
 
 /*-
  * #%L
@@ -25,19 +25,14 @@ package com.cloudhopper.mc;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
+import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(SOURCE)
-@Target(ElementType.METHOD)
-public @interface Schedule {
-    String cron();
-    String timezone() default "UTC";
-    
-    public static class ScheduleAttribute{
-        public static final String CRON = "cron";
-        public static final String TIMEZONE = "timezone";
-    }
+@Retention(RetentionPolicy.SOURCE)
+@Target({})
+public @interface GeneratorFeature {
+    Class<? extends java.lang.annotation.Annotation> supportedAnnotation() default Annotation.class;
+    String[] supportedAttributes() default {};
 }

@@ -1,8 +1,8 @@
-package ${package};
+package ${handlerInfo.handlerPackage};
 
-import ${inputTypeImport};
-import ${outputTypeImport};
-import ${handlerFullyQualifiedName};
+import ${handlerInfo.inputTypeImport};
+import ${handlerInfo.outputTypeImport};
+import ${handlerInfo.handlerFullyQualifiedName};
 import com.cloudhopper.mc.provider.aws.AwsLambdaRequestHandler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -18,14 +18,14 @@ import java.util.Collections;
 /**
  * This class contains both a plain Lambda integration and an API proxy integration.
  */
-public class AwsLambda${handler}Handler {
+public class AwsLambda${handlerInfo.handlerClassName}Handler {
 
     /**
      * Plain Lambda integration.
      */
-    public static class Plain extends AwsLambdaRequestHandler<${inputType}, ${outputType}> {
+    public static class Plain extends AwsLambdaRequestHandler<${handlerInfo.inputType}, ${handlerInfo.outputType}> {
         public Plain() {
-            super(new ${handler}());
+            super(new ${handlerInfo.handlerClassName}());
         }
     }
 
@@ -35,7 +35,7 @@ public class AwsLambda${handler}Handler {
     public static class ApiProxy implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
 
         // Delegate to the plain integration
-        private final AwsLambdaRequestHandler<${inputType}, ${outputType}> delegate = new Plain();
+        private final AwsLambdaRequestHandler<${handlerInfo.inputType}, ${handlerInfo.outputType}> delegate = new Plain();
         private final Gson gson = new Gson();
 
         @Override
@@ -46,14 +46,14 @@ public class AwsLambda${handler}Handler {
                 body = new String(Base64.getDecoder().decode(body), StandardCharsets.UTF_8);
             }
             // Convert the event body from JSON into the expected input type.
-            <#if inputType == "java.util.Map<java.lang.String,java.lang.Object>">
+            <#if handlerInfo.inputType == "java.util.Map<java.lang.String,java.lang.Object>">
             Type mapType = new TypeToken<java.util.Map<java.lang.String,java.lang.Object>>(){}.getType();
             java.util.Map<java.lang.String,java.lang.Object> input = gson.fromJson(body, mapType);
             <#else>
-            ${inputType} input = gson.fromJson(body, ${inputType}.class);
+            ${handlerInfo.inputType} input = gson.fromJson(body, ${handlerInfo.inputType}.class);
             </#if>            
             // Call the provider-agnostic handler.
-            ${outputType} result = delegate.handleRequest(input, awsContext);
+            ${handlerInfo.outputType} result = delegate.handleRequest(input, awsContext);
 
             // Build the API Gateway response.
             APIGatewayV2HTTPResponse response = new APIGatewayV2HTTPResponse();

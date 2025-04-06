@@ -30,13 +30,6 @@ import com.cloudhopper.mc.deployment.config.api.CloudRequestHandler;
 import com.cloudhopper.mc.deployment.config.api.HandlerContext;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-
-@OpenAPIDefinition(info = @Info(title = "Cloudhopper Demo API",
-        description = "",
-        version = "1.0"
-))
 
 public class ApiFunction implements CloudRequestHandler<Integer, String> {
 

@@ -1,5 +1,5 @@
-resource "aws_cloudwatch_event_rule" "${functionId}_schedule" {
-  name                = "${functionId}-schedule"
+resource "aws_cloudwatch_event_rule" "${handlerInfo.functionId}_schedule" {
+  name                = "${handlerInfo.functionId}-schedule"
 <#assign parts = scheduleExpression?split(" ")>
 <#if parts?size == 5>
   <#-- convert 5-part UNIX cron to 6-part AWS cron: replace weekday with ? and add * for year -->
@@ -12,16 +12,16 @@ resource "aws_cloudwatch_event_rule" "${functionId}_schedule" {
 schedule_expression = "cron(${awsCron} ${scheduleTimezone})"
 }
 
-resource "aws_cloudwatch_event_target" "${functionId}_target" {
-  rule      = aws_cloudwatch_event_rule.${functionId}_schedule.name
-  target_id = "${functionId}-lambda"
-  arn       = aws_lambda_function.${functionId}.arn
+resource "aws_cloudwatch_event_target" "${handlerInfo.functionId}_target" {
+  rule      = aws_cloudwatch_event_rule.${handlerInfo.functionId}_schedule.name
+  target_id = "${handlerInfo.functionId}-lambda"
+  arn       = aws_lambda_function.${handlerInfo.functionId}.arn
 }
 
-resource "aws_lambda_permission" "${functionId}_invoke_permission" {
+resource "aws_lambda_permission" "${handlerInfo.functionId}_invoke_permission" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.${functionId}.function_name
+  function_name = aws_lambda_function.${handlerInfo.functionId}.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.${functionId}_schedule.arn
+  source_arn    = aws_cloudwatch_event_rule.${handlerInfo.functionId}_schedule.arn
 }

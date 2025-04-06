@@ -42,6 +42,21 @@ public class HandlerInfo {
     private final String classifier;
     private final String targetDir;
     private String wrapperFullyQualifiedName;
+    private final int memory;
+    private final int timeout;
+    private final int minInstances;
+
+    public int getMemory() {
+        return memory;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public int getMinInstances() {
+        return minInstances;
+    }
 
     public String getWrapperFullyQualifiedName() {
         return wrapperFullyQualifiedName;
@@ -54,7 +69,7 @@ public class HandlerInfo {
     public String getOutputTypeImport() {
         return stripGenericArguments(outputType);
     }
-    
+
     private String stripGenericArguments(String type) {
         int genericStart = type.indexOf('<');
         if (genericStart != -1) {
@@ -111,10 +126,11 @@ public class HandlerInfo {
         return targetDir;
     }
 
-    public HandlerInfo(String functionId, String handlerClassName, String handlerFullyQualifiedName,
-            String handlerPackage, String handlerMethod, String inputType, String outputType,
-            String artifactId, String version, String classifier, String targetDir) {
+    public HandlerInfo(String functionId, int memory, int timeout, int minInstances, String handlerClassName, String handlerFullyQualifiedName, String handlerPackage, String handlerMethod, String inputType, String outputType, String artifactId, String version, String classifier, String targetDir) {
         this.targetDir = targetDir;
+        this.memory = memory;
+        this.timeout = timeout;
+        this.minInstances = minInstances;
         this.artifactId = artifactId;
         this.version = version;
         this.classifier = classifier;

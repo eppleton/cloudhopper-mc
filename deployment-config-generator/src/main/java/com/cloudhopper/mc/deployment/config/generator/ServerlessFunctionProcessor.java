@@ -62,6 +62,8 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        AnnotationFeatureValidator featureValidator = new AnnotationFeatureValidator(processingEnv, generatorFeatureInfo);
+
         if (roundEnv.processingOver()) {
             try {
                 deploymentGenerator.finalizeConfig(generatorID, configOutputDir);
@@ -96,6 +98,9 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
 
                     final HandlerInfo handlerInfo = new HandlerInfo(
                             functionAnnotation.name(),
+                            functionAnnotation.memory(),
+                            functionAnnotation.timeout(),
+                            functionAnnotation.minInstances(),
                             handlerSimpleName,
                             handlerFQN,
                             packageName,
@@ -118,7 +123,7 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                         if (schedule != null) {
                             deploymentGenerator.generateScheduledTrigger(generatorID, configOutputDir, handlerInfo, schedule, processingEnv);
                         }
-
+                        featureValidator.validate(methodElement);
                     } catch (ConfigGenerationException e) {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                         MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);

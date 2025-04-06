@@ -64,48 +64,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.2.22</version>
-                <configuration>
-                    <outputFileName>openapi</outputFileName>
-                    <outputPath>${project.build.directory}/deployment/${cloud.provider}</outputPath>
-                    <outputFormat>JSONANDYAML</outputFormat>
-                    <resourcePackages combine.children="append">
-                        <package>com.cloudhopper.mc.demo</package>
-                    </resourcePackages>
-                    <prettyPrint>TRUE</prettyPrint>  
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>default-openapi</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>resolve</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>io.swagger.codegen.v3</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>3.0.55</version>
-                <executions>
-                    <execution>
-                        <id>generate-html-docs</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.build.directory}/deployment/${cloud.provider}/openapi.json</inputSpec>
-                            <language>html2</language>
-                            <output>${project.build.directory}/generated-docs/${cloud.provider}</output>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
@@ -116,7 +74,6 @@
                     <encoding>UTF-8</encoding>
                     <generatedSourcesDirectory>${output.dir}</generatedSourcesDirectory>
                     <annotationProcessors>
-                        <annotationProcessor>com.cloudhopper.mc.deployment.config.generator.OperationProcessor</annotationProcessor>
                         <annotationProcessor>com.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor</annotationProcessor>
                     </annotationProcessors>
                     <compilerArgs>
@@ -255,9 +212,6 @@
     <profiles>
         <profile>
             <id>gcp</id>
-            <activation>      
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <cloud.provider>gcp</cloud.provider>
                 <generator.id>gcp-terraform-java21</generator.id>
@@ -329,15 +283,10 @@
             </dependencies>
         </profile>
         <profile>
-            <id>aws2</id>    
-            <properties>
-                <cloud.provider>aws2</cloud.provider>
-                <output.dir>target/generated-sources/aws2</output.dir>
-                <jar.classifier>aws2</jar.classifier>
-            </properties>
-        </profile>
-        <profile>
             <id>azure</id>
+            <activation>      
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <cloud.provider>azure</cloud.provider>
                 <generator.id>azure-terraform-java21</generator.id>

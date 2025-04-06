@@ -1,4 +1,9 @@
-package com.cloudhopper.mc;
+package com.cloudhopper.mc.generator.features;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /*-
  * #%L
@@ -25,19 +30,13 @@ package com.cloudhopper.mc;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
-import java.lang.annotation.Target;
-
-@Retention(SOURCE)
-@Target(ElementType.METHOD)
-public @interface Schedule {
-    String cron();
-    String timezone() default "UTC";
-    
-    public static class ScheduleAttribute{
-        public static final String CRON = "cron";
-        public static final String TIMEZONE = "timezone";
-    }
+/**
+ *
+ * @author antonepple
+ */
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.TYPE)
+public @interface GeneratorFeatures {
+    String generatorId();
+    GeneratorFeature[] supportedFeatures() default {};
 }

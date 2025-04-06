@@ -29,11 +29,11 @@ resource "azurerm_storage_container" "function_container" {
 
 # Shared JAR file for all functions
 resource "azurerm_storage_blob" "function_code" {
-  name                   = "${artifactId}-${version}-${classifier}.zip"
+  name                   = "${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.zip"
   storage_account_name   = azurerm_storage_account.function_storage.name
   storage_container_name = azurerm_storage_container.function_container.name
   type                   = "Block"
-  source = "${targetDir}/${artifactId}-${version}-${classifier}.zip"
+  source = "${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.zip"
 }
 
 resource "azurerm_linux_function_app" "shared_function_app" {

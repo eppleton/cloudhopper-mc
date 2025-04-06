@@ -40,4 +40,13 @@ public @interface ApiOperation {
     String path() default "";
     String method() default "";
     Parameter [] parameters() default {};
+    
+    public static class ApiOperationFeature{
+        public static final String SUMMARY = "summary";
+        public static final String DESCRIPTION = "description";
+        public static final String OPERATION_ID = "operationId";
+        public static final String PATH = "path";
+        public static final String METHOD = "method";
+        public static final String PARAMETERS = "parameters";
+    }
 }

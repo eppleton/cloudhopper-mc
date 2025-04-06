@@ -7,7 +7,7 @@
       }
     },
     "x-google-backend": {
-      "address": "https://${"$"}{var.region}-${"$"}{var.project}.cloudfunctions.net/${functionId}",
+      "address": "https://${"$"}{var.region}-${"$"}{var.project}.cloudfunctions.net/${handlerInfo.functionId}",
       "protocol": "h2"
     }
   }

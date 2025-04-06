@@ -42,6 +42,9 @@ package com.cloudhopper.mc.deployment.config.generator;
  */
 import com.cloudhopper.mc.deployment.config.api.GenericDeploymentConfigGenerator;
 import com.cloudhopper.mc.deployment.config.spi.DeploymentConfigGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -68,6 +71,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
     protected String classifier;
     protected String version;
     protected String targetDir;
+    GeneratorFeatureInfo generatorFeatureInfo;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -92,6 +96,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
             messager.printMessage(Diagnostic.Kind.WARNING, "One or more required compiler arguments (artifactId, classifier, version) are using default values. Please ensure these are provided.");
         }
         deploymentGenerator = getDeploymentGenerator();
+        generatorFeatureInfo = loadFeaturesFor(deploymentGenerator.getGeneratorID());
     }
 
     protected DeploymentConfigGenerator getDeploymentGenerator() {
@@ -108,13 +113,13 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
             GenericDeploymentConfigGenerator genericDeploymentConfigGenerator = new GenericDeploymentConfigGenerator(processingEnv);
 //            if (genericDeploymentConfigGenerator.supportsGenerator(generatorID)) {
 //                System.err.println("GenericDeploymentConfigGenerator supports " + generatorID);
-                deploymentGenerator = genericDeploymentConfigGenerator;
+            deploymentGenerator = genericDeploymentConfigGenerator;
 //            } else {
 //                System.err.println("GenericDeploymentConfigGenerator doesn't support " + generatorID);
 //                processingEnv.getMessager().printError("No generator found for provider " + generatorID);
 //            }
         }
-        
+
         return deploymentGenerator;
     }
 
@@ -150,6 +155,28 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
     protected String getPackageName(TypeElement classElement) {
         String qualifiedName = classElement.getQualifiedName().toString();
         return qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
+    }
+
+    private GeneratorFeatureInfo loadFeaturesFor(String generatorId) {
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String filename = "META-INF/cloudhopper/" + generatorId + "-features.json";
+        System.err.println("Load Features for "+generatorId);
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(filename)) {
+            if (in == null) {
+               System.err.println("Could not find "+filename);
+
+                return null;
+            }
+            
+            return objectMapper.readValue(in, GeneratorFeatureInfo.class);
+        } catch (IOException e) {
+            // Logging oder fallback
+            System.err.println("Could not read "+filename);
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

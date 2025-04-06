@@ -37,4 +37,5 @@ public interface DeploymentConfigGenerator {
     public void generateApiResourceAndIntegration(String generatorId, String outputDir, HandlerInfo handlerInfo, ApiOperation apiOperation, ProcessingEnvironment env) throws ConfigGenerationException;
     void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException;
     public void generateScheduledTrigger(String generatorID, String configOutputDir, HandlerInfo handlerInfo, Schedule schedule, ProcessingEnvironment processingEnv);
+    public String getGeneratorID();
 }
