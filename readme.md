@@ -39,7 +39,6 @@ Many serverless frameworks and cloud ecosystems still impose hidden dependencies
 3. **Configuration**
    - Specify which templates or deployment targets to use in your build plugin configuration.
 
-*(Exact installation details will be updated once the packages and artifact IDs are finalized.)*
 
 
 
