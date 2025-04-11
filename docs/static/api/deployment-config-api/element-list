@@ -1,0 +1,5 @@
+com.cloudhopper.mc
+com.cloudhopper.mc.deployment.config.api
+com.cloudhopper.mc.deployment.config.impl
+com.cloudhopper.mc.deployment.config.spi
+com.cloudhopper.mc.generator.features

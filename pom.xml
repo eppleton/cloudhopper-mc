@@ -59,7 +59,24 @@
     </modules>
     <build>
         <pluginManagement>
-            <plugins>            
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.6.3</version>
+                    <executions>
+                        <execution>
+                            <id>generate-javadoc</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>javadoc</goal>
+                            </goals>
+                            <configuration>
+                                <destDir>${project.build.directory}/apidocs</destDir>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>            
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
