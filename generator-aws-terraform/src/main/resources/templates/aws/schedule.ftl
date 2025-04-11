@@ -9,7 +9,7 @@ resource "aws_cloudwatch_event_rule" "${handlerInfo.functionId}_schedule" {
   <#assign awsCron = scheduleExpression>
 </#if>
 
-schedule_expression = "cron(${awsCron} ${scheduleTimezone})"
+schedule_expression = "cron(${awsCron})"
 }
 
 resource "aws_cloudwatch_event_target" "${handlerInfo.functionId}_target" {

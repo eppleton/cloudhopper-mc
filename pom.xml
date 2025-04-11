@@ -55,7 +55,7 @@
         <module>deployment-config-api</module>
         <module>generator-gcp-terraform</module>
         <module>generator-azure-terraform</module>
-        <module>generator-aws-terraform-openapi</module>
+        <module>generator-aws-terraform</module>
     </modules>
     <build>
         <pluginManagement>

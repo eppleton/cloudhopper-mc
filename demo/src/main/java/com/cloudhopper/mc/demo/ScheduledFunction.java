@@ -54,11 +54,10 @@ import com.cloudhopper.mc.deployment.config.api.HandlerContext;
 public class ScheduledFunction implements CloudRequestHandler<Integer, String>{
 
     @Function(name = "ScheduledFunction")
-    @Schedule(cron = "0 2 * * *", timezone = "UTC")
+    @Schedule(cron = "0 2 * * *")
     @Override
     public String handleRequest(Integer input, HandlerContext context) {
-        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        return "";
+        return "Hello";
     }
     
 }

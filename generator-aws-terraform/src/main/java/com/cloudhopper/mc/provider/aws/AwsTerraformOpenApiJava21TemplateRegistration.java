@@ -2,7 +2,7 @@ package com.cloudhopper.mc.provider.aws;
 
 /*-
  * #%L
- * generator-aws-terraform-openapi - a library from the "Cloudhopper" project.
+ * generator-aws-terraform - a library from the "Cloudhopper" project.
  * 
  * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
  * exception as provided in the README.md file that accompanies this code.
@@ -35,7 +35,7 @@ import com.cloudhopper.mc.generator.features.GeneratorFeature;
 import com.cloudhopper.mc.generator.features.GeneratorFeatures;
 
 @GeneratorFeatures(
-        generatorId = "aws-terraform-openapi-java21",
+        generatorId = "aws-terraform-java21",
         supportedFeatures = {
             @GeneratorFeature(
                     supportedAnnotation = Function.class,
@@ -49,8 +49,7 @@ import com.cloudhopper.mc.generator.features.GeneratorFeatures;
             @GeneratorFeature(
                     supportedAnnotation = Schedule.class,
                     supportedAttributes = {
-                        ScheduleAttribute.CRON,
-                        ScheduleAttribute.TIMEZONE
+                        ScheduleAttribute.CRON
                     }
             ),
             @GeneratorFeature(
@@ -67,7 +66,7 @@ import com.cloudhopper.mc.generator.features.GeneratorFeatures;
         }
 )
 @TemplateRegistration(
-        generatorId = "aws-terraform-openapi-java21",
+        generatorId = "aws-terraform-java21",
         templates = {
             @Template(
                     phase = GenerationPhase.SHARED,

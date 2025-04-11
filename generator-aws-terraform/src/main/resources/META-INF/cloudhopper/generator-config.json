@@ -1,5 +1,5 @@
 {
-  "generatorId": "aws-terraform-openapi-java21",
+  "generatorId": "aws-terraform-java21",
   "phases": {
     "shared": [
       {
