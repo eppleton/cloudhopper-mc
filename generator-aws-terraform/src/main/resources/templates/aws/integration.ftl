@@ -4,7 +4,7 @@ resource "aws_apigatewayv2_integration" "${handlerInfo.functionId}_integration" 
   integration_uri    = aws_lambda_function.${handlerInfo.functionId}.invoke_arn
   integration_method = "POST"
   payload_format_version = "2.0"
-  timeout_milliseconds   = ${handlerInfo.timeout?intq * 1000}
+  timeout_milliseconds   = ${handlerInfo.timeout?int * 1000}
 }
 
 resource "aws_apigatewayv2_route" "${handlerInfo.functionId}_route" {
