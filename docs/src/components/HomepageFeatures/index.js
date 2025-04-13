@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 const FeatureList = [
   {
     title: 'Relax',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    Svg: require('@site/static/img/relax.svg').default,
     description: (
       <>
         Focus on your business logic, and we&apos;ll do the chores.
@@ -13,8 +13,8 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Stay on top',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Keep moving',
+    Svg: require('@site/static/img/hop.svg').default,
     description: (
       <>
         Switch providers as painless as possible.
@@ -23,7 +23,7 @@ const FeatureList = [
   },
   {
     title: 'Powered by Java',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    Svg: require('@site/static/img/java.svg').default,
     description: (
       <>
         Built with Java for Java devs.
