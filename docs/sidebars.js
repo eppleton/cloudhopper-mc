@@ -10,7 +10,7 @@ const sidebars = {
                 {
                     type: 'link',
                     label: 'Java API',
-                    href: 'pathname:///cloudhopper-mc/api/deployment-config-api/index.html',
+                    href: 'pathname:///api/deployment-config-api/index.html',
                 },
             ],
         },
@@ -23,7 +23,7 @@ const sidebars = {
                  {
                     type: 'link',
                     label: 'Java API',
-                    href: 'pathname:///cloudhopper-mc/api/deployment-config-generator-api/index.html',
+                    href: 'pathname:///api/deployment-config-generator-api/index.html',
                 },
             ],
         },
@@ -36,7 +36,7 @@ const sidebars = {
                  {
                     type: 'link',
                     label: 'Java API',
-                    href: 'pathname:///cloudhopper-mc/api/deployment-config-generator-generic/index.html',
+                    href: 'pathname:///api/deployment-config-generator-generic/index.html',
                 },
             ],
         },

@@ -23,25 +23,24 @@ This module is intended for:
 
 ### SPI
 
-- [`DeploymentConfigGenerator`](../deployment-config-generator-api/spi/DeploymentConfigGenerator.java):  
+- `DeploymentConfigGenerator`:  
   Main interface to be implemented by generator modules.
 
 ### Annotations
 
-- [`@GeneratorFeatures`](../deployment-config-generator-api/annotations/GeneratorFeatures.java):  
+- `@GeneratorFeatures`:  
   Declares the generator ID and supported features.
-- [`@GeneratorFeature`](../deployment-config-generator-api/annotations/GeneratorFeature.java):  
+- `@GeneratorFeature`:  
   Describes which annotations and attributes a generator supports.
 
 ### Support Types
 
-- [`HandlerInfo`](../deployment-config-generator-api/api/HandlerInfo.java):  
+- `HandlerInfo`:  
   Encapsulates function metadata passed to generators.
-- [`GenerationPhase`](../deployment-config-generator-api/api/GenerationPhase.java):  
+- `GenerationPhase`:  
   Enum describing the stages of generation (e.g. FUNCTION, API, etc.)
-- [`ConfigGenerationException`](../deployment-config-generator-api/api/ConfigGenerationException.java):  
+- `ConfigGenerationException`:  
   Used to signal errors during generation.
-
 ---
 
 ## 🧩 Example
