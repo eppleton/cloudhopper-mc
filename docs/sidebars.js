@@ -1,6 +1,6 @@
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
-    tutorialSidebar: [
+    documentationSidebar: [
         {
             type: 'category',
             label: 'Runtime API',
