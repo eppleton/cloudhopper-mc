@@ -24,17 +24,17 @@ package com.cloudhopper.mc.provider.azure;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import com.cloudhopper.mc.ApiOperation;
-import com.cloudhopper.mc.ApiOperation.ApiOperationFeature;
-import com.cloudhopper.mc.Function;
-import com.cloudhopper.mc.Function.FunctionAttribute;
-import com.cloudhopper.mc.Schedule;
-import com.cloudhopper.mc.Schedule.ScheduleAttribute;
-import com.cloudhopper.mc.deployment.config.api.GenerationPhase;
-import com.cloudhopper.mc.deployment.config.api.GenericDeploymentConfigGenerator.Template;
-import com.cloudhopper.mc.deployment.config.api.GenericDeploymentConfigGenerator.TemplateRegistration;
-import com.cloudhopper.mc.generator.features.GeneratorFeature;
-import com.cloudhopper.mc.generator.features.GeneratorFeatures;
+import com.cloudhopper.mc.annotations.ApiOperation;
+import com.cloudhopper.mc.annotations.ApiOperation.ApiOperationAttribute;
+import com.cloudhopper.mc.annotations.Function;
+import com.cloudhopper.mc.annotations.Function.FunctionAttribute;
+import com.cloudhopper.mc.annotations.Schedule;
+import com.cloudhopper.mc.annotations.Schedule.ScheduleAttribute;
+import com.cloudhopper.mc.deployment.config.generator.generic.GenericDeploymentConfigGenerator.Template;
+import com.cloudhopper.mc.deployment.config.generator.generic.GenericDeploymentConfigGenerator.TemplateRegistration;
+import com.cloudhopper.mc.generator.api.GenerationPhase;
+import com.cloudhopper.mc.generator.api.annotations.GeneratorFeature;
+import com.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
 
 @GeneratorFeatures(
         generatorId = "azure-terraform-java21",
@@ -54,12 +54,12 @@ import com.cloudhopper.mc.generator.features.GeneratorFeatures;
             @GeneratorFeature(
                     supportedAnnotation = ApiOperation.class,
                     supportedAttributes = { 
-                        ApiOperationFeature.SUMMARY,
-                        ApiOperationFeature.DESCRIPTION,
-                        ApiOperationFeature.OPERATION_ID,
-                        ApiOperationFeature.PATH,
-                        ApiOperationFeature.METHOD,
-                        ApiOperationFeature.PARAMETERS }
+                        ApiOperationAttribute.SUMMARY,
+                        ApiOperationAttribute.DESCRIPTION,
+                        ApiOperationAttribute.OPERATION_ID,
+                        ApiOperationAttribute.PATH,
+                        ApiOperationAttribute.METHOD,
+                        ApiOperationAttribute.PARAMETERS }
             )
         }
 )

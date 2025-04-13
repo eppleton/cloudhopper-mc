@@ -44,26 +44,21 @@
     <dependencies>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>provider-gcp</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
             <artifactId>deployment-config-api</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
-            <artifactId>deployment-config-generator</artifactId>
+            <artifactId>deployment-config-processor</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.cloud.functions</groupId>
-            <artifactId>functions-framework-api</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
     <name>generator-gcp-terraform</name>

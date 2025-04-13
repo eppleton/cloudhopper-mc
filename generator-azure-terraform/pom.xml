@@ -50,21 +50,17 @@
         </dependency>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
-            <artifactId>deployment-config-generator</artifactId>
+            <artifactId>provider-azure</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>deployment-config-processor</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.microsoft.azure.functions</groupId>
-            <artifactId>azure-functions-java-library</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-            <type>jar</type>
-        </dependency>
+
     </dependencies>
     <name>generator-azure-terraform</name>
 </project>

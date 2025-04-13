@@ -9,7 +9,6 @@
     <artifactId>generator-aws-terraform</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <aws.lambda.java.core.version>1.2.3</aws.lambda.java.core.version>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
         <cloudhopper.generator.id>aws-terraform-java21</cloudhopper.generator.id>
         <cloudhopper.integration.strategy>apiClass</cloudhopper.integration.strategy>
@@ -45,25 +44,27 @@
     <dependencies>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
-            <artifactId>deployment-config-api</artifactId>
+            <artifactId>deployment-config-generator-api</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
-            <artifactId>deployment-config-generator</artifactId>
+            <artifactId>deployment-config-generator-generic</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>deployment-config-processor</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-core</artifactId>
-            <version>${aws.lambda.java.core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-events</artifactId>
-            <version>3.15.0</version>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>provider-aws</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

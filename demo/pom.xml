@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
-            <artifactId>deployment-config-generator</artifactId>
+            <artifactId>deployment-config-processor</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
             <artifactId>deployment-config-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>jar</type>
         </dependency>
     </dependencies>
@@ -166,7 +166,7 @@
                             </environmentVariables>
                         </configuration>
                     </execution>
-                    <execution>
+<!--                    <execution>
                         <id>terraform-apply</id>
                         <phase>verify</phase>
                         <goals>
@@ -178,17 +178,17 @@
                             <arguments>
                                 <argument>apply</argument>
                                 <argument>-auto-approve</argument>
-    <!--                                <argument>-var</argument>
-                                    <argument>gcp_project_id=cloudhopper</argument>-->
-<!--                                If you want to use a specific var file 
-                                <argument>-var-file=${project.basedir}/terraform.tfvars</argument> -->
+                                    <argument>-var</argument>
+                                    <argument>gcp_project_id=cloudhopper</argument>
+                                If you want to use a specific var file 
+                                <argument>-var-file=${project.basedir}/terraform.tfvars</argument> 
                             </arguments>
                             <environmentVariables>
                                 <AWS_PROFILE>dukehoff</AWS_PROFILE>
                                 <PATH>${path.extras}:${env.PATH}</PATH>
                             </environmentVariables>
                         </configuration>
-                    </execution>
+                    </execution>-->
                 </executions>
             </plugin>
             <plugin>

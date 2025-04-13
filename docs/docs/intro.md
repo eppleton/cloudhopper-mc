@@ -2,46 +2,47 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Cloudhopper
 
-Let's discover **Docusaurus in less than 5 minutes**.
+**Cloudhopper** is an open-source toolkit for building truly vendor-neutral serverless Java applications. By leveraging annotations, templates, and generated code, Cloudhopper makes it painless to switch between various cloud providers (or on-premises Kubernetes clusters) without tying your code to proprietary services.
 
-## Getting Started
+## Motivation
 
-Get started by **creating a new site**.
+Many serverless frameworks and cloud ecosystems still impose hidden dependencies on specific platforms. Cloudhopper tackles this challenge by providing common abstractions (e.g., for persistence or messaging) directly at the code level. Differences in infrastructure are handled through configurable templates and generated deployment descriptors, allowing teams to avoid vendor lock-in.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## How It Works
 
-### What you'll need
+1. **Annotation-Driven**
+   - Mark serverless functions in Java with custom annotations.
+   - An annotation processor then generates integration classes, deployment descriptors (e.g., Terraform, openTofu), and documentation (e.g., OpenAPI).
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+2. **Template-Based**
+   - Standard templates are available for popular platforms (e.g., AWS).
+   - Users can add or override templates to accommodate custom requirements.
 
-## Generate a new site
+3. **Build-Tool Integration**
+   - Compatible with Maven or Gradle.
+   - Configure the generator via your build settings to produce the required code for your target platform.
 
-Generate a new Docusaurus site using the **classic template**.
+4. **Genuinely Vendor-Neutral**
+   - Use platform-specific artifacts only through generated descriptors, making provider switching effortless.
 
-The classic template will automatically be added to your project after you run the command:
+## Features
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+- **Automatic Generation** of deployment scripts and documentation.
+- **Extensibility** with your own code generators or templates.
+- **Transparent Integration** with established Java frameworks (e.g., Spring Boot).
+- **Seamless Platform Switching** (managed cloud, Kubernetes, or on-prem).
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+## Installation
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+1. **Include the Dependency**
+   - In your `pom.xml` (Maven) or `build.gradle` (Gradle), add the Cloudhopper dependency.
+2. **Enable Annotation Processing**
+   - Ensure annotation processing is activated in your project build settings.
+3. **Configuration**
+   - Specify which templates or deployment targets to use in your build plugin configuration.
 
-## Start your site
 
-Run the development server:
 
-```bash
-cd my-website
-npm run start
-```
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.

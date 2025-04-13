@@ -41,10 +41,10 @@ package com.cloudhopper.mc.demo;
  * #L%
  */
 
-import com.cloudhopper.mc.Function;
-import com.cloudhopper.mc.Schedule;
-import com.cloudhopper.mc.deployment.config.api.CloudRequestHandler;
-import com.cloudhopper.mc.deployment.config.api.HandlerContext;
+import com.cloudhopper.mc.annotations.Function;
+import com.cloudhopper.mc.annotations.Schedule;
+import com.cloudhopper.mc.runtime.CloudRequestHandler;
+import com.cloudhopper.mc.runtime.HandlerContext;
 
 /**
  *

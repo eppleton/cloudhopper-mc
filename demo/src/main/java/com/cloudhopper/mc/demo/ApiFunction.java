@@ -24,10 +24,10 @@ package com.cloudhopper.mc.demo;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import com.cloudhopper.mc.ApiOperation;
-import com.cloudhopper.mc.Function;
-import com.cloudhopper.mc.deployment.config.api.CloudRequestHandler;
-import com.cloudhopper.mc.deployment.config.api.HandlerContext;
+import com.cloudhopper.mc.annotations.ApiOperation;
+import com.cloudhopper.mc.annotations.Function;
+import com.cloudhopper.mc.runtime.CloudRequestHandler;
+import com.cloudhopper.mc.runtime.HandlerContext;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 
