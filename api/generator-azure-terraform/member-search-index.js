@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"com.cloudhopper.mc.provider.azure","c":"AzureTerraformJava21TemplateRegistration","l":"AzureTerraformJava21TemplateRegistration()","u":"%3Cinit%3E()"}];updateSearchResults();
