@@ -25,7 +25,24 @@ package com.cloudhopper.mc.runtime;
  * #L%
  */
 
-
+/**
+ * A user-defined function handler for processing cloud function requests.
+ * <p>
+ * Each function must implement this interface to define how input is handled
+ * and output is returned. The runtime platform is responsible for invoking
+ * {@link #handleRequest(Object, HandlerContext)} with the appropriate input and context.
+ *
+ * @param <I> The input type (e.g., deserialized JSON request body)
+ * @param <O> The output type (e.g., response body)
+ */
 public interface CloudRequestHandler<I, O> {
+
+    /**
+     * Handles an incoming request.
+     *
+     * @param input   the deserialized input object
+     * @param context runtime context information about the invocation
+     * @return a response object
+     */
     O handleRequest(I input, HandlerContext context);
 }

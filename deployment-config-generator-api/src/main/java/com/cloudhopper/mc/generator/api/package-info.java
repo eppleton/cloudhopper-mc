@@ -1,7 +1,14 @@
 /**
- * Core types shared between Cloudhopper's code generator framework and custom generators.
- * 
- * Includes common enums, descriptors, and utility models.
+ * Defines shared types used to configure and support deployment config generators.
+ * <p>
+ * This package includes common models and enums that describe generator capabilities,
+ * phases, templates, and configuration metadata.
+ * <ul>
+ *   <li>{@link com.cloudhopper.mc.generator.api.ConfigGenerationException}</li>
+ *   <li>{@link com.cloudhopper.mc.generator.api.GenerationPhase}</li>
+ *   <li>{@link com.cloudhopper.mc.generator.api.HandlerInfo}</li>
+ * </ul>
+ * These types are used both by the Cloudhopper annotation processor and by custom generator implementations.
  */
 package com.cloudhopper.mc.generator.api;
 

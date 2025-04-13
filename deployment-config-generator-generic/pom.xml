@@ -11,6 +11,38 @@
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
     </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <configuration>
+                    <destDir>${project.build.directory}/site/apidocs</destDir>
+
+                    <!-- Only include public packages -->
+                    <sourcepaths>
+                        <sourcepath>${project.basedir}/src/main/java</sourcepath>
+                    </sourcepaths>
+                    <excludePackageNames>com.cloudhopper.mc.generator.generic.internal</excludePackageNames>
+
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-javadocs</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+  
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
@@ -21,6 +53,12 @@
             <groupId>com.cloudhopper.mc</groupId>
             <artifactId>deployment-config-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+            <version>1.0.1</version> 
+            <scope>provided</scope> 
         </dependency>
     </dependencies>
 </project>

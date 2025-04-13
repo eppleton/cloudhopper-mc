@@ -26,22 +26,53 @@ import java.util.Map;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+/**
+ * Provides runtime information about the current function invocation.
+ * <p>
+ * This context is passed to every {@link CloudRequestHandler} and includes
+ * platform-specific metadata such as request ID, function name, and resource limits.
+ * Implementations of this interface are provided by the platform adapter
+ * (e.g., AWS Lambda or Azure Functions).
+ */
 public interface HandlerContext {
 
+    /**
+     * @return the unique ID of the current request
+     */
     String getRequestId();
 
+    /**
+     * @return the name of the deployed function
+     */
     String getFunctionName();
 
+    /**
+     * @return the version of the function
+     */
     String getFunctionVersion();
 
+    /**
+     * @return the fully qualified ARN (or platform-specific equivalent) of the invoked function
+     */
     String getInvokedFunctionArn();
 
+    /**
+     * @return the name of the log group for this function
+     */
     String getLogGroupName();
 
+    /**
+     * @return the name of the log stream associated with this invocation
+     */
     String getLogStreamName();
 
+    /**
+     * @return the remaining time available to the function in milliseconds
+     */
     long getRemainingTimeInMillis();
 
+    /**
+     * @return the memory limit for the function in megabytes
+     */
     int getMemoryLimitInMB();
-
 }

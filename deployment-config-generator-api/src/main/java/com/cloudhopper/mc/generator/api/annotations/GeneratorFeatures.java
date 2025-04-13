@@ -31,12 +31,63 @@ import java.lang.annotation.Target;
  */
 
 /**
+ * Declares the features supported by a code generator module.
+ * <p>
+ * This annotation is placed on the class that implements a generator (e.g., {@code TemplateRegistration})
+ * and is used by the Cloudhopper annotation processor to understand:
+ * <ul>
+ *   <li>Which annotations the generator supports</li>
+ *   <li>Which attributes of those annotations are recognized</li>
+ * </ul>
  *
- * @author antonepple
+ * <p>
+ * This enables validation during annotation processing and allows tools to provide early feedback
+ * when unsupported annotations or attributes are used.
+ *
+ * <h2>Example</h2>
+ * <pre>{@code
+ * @GeneratorFeatures(
+ *     generatorId = "aws-terraform-java21",
+ *     supportedFeatures = {
+ *         @GeneratorFeature(
+ *             supportedAnnotation = Function.class,
+ *             supportedAttributes = {
+ *                 FunctionAttribute.NAME,
+ *                 FunctionAttribute.TIMEOUT,
+ *                 FunctionAttribute.MEMORY
+ *             }
+ *         ),
+ *         @GeneratorFeature(
+ *             supportedAnnotation = Schedule.class,
+ *             supportedAttributes = {
+ *                 ScheduleAttribute.CRON,
+ *                 ScheduleAttribute.TIMEZONE
+ *             }
+ *         )
+ *     }
+ * )
+ * public class AwsTemplateRegistration implements TemplateRegistration {
+ *     ...
+ * }
+ * }</pre>
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface GeneratorFeatures {
+
+    /**
+     * The unique ID of the generator implementation.
+     * <p>
+     * This is used to associate the feature declarations with the correct generator.
+     *
+     * @return the generator identifier
+     */
     String generatorId();
+
+    /**
+     * A list of features (annotations and their attributes) that this generator supports.
+     *
+     * @return array of supported annotation features
+     */
     GeneratorFeature[] supportedFeatures() default {};
 }

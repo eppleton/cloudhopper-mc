@@ -29,10 +29,55 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
+/**
+ * Describes a feature supported by a code generator implementation.
+ * <p>
+ * This annotation is used within {@link GeneratorFeatures} to declare
+ * which annotations and specific attributes a generator understands.
+ * It allows the annotation processor to:
+ * <ul>
+ *   <li>Validate user annotations against generator capabilities</li>
+ *   <li>Emit warnings or errors for unsupported attributes</li>
+ *   <li>Enable conditional generation logic</li>
+ * </ul>
+ *
+ * <p>
+ * This annotation is intended for use by generator module authors, not application developers.
+ *
+ * <h2>Example</h2>
+ * <pre>{@code
+ * @GeneratorFeatures(
+ *     generatorId = "aws-terraform-java21",
+ *     supportedFeatures = {
+ *         @GeneratorFeature(
+ *             supportedAnnotation = Function.class,
+ *             supportedAttributes = {
+ *                 FunctionAttribute.NAME,
+ *                 FunctionAttribute.TIMEOUT,
+ *                 FunctionAttribute.MEMORY
+ *             }
+ *         )
+ *     }
+ * )
+ * }</pre>
+ */
 @Retention(RetentionPolicy.SOURCE)
 @Target({})
 public @interface GeneratorFeature {
+
+    /**
+     * The annotation type supported by the generator.
+     * This must be a class reference (e.g., {@code Function.class}).
+     *
+     * @return annotation class supported by the generator
+     */
     Class<? extends java.lang.annotation.Annotation> supportedAnnotation() default Annotation.class;
+
+    /**
+     * The specific attributes of the annotation that the generator supports.
+     * Attribute names should be declared using constants (e.g. {@code FunctionAttribute.MEMORY}).
+     *
+     * @return array of attribute names
+     */
     String[] supportedAttributes() default {};
 }

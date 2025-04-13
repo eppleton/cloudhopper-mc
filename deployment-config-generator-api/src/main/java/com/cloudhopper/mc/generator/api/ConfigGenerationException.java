@@ -28,14 +28,35 @@ package com.cloudhopper.mc.generator.api;
  *
  * @author antonepple
  */
+/**
+ * Exception thrown when an error occurs during deployment configuration generation.
+ * <p>
+ * This exception is typically thrown by implementations of
+ * {@link com.cloudhopper.mc.generator.api.spi.DeploymentConfigGenerator}
+ * to indicate a failure during code or config generation.
+ *
+ * <p>
+ * It may wrap a lower-level exception or contain a descriptive message
+ * indicating the cause of the failure (e.g. invalid template data, missing attributes).
+ */
 public class ConfigGenerationException extends Exception {
 
-    public ConfigGenerationException(String par, Exception e) {
-        super(par, e);
+    /**
+     * Creates a new exception with a message and an underlying cause.
+     *
+     * @param message a description of the error
+     * @param cause the original exception that caused this failure
+     */
+    public ConfigGenerationException(String message, Exception cause) {
+        super(message, cause);
     }
 
-    ConfigGenerationException(String string) {
-        super(string);
+    /**
+     * Creates a new exception with a message.
+     *
+     * @param message a description of the error
+     */
+    ConfigGenerationException(String message) {
+        super(message);
     }
-
 }

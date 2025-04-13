@@ -1,7 +1,12 @@
 /**
- * Annotations for declaring metadata about deployment config generators.
- * 
- * Used to indicate supported features, versions, and capabilities.
+ * Contains annotations used by generator implementations to declare supported features.
+ * <p>
+ * These annotations allow generator modules to declare which attributes and annotations
+ * they understand and support, for use by the Cloudhopper annotation processor.
+ * <ul>
+ *   <li>{@link com.cloudhopper.mc.generator.api.annotations.GeneratorFeatures}</li>
+ *   <li>{@link com.cloudhopper.mc.generator.api.annotations.GeneratorFeature}</li>
+ * </ul>
  */
 package com.cloudhopper.mc.generator.api.annotations;
 

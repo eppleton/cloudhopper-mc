@@ -40,8 +40,8 @@ package com.cloudhopper.mc.deployment.config.generator;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import com.cloudhopper.mc.deployment.config.generator.generic.GenericDeploymentConfigGenerator;
-import com.cloudhopper.mc.generator.spi.DeploymentConfigGenerator;
+import com.cloudhopper.mc.generator.generic.GenericDeploymentConfigGenerator;
+import com.cloudhopper.mc.generator.api.spi.DeploymentConfigGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;

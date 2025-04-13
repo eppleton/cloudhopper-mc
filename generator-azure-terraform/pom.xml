@@ -34,7 +34,7 @@
                     <source>11</source>
                     <target>11</target>
                     <annotationProcessors>
-                        <annotationProcessor>com.cloudhopper.mc.deployment.config.generator.TemplateRegistrationProcessor</annotationProcessor>
+                        <annotationProcessor>com.cloudhopper.mc.generator.generic.TemplateRegistrationProcessor</annotationProcessor>
                         <annotationProcessor>com.cloudhopper.mc.deployment.config.generator.GeneratorFeatureProcessor</annotationProcessor>
                     </annotationProcessors>
                 </configuration>

@@ -30,12 +30,63 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 import java.lang.annotation.Target;
 
+/**
+ * Declares that the annotated function should be triggered on a schedule.
+ * <p>
+ * Can be combined with {@link Function} to define a time-based trigger using a cron expression.
+ *
+ * <h2>Example</h2>
+ * <pre>{@code
+ * @Function(name = "dailyTask")
+ * @Schedule(cron = "0 0 * * *")
+ * public class DailyJob implements CloudRequestHandler<Void, Void> {
+ *     public Void handleRequest(Void input, HandlerContext context) {
+ *         // do something daily
+ *         return null;
+ *     }
+ * }
+ * }</pre>
+ */
 @Retention(SOURCE)
 @Target(ElementType.METHOD)
 public @interface Schedule {
+
+    /**
+     * A cron expression defining the schedule at which the function should run.
+     * Uses standard cron syntax (e.g., "0 0 * * *" for daily at midnight).
+     *
+     * @return cron expression
+     */
     String cron();
+
+    /**
+     * The timezone to interpret the cron expression in.
+     * Defaults to UTC.
+     *
+     * @return IANA timezone identifier (e.g., "UTC", "Europe/Berlin")
+     */
     String timezone() default "UTC";
     
+    
+    /**
+     * Constants representing the attribute names of {@link Function}.
+     *
+     * These are intended for use by generator implementors when declaring which
+     * attributes their generator supports in {see: com.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
+     *
+     * Example usage:
+     * <pre>{@code
+     * @GeneratorFeature(
+     *     supportedAnnotation = Schedule.class,
+     *     supportedAttributes = {
+     *         ScheduleAttribute.CRON,
+     *     }
+     * )
+     * }</pre>
+     *
+     * This class is not relevant for application developers and may be ignored
+     * in function code.
+     */
     public static class ScheduleAttribute{
         public static final String CRON = "cron";
         public static final String TIMEZONE = "timezone";
