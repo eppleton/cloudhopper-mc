@@ -50,14 +50,17 @@ const sidebars = {
         },
         {
             type: 'category',
-            label: 'Platform Providers',
+            label: 'Platform Integration',
             collapsed: false,
             items: [
+                'platforms/generator-overview', // comparison doc
+
                 {
                     type: 'category',
                     label: 'AWS',
                     collapsed: false,
                     items: [
+                        'modules/generator-aws-terraform',
                         'modules/provider-aws',
                         {
                             type: 'link',
@@ -71,6 +74,7 @@ const sidebars = {
                     label: 'Azure',
                     collapsed: false,
                     items: [
+                        'modules/generator-azure-terraform',
                         'modules/provider-azure',
                         {
                             type: 'link',
@@ -84,6 +88,7 @@ const sidebars = {
                     label: 'GCP',
                     collapsed: false,
                     items: [
+                        'modules/generator-gcp-terraform',
                         'modules/provider-gcp',
                         {
                             type: 'link',
@@ -93,7 +98,7 @@ const sidebars = {
                     ],
                 },
             ],
-        },
+        }
     ],
 };
 
