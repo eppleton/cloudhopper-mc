@@ -20,7 +20,7 @@ const sidebars = {
             collapsed: true,
             items: [
                 'modules/deployment-config-generator-api',
-                 {
+                {
                     type: 'link',
                     label: 'Java API',
                     href: 'pathname:///api/deployment-config-generator-api/index.html',
@@ -33,7 +33,7 @@ const sidebars = {
             collapsed: true,
             items: [
                 'modules/deployment-config-generator-generic',
-                 {
+                {
                     type: 'link',
                     label: 'Java API',
                     href: 'pathname:///api/deployment-config-generator-generic/index.html',
@@ -46,6 +46,52 @@ const sidebars = {
             collapsed: true,
             items: [
                 'modules/demo',
+            ],
+        },
+        {
+            type: 'category',
+            label: 'Platform Providers',
+            collapsed: false,
+            items: [
+                {
+                    type: 'category',
+                    label: 'AWS',
+                    collapsed: false,
+                    items: [
+                        'modules/provider-aws',
+                        {
+                            type: 'link',
+                            label: 'Java API',
+                            href: 'pathname:///api/provider-aws/index.html',
+                        },
+                    ],
+                },
+                {
+                    type: 'category',
+                    label: 'Azure',
+                    collapsed: false,
+                    items: [
+                        'modules/provider-azure',
+                        {
+                            type: 'link',
+                            label: 'Java API',
+                            href: 'pathname:///api/provider-azure/index.html',
+                        },
+                    ],
+                },
+                {
+                    type: 'category',
+                    label: 'GCP',
+                    collapsed: false,
+                    items: [
+                        'modules/provider-gcp',
+                        {
+                            type: 'link',
+                            label: 'Java API',
+                            href: 'pathname:///api/provider-gcp/index.html',
+                        },
+                    ],
+                },
             ],
         },
     ],

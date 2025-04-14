@@ -284,8 +284,6 @@ The templates are rendered and written to:
 - Terraform config & metadata:  
   `target/deployment/{provider}`
 
-- Embedded metadata (e.g. `handler-info.properties`):  
-  `target/classes/META-INF/cloudhopper/`
 
 This allows you to inspect or customize any generated artifact before deploying.
 

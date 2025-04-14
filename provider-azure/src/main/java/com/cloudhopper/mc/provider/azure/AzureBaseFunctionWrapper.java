@@ -30,21 +30,56 @@ import com.cloudhopper.mc.runtime.HandlerContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+/**
+ * Abstract base class used by generated Azure Functions to invoke vendor-neutral
+ * {@link CloudRequestHandler} implementations.
+ * <p>
+ * This wrapper handles input parsing, context adaptation, and response formatting
+ * for both HTTP-triggered and timer-triggered Azure Functions.
+ *
+ * @param <I> the input type
+ * @param <O> the output type
+ */
 public abstract class AzureBaseFunctionWrapper<I, O> {
 
+    /**
+     * The wrapped Cloudhopper handler implementation.
+     */
     protected final CloudRequestHandler<I, O> handler;
+
+    /**
+     * The Java type of the input payload, used for JSON deserialization.
+     */
     protected final Type inputType;
+
+    /**
+     * The Jackson object mapper used for parsing and serializing JSON.
+     */
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
-    
+    /**
+     * Constructs a new Azure function wrapper.
+     *
+     * @param handler    the Cloudhopper handler to delegate to
+     * @param inputType  the expected input type, used for deserialization
+     */
     protected AzureBaseFunctionWrapper(CloudRequestHandler<I, O> handler, Type inputType) {
         this.handler = handler;
         this.inputType = inputType;
     }
 
+    /**
+     * Handles HTTP requests by parsing the input body, invoking the handler,
+     * and returning a JSON response.
+     *
+     * @param request the incoming HTTP request
+     * @param context the Azure execution context
+     * @return the HTTP response message
+     */
     protected HttpResponseMessage handleRequest(HttpRequestMessage<String> request, ExecutionContext context) {
         try {
             I input = parseInput(request);
@@ -55,7 +90,11 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
         }
     }
 
-    // For Timer triggers
+    /**
+     * Handles scheduled (timer-triggered) function invocations.
+     *
+     * @param context the Azure execution context
+     */
     protected void handleScheduledRequest(ExecutionContext context) {
         try {
             handler.handleRequest(null, new AzureContextAdapter(context));
@@ -64,67 +103,106 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
         }
     }
 
+    /**
+     * Parses the input payload from the request body using Jackson.
+     *
+     * @param request the HTTP request
+     * @return the deserialized input
+     * @throws IOException if the payload is invalid
+     */
     private I parseInput(HttpRequestMessage<String> request) throws IOException {
         JavaType javaType = objectMapper.getTypeFactory().constructType(inputType);
         return objectMapper.readValue(request.getBody(), javaType);
     }
 
-    private HttpResponseMessage createSuccessResponse(HttpRequestMessage<String> request, O output) throws JsonProcessingException {
+    /**
+     * Creates a successful JSON response.
+     *
+     * @param request the original HTTP request
+     * @param output  the function output
+     * @return the success response
+     * @throws JsonProcessingException if serialization fails
+     */
+    private HttpResponseMessage createSuccessResponse(HttpRequestMessage<String> request, O output)
+            throws JsonProcessingException {
         return request.createResponseBuilder(HttpStatus.OK)
                 .body(objectMapper.writeValueAsString(output))
                 .header("Content-Type", "application/json")
                 .build();
     }
 
+    /**
+     * Creates a generic error response.
+     *
+     * @param request the original HTTP request
+     * @param e       the exception thrown
+     * @return the error response
+     */
     private HttpResponseMessage createErrorResponse(HttpRequestMessage<String> request, Exception e) {
         return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error processing request: " + e.getMessage())
                 .build();
     }
 
+    /**
+     * Adapter that translates Azure's {@link ExecutionContext} to Cloudhopper's {@link HandlerContext}.
+     */
     private static class AzureContextAdapter implements HandlerContext {
 
         private final ExecutionContext context;
 
+        /**
+         * Creates a new context adapter.
+         *
+         * @param context the Azure execution context
+         */
         public AzureContextAdapter(ExecutionContext context) {
             this.context = context;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getRequestId() {
             return context.getInvocationId();
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getFunctionName() {
             return context.getFunctionName();
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getFunctionVersion() {
             return System.getenv("FUNCTIONS_EXTENSION_VERSION");
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getInvokedFunctionArn() {
-            return null; // Not applicable for Azure
+            return null; // Not available in Azure
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getLogGroupName() {
-            return null; // Not directly available in Azure
+            return null; // Not available in Azure
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getLogStreamName() {
-            return null; // Not directly available in Azure
+            return null; // Not available in Azure
         }
 
+        /** {@inheritDoc} */
         @Override
         public long getRemainingTimeInMillis() {
-            return -1; // Not directly available in Azure
+            return -1; // Not available in Azure
         }
 
+        /** {@inheritDoc} */
         @Override
         public int getMemoryLimitInMB() {
             return Integer.parseInt(System.getenv("WEBSITE_MEMORY_LIMIT_MB"));

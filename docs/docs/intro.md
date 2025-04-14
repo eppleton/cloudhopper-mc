@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Cloudhopper
 
-**Cloudhopper** is an open-source toolkit for building truly vendor-neutral serverless Java applications. By leveraging annotations, templates, and generated code, Cloudhopper makes it painless to switch between various cloud providers (or on-premises Kubernetes clusters) without tying your code to proprietary services.
+**Cloudhopper** is an open-source toolkit for building truly vendor-neutral serverless Java applications. By leveraging annotations, templates, and generated code, Cloudhopper makes it painless to switch between various cloud providers (or in the future maybe on-premises Kubernetes clusters) without tying your code to proprietary services.
 
 ## Motivation
 
@@ -31,8 +31,7 @@ Many serverless frameworks and cloud ecosystems still impose hidden dependencies
 
 - **Automatic Generation** of deployment scripts and documentation.
 - **Extensibility** with your own code generators or templates.
-- **Transparent Integration** with established Java frameworks (e.g., Spring Boot).
-- **Seamless Platform Switching** (managed cloud, Kubernetes, or on-prem).
+- **Seamless Platform Switching** 
 
 ## Installation
 
