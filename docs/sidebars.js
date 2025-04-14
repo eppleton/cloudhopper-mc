@@ -40,6 +40,14 @@ const sidebars = {
                 },
             ],
         },
+        {
+            type: 'category',
+            label: 'The Demo Project',
+            collapsed: true,
+            items: [
+                'modules/demo',
+            ],
+        },
     ],
 };
 
