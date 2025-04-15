@@ -250,17 +250,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
             param.put("in", "PATH");
             param.put("name", matcher.group(1));
             parameters.add(param);
-        }
-
-        for (Parameter param : apiOp.parameters()) {
-            Map<String, String> paramData = new HashMap<>();
-            paramData.put("in", param.in().name());
-            paramData.put("name", param.name());
-            paramData.put("description", param.description());
-            paramData.put("example", param.example());
-            parameters.add(paramData);
-        }
-
+        }      
         dataModel.put("parameters", parameters);
         return dataModel;
     }

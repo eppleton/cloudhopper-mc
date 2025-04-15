@@ -1,55 +1,95 @@
-# provider-aws
+# ☁️ provider-aws
 
-This module contains a single utility class: `AwsLambdaRequestHandler`.
+This module provides AWS-specific base classes for Cloudhopper functions. These classes act as bridges between the AWS Lambda runtime and the cloud-neutral `CloudRequestHandler<I, O>` interface.
 
-It provides the glue between Cloudhopper’s cloud-neutral function interface and the AWS Lambda runtime. This class is especially important for **developers implementing custom AWS-based generators**, such as in the `generator-aws-terraform` module.
+They are used by generated handler classes in the `generator-aws-terraform` module to support:
+
+- Plain Lambda invocations
+- Scheduled executions (e.g., EventBridge)
+- API Gateway HTTP APIs (v2), including both proxy and typed events
 
 ---
 
 ## 🚀 Purpose
 
-The `AwsLambdaRequestHandler<I, O>` class allows generated AWS handler classes to:
+These base classes enable Cloudhopper functions to:
 
-- Bridge between AWS Lambda’s `RequestHandler<I, O>` interface and the generic `CloudRequestHandler<I, O>`
-- Translate AWS-specific `Context` into Cloudhopper’s `HandlerContext`
-- Stay vendor-neutral in the function logic, while enabling platform-specific entrypoints
+- Stay **platform-neutral** in their logic
+- Be executed in **multiple AWS contexts**
+- Use a consistent interface for path/query parameters and runtime metadata
 
 ---
 
-## 🔧 How It's Used
+## 🔧 Available Base Classes
 
-Generated handler classes in `generator-aws-terraform` extend this class and delegate to your user-defined function:
+| Class | Trigger Type | Input | Output | Used for |
+|-------|--------------|-------|--------|----------|
+| `AwsLambdaRequestHandler<I, O>` | Lambda direct or scheduled | POJO or Map | POJO | `Plain`, `PlainSchedule` |
+| `ApiGatewayV2ProxyRequestHandler<I, O>` | API Gateway v2 (proxy) | `APIGatewayV2ProxyRequestEvent` | `APIGatewayV2ProxyResponseEvent` | `ApiProxyV2` |
+| `ApiGatewayV2HttpEventHandler<I, O>` | API Gateway v2 (typed) | `APIGatewayV2HTTPEvent` | `APIGatewayV2HTTPResponse` | `ApiHttpV2` |
+| `ApiGatewayEventRouter<I, O>` | Dynamic | `Object` | `Object` | `Auto` router that delegates to the correct handler |
+
+---
+
+## 🧪 Example Usage
+
+Generated handlers typically look like this:
 
 ```java
-public class MyGeneratedHandler extends AwsLambdaRequestHandler<InputType, OutputType> {
-    public MyGeneratedHandler() {
-        super(new MyCloudhopperFunction());
+public class AwsLambdaMyFunctionHandler {
+
+    public static class Plain extends AwsLambdaRequestHandler<InputType, OutputType> {
+        public Plain() {
+            super(new MyFunction());
+        }
+    }
+
+    public static class PlainSchedule extends AwsLambdaRequestHandler<Map<String, Object>, OutputType> {
+        public PlainSchedule() {
+            super(new MyFunction());
+        }
+    }
+
+    public static class ApiProxyV2 extends ApiGatewayV2ProxyRequestHandler<InputType, OutputType> {
+        public ApiProxyV2() {
+            super(new MyFunction(), InputType.class);
+        }
+    }
+
+    public static class ApiHttpV2 extends ApiGatewayV2HttpEventHandler<InputType, OutputType> {
+        public ApiHttpV2() {
+            super(new MyFunction(), InputType.class);
+        }
+    }
+
+    public static class Auto extends ApiGatewayEventRouter<InputType, OutputType> {
+        public Auto() {
+            super(new Plain(), new PlainSchedule(), new ApiProxyV2(), new ApiHttpV2());
+        }
     }
 }
 ```
 
-This allows the developer to write platform-agnostic business logic and let Cloudhopper handle:
-
-- AWS integration
-- Context adaptation
-- Handler wiring
+In AWS deployments, the `Auto` handler is typically registered to dynamically route events to the appropriate handler class.
 
 ---
 
 ## 📦 Packaging
 
-This class is included in the shaded JAR produced for AWS deployment. It **must** be available in the deployment runtime to ensure the generated handler can be invoked.
+All classes in this module are runtime dependencies and **must** be included in the shaded JAR used for deployment.
+
+They are referenced by the generated handlers and are required for correct dispatch and integration with the AWS Lambda platform.
 
 ---
 
 ## 💡 For Generator Authors
 
-If you're building your own AWS generator (e.g. a custom version of `generator-aws-terraform`), you should:
+If you're building your own AWS generator module (like `generator-aws-terraform`), you should:
 
-- Use this class in your generated AWS Lambda handler templates
-- Ensure it is either:
-  - Included in your runtime dependency tree, or
-  - Generated into the function JAR via annotation processor output
+- Use the correct base class for each handler type
+- Route schedule and direct invocations to `AwsLambdaRequestHandler`
+- Route HTTP API events to one of the two API Gateway handler base classes
+- Optionally register `Auto` as the main handler to allow flexible dispatch
 
 ---
 
@@ -57,7 +97,7 @@ If you're building your own AWS generator (e.g. a custom version of `generator-a
 
 | Module | Purpose |
 |--------|---------|
-| `generator-aws-terraform` | Uses this base class to generate AWS Lambda handler classes |
+| `generator-aws-terraform` | Uses these base classes to generate AWS Lambda handler classes |
 | `deployment-config-api` | Provides `CloudRequestHandler` and `HandlerContext` interfaces |
 
 ---
@@ -68,4 +108,4 @@ public abstract class AwsLambdaRequestHandler<I, O> implements RequestHandler<I,
 }
 ```
 
-This class acts as the AWS-specific adapter between infrastructure and logic — making it a central building block for serverless interoperability in Cloudhopper.
+These base classes form the backbone of Cloudhopper’s AWS Lambda support, enabling a clean separation of infrastructure, runtime integration, and application logic.

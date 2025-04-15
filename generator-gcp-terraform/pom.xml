@@ -10,15 +10,6 @@
     <packaging>jar</packaging>
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
-        <cloudhopper.generator.id>gcp-terraform-java21</cloudhopper.generator.id>
-        <cloudhopper.integration.strategy>configFile</cloudhopper.integration.strategy>
-        <cloudhopper.provider.name>gcp</cloudhopper.provider.name>
-        <cloudhopper.provider.version>latest</cloudhopper.provider.version>
-        <cloudhopper.deployment.tool>terraform</cloudhopper.deployment.tool>
-        <cloudhopper.deployment.version>1.7.4</cloudhopper.deployment.version>
-        <cloudhopper.java.version>21</cloudhopper.java.version>
-        <cloudhopper.native.support>graalvm</cloudhopper.native.support>
-        <cloudhopper.description>AWS Lambda Deployment via Terraform (Java 21 + GraalVM).</cloudhopper.description>
     </properties>
     <build>
         <plugins>

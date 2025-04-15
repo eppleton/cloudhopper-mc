@@ -25,7 +25,6 @@ package com.cloudhopper.mc.annotations;
  * #L%
  */
 
-import io.swagger.v3.oas.annotations.Parameter;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -102,13 +101,6 @@ public @interface ApiOperation {
      */
     String method() default "";
 
-    /**
-     * An optional list of parameters that are expected by the API gateway.
-     * These can define path, query, or header parameters.
-     *
-     * @return array of parameters
-     */
-    Parameter[] parameters() default {};
 
     /**
      * Constants representing attribute names of this annotation.

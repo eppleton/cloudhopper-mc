@@ -29,6 +29,7 @@ import com.cloudhopper.mc.annotations.Function;
 import com.cloudhopper.mc.annotations.Schedule;
 import com.cloudhopper.mc.runtime.CloudRequestHandler;
 import com.cloudhopper.mc.runtime.HandlerContext;
+import java.util.Map;
 
 /**
  *
@@ -38,9 +39,9 @@ import com.cloudhopper.mc.runtime.HandlerContext;
 public class ScheduledFunction implements CloudRequestHandler<Integer, String>{
 
     @Function(name = "ScheduledFunction")
-    @Schedule(cron = "0 2 * * *")
+    @Schedule(cron = "0 0 * * *")
     @Override
-    public String handleRequest(Integer input, HandlerContext context) {
+    public String handleRequest(Integer input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
         return "Hello";
     }
     

@@ -61,6 +61,9 @@
         <module>provider-azure</module>
         <module>provider-gcp</module>
         <module>deployment-config-processor</module>
+        <module>generator-springboot</module>
+        <module>provider-http</module>
+        <module>provider-springboot</module>
     </modules>
     <build>
         <pluginManagement>

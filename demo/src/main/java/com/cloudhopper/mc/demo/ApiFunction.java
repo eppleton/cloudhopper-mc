@@ -28,24 +28,24 @@ import com.cloudhopper.mc.annotations.ApiOperation;
 import com.cloudhopper.mc.annotations.Function;
 import com.cloudhopper.mc.runtime.CloudRequestHandler;
 import com.cloudhopper.mc.runtime.HandlerContext;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import java.util.Map;
 
 public class ApiFunction implements CloudRequestHandler<Integer, String> {
 
     @ApiOperation(
                     description = "dummy description",
                     operationId = "helloworld2",
-                    method = "GET",
+                    method = "POST",
                     path = "/hello2/{id}",
-                    summary = "bla",
-                    parameters = {
-                        @Parameter(in = ParameterIn.PATH, name = "version", description = "APi Version", example = "2.0"),}
+                    summary = "bla" //,
+//                    parameters = {
+//                        @Parameter(in = ParameterIn.PATH, name = "version", description = "APi Version", example = "2.0"),
+//            }
             )
     @Function(name = "hello_world_2")
     @Override
-    public String handleRequest(Integer input, HandlerContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public String handleRequest(Integer input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
+        return "Hallo "+input;
     }
 
 }

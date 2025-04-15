@@ -1,5 +1,8 @@
 package com.cloudhopper.mc.runtime;
 
+import java.util.Collections;
+import java.util.Map;
+
 /*-
  * #%L
  * deployment-config-api - a library from the "Cloudhopper" project.
@@ -44,5 +47,9 @@ public interface CloudRequestHandler<I, O> {
      * @param context runtime context information about the invocation
      * @return a response object
      */
-    O handleRequest(I input, HandlerContext context);
+     default O handleRequest(I input, HandlerContext context) {
+        return handleRequest(input, Collections.emptyMap(), Collections.emptyMap(), context);
+    }
+
+    O handleRequest(I input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context);
 }

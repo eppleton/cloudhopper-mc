@@ -10,15 +10,6 @@
     <packaging>jar</packaging>
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
-        <cloudhopper.generator.id>azure-terraform-java21</cloudhopper.generator.id>
-        <cloudhopper.integration.strategy>apiClass</cloudhopper.integration.strategy>
-        <cloudhopper.provider.name>azure</cloudhopper.provider.name>
-        <cloudhopper.provider.version>latest</cloudhopper.provider.version>
-        <cloudhopper.deployment.tool>terraform</cloudhopper.deployment.tool>
-        <cloudhopper.deployment.version>1.7.5</cloudhopper.deployment.version>
-        <cloudhopper.java.version>21</cloudhopper.java.version>
-        <cloudhopper.native.support>graalvm</cloudhopper.native.support>
-        <cloudhopper.description>Azure Deployment via Terraform (Java 21)</cloudhopper.description>
     </properties>
     <build>
         <plugins>

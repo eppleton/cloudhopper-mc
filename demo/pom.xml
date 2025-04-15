@@ -125,7 +125,7 @@
                     </execution>
                 </executions>
             </plugin>
- <!--            <plugin>
+          <!--  <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
@@ -166,7 +166,7 @@
                             </environmentVariables>
                         </configuration>
                     </execution>
-                   <execution>
+                    <execution>
                         <id>terraform-apply</id>
                         <phase>verify</phase>
                         <goals>
@@ -178,10 +178,10 @@
                             <arguments>
                                 <argument>apply</argument>
                                 <argument>-auto-approve</argument>
-                                    <argument>-var</argument>
-                                    <argument>gcp_project_id=cloudhopper</argument>
-                                If you want to use a specific var file 
-                                <argument>-var-file=${project.basedir}/terraform.tfvars</argument> 
+<!--                                <argument>-var</argument>
+                                <argument>gcp_project_id=cloudhopper</argument>-->
+<!--                                If you want to use a specific var file 
+                                <argument>-var-file=${project.basedir}/terraform.tfvars</argument> -->
                             </arguments>
                             <environmentVariables>
                                 <AWS_PROFILE>dukehoff</AWS_PROFILE>
@@ -215,8 +215,64 @@
     </build>
     <profiles>
         <profile>
-            <id>gcp</id>
+            <id>springboot</id>
 
+            <properties>
+                <cloud.provider>springboot</cloud.provider>
+                <generator.id>springboot-http</generator.id>
+                <output.dir>target/generated-sources/springboot</output.dir>
+                <jar.classifier>springboot</jar.classifier>
+                <main.class>com.cloudhopper.mc.demo.Application</main.class>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>add-springboot-source</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>src/main/springboot</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.cloudhopper.mc</groupId>
+                    <artifactId>generator-springboot</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.cloudhopper.mc</groupId>
+                    <artifactId>provider-springboot</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.cloudhopper.mc</groupId>
+                    <artifactId>provider-http</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <!-- The user is expected to depend on spring-boot-starter-web -->
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                    <version>3.2.5</version> <!-- or match your global BOM -->
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>gcp</id>
             <properties>
                 <cloud.provider>gcp</cloud.provider>
                 <generator.id>gcp-terraform-java21</generator.id>

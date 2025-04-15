@@ -10,15 +10,6 @@
     <packaging>jar</packaging>
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
-        <cloudhopper.generator.id>aws-terraform-java21</cloudhopper.generator.id>
-        <cloudhopper.integration.strategy>apiClass</cloudhopper.integration.strategy>
-        <cloudhopper.provider.name>aws</cloudhopper.provider.name>
-        <cloudhopper.provider.version>latest</cloudhopper.provider.version>
-        <cloudhopper.deployment.tool>terraform</cloudhopper.deployment.tool>
-        <cloudhopper.deployment.version>1.7.4</cloudhopper.deployment.version>
-        <cloudhopper.java.version>21</cloudhopper.java.version>
-        <cloudhopper.native.support>graalvm</cloudhopper.native.support>
-        <cloudhopper.description>AWS Lambda Deployment via Terraform (Java 21 + GraalVM). Uses openapi definition file for API Gateway deployment and Lambda integration.</cloudhopper.description>
     </properties>    
     <build>
         <plugins>
