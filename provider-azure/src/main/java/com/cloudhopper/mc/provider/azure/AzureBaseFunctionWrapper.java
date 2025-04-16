@@ -33,13 +33,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Abstract base class used by generated Azure Functions to invoke vendor-neutral
- * {@link CloudRequestHandler} implementations.
+ * Abstract base class used by generated Azure Functions to invoke
+ * vendor-neutral {@link CloudRequestHandler} implementations.
  * <p>
- * This wrapper handles input parsing, context adaptation, and response formatting
- * for both HTTP-triggered and timer-triggered Azure Functions.
+ * This wrapper handles input parsing, context adaptation, and response
+ * formatting for both HTTP-triggered and timer-triggered Azure Functions.
  *
  * @param <I> the input type
  * @param <O> the output type
@@ -64,8 +66,8 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
     /**
      * Constructs a new Azure function wrapper.
      *
-     * @param handler    the Cloudhopper handler to delegate to
-     * @param inputType  the expected input type, used for deserialization
+     * @param handler the Cloudhopper handler to delegate to
+     * @param inputType the expected input type, used for deserialization
      */
     protected AzureBaseFunctionWrapper(CloudRequestHandler<I, O> handler, Type inputType) {
         this.handler = handler;
@@ -83,11 +85,56 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
     protected HttpResponseMessage handleRequest(HttpRequestMessage<String> request, ExecutionContext context) {
         try {
             I input = parseInput(request);
+
             O output = handler.handleRequest(input, new AzureContextAdapter(context));
             return createSuccessResponse(request, output);
         } catch (Exception e) {
             return createErrorResponse(request, e);
         }
+    }
+
+    /**
+     * Handles HTTP requests by parsing the input body, invoking the handler,
+     * and returning a JSON response.
+     *
+     * @param request the incoming HTTP request
+     * @param context the Azure execution context
+     * @param routePattern the pattern with path params, e.g /hello/{id}
+     * @return the HTTP response message
+     */
+    protected HttpResponseMessage handleRequest(HttpRequestMessage<String> request, ExecutionContext context, String routePattern) {
+        try {
+            I input = parseInput(request);
+
+            Map<String, String> pathParams = extractPathParams(request, routePattern);
+            Map<String, String> queryParams = request.getQueryParameters();
+
+            O output = handler.handleRequest(input, pathParams, queryParams, new AzureContextAdapter(context));
+            return createSuccessResponse(request, output);
+        } catch (Exception e) {
+            return createErrorResponse(request, e);
+        }
+    }
+
+    /**
+     * Extract the path params by using the routePattern as a template for extracting the ids and the coresponding values
+     * @param request
+     * @param routePattern
+     * @return a map of param id -> param value
+     */
+    protected Map<String, String> extractPathParams(HttpRequestMessage<?> request, String routePattern) {
+        String actualPath = request.getUri().getPath();
+        String[] routeParts = routePattern.split("/");
+        String[] pathParts = actualPath.split("/");
+
+        Map<String, String> pathParams = new HashMap<>();
+        for (int i = 0; i < Math.min(routeParts.length, pathParts.length); i++) {
+            if (routeParts[i].startsWith("{") && routeParts[i].endsWith("}")) {
+                String name = routeParts[i].substring(1, routeParts[i].length() - 1);
+                pathParams.put(name, pathParts[i]);
+            }
+        }
+        return pathParams;
     }
 
     /**
@@ -119,7 +166,7 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
      * Creates a successful JSON response.
      *
      * @param request the original HTTP request
-     * @param output  the function output
+     * @param output the function output
      * @return the success response
      * @throws JsonProcessingException if serialization fails
      */
@@ -135,7 +182,7 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
      * Creates a generic error response.
      *
      * @param request the original HTTP request
-     * @param e       the exception thrown
+     * @param e the exception thrown
      * @return the error response
      */
     private HttpResponseMessage createErrorResponse(HttpRequestMessage<String> request, Exception e) {
@@ -145,7 +192,8 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
     }
 
     /**
-     * Adapter that translates Azure's {@link ExecutionContext} to Cloudhopper's {@link HandlerContext}.
+     * Adapter that translates Azure's {@link ExecutionContext} to Cloudhopper's
+     * {@link HandlerContext}.
      */
     private static class AzureContextAdapter implements HandlerContext {
 
@@ -160,49 +208,65 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
             this.context = context;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getRequestId() {
             return context.getInvocationId();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getFunctionName() {
             return context.getFunctionName();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getFunctionVersion() {
             return System.getenv("FUNCTIONS_EXTENSION_VERSION");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getInvokedFunctionArn() {
             return null; // Not available in Azure
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getLogGroupName() {
             return null; // Not available in Azure
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getLogStreamName() {
             return null; // Not available in Azure
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public long getRemainingTimeInMillis() {
             return -1; // Not available in Azure
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int getMemoryLimitInMB() {
             return Integer.parseInt(System.getenv("WEBSITE_MEMORY_LIMIT_MB"));

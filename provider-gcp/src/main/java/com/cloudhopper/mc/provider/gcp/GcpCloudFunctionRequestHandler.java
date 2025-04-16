@@ -35,13 +35,15 @@ import com.google.gson.reflect.TypeToken;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Abstract base class for GCP HTTP-triggered functions that delegate execution to
- * a cloud-neutral {@link CloudRequestHandler}.
+ * Abstract base class for GCP HTTP-triggered functions that delegate execution
+ * to a cloud-neutral {@link CloudRequestHandler}.
  * <p>
- * This wrapper handles JSON input parsing, output serialization, and context adaptation
- * for Google Cloud Functions.
+ * This wrapper handles JSON input parsing, output serialization, and context
+ * adaptation for Google Cloud Functions.
  *
  * @param <I> the input type
  * @param <O> the output type
@@ -55,7 +57,7 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
     /**
      * Constructs a new request handler for GCP Cloud Functions.
      *
-     * @param handler   the Cloudhopper handler that contains the actual logic
+     * @param handler the Cloudhopper handler that contains the actual logic
      * @param typeToken the input type token used for generic deserialization
      */
     protected GcpCloudFunctionRequestHandler(CloudRequestHandler<I, O> handler, TypeToken<I> typeToken) {
@@ -64,17 +66,28 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
     }
 
     /**
-     * Entry point for the HTTP function.
-     * Parses the input, delegates to the handler, and writes the JSON output.
+     * Entry point for the HTTP function. Parses the input, delegates to the
+     * handler, and writes the JSON output.
      *
-     * @param request  the incoming HTTP request
+     * @param request the incoming HTTP request
      * @param response the HTTP response to be written
      * @throws IOException if parsing or writing fails
      */
     @Override
     public void service(HttpRequest request, HttpResponse response) throws IOException {
         I input = parseInput(request);
-        O output = handler.handleRequest(input, new GcpContextAdapter(request));
+        Map<String, String> queryParams = new HashMap<>();
+        request.getQueryParameters().forEach((key, valueList) -> {
+            if (valueList != null && !valueList.isEmpty()) {
+                queryParams.put(key, valueList.get(0));
+            }
+        });
+        Map<String, String> pathParams = Collections.emptyMap();
+        String routePattern = getRoutePattern();
+        if (routePattern != null && !routePattern.isBlank()) {
+            pathParams = extractPathParams(request.getPath(), routePattern);
+        }
+        O output = handler.handleRequest(input, pathParams, queryParams, new GcpContextAdapter(request));
         writeOutput(response, output);
     }
 
@@ -94,7 +107,7 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
      * Writes the function output as a JSON response.
      *
      * @param response the HTTP response
-     * @param output   the output object to serialize
+     * @param output the output object to serialize
      * @throws IOException if writing fails
      */
     private void writeOutput(HttpResponse response, O output) throws IOException {
@@ -103,10 +116,34 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
         writer.write(gson.toJson(output));
     }
 
+    private Map<String, String> extractPathParams(String actualPath, String routePattern) {
+        String[] actualParts = actualPath.split("/");
+        String[] routeParts = routePattern.split("/");
+
+        Map<String, String> pathParams = new HashMap<>();
+        for (int i = 0; i < Math.min(routeParts.length, actualParts.length); i++) {
+            if (routeParts[i].startsWith("{") && routeParts[i].endsWith("}")) {
+                String name = routeParts[i].substring(1, routeParts[i].length() - 1);
+                pathParams.put(name, actualParts[i]);
+            }
+        }
+        return pathParams;
+    }
+
     /**
-     * Adapter that maps the GCP {@link HttpRequest} to Cloudhopper’s {@link HandlerContext}.
+     * Should return the route pattern (e.g., "/hello/{id}").This is used to
+     * extract path parameters from the incoming URL.
+     *
+     * @return the route pattern
+     */
+    protected abstract String getRoutePattern();
+
+    /**
+     * Adapter that maps the GCP {@link HttpRequest} to Cloudhopper’s
+     * {@link HandlerContext}.
      */
     private static class GcpContextAdapter implements HandlerContext {
+
         private final HttpRequest request;
 
         /**
@@ -118,49 +155,65 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
             this.request = request;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getRequestId() {
             return request.getHeaders().get("X-Cloud-Trace-Context").get(0);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getFunctionName() {
             return System.getenv("K_SERVICE");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getFunctionVersion() {
             return System.getenv("K_REVISION");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getInvokedFunctionArn() {
             return null; // Not available on GCP
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getLogGroupName() {
             return null; // Not available on GCP
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getLogStreamName() {
             return null; // Not available on GCP
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public long getRemainingTimeInMillis() {
             return -1; // Not provided by GCP
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int getMemoryLimitInMB() {
             return Integer.parseInt(System.getenv("FUNCTION_MEMORY_MB"));

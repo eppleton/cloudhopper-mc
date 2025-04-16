@@ -24,6 +24,6 @@ public class Azure${handlerInfo.handlerClassName}ApiFunction extends AzureBaseFu
                         ) 
             HttpRequestMessage<String> request,
             final ExecutionContext context) {
-        return handleRequest(request, context);
+        return handleRequest(request, context, "${path}");
     }
 }
