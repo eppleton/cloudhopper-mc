@@ -16,5 +16,9 @@ public class Gcp${handlerInfo.handlerClassName}Function extends GcpCloudFunction
         super(new ${handlerInfo.handlerClassName}(), new TypeToken<${handlerInfo.inputType}>() {});
     }
 
+    @Override
+    protected String getRoutePattern() {
+        return null;
+    }
  
 }

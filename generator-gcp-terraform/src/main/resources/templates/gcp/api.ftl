@@ -1,7 +1,10 @@
 locals {
   openapi_paths_fragments = [
   <#list lambdaMap?keys as key>
-    file("${"$"}{path.module}/api-routes/${lambdaMap[key]}_api.json")<#if key_has_next>,</#if>
+    templatefile("${"$"}{path.module}/api-routes/${lambdaMap[key]}_api.json", {
+      region  = var.gcp_region,
+      project = var.gcp_project_id
+    })<#if key_has_next>,</#if>
   </#list>
   ]
 

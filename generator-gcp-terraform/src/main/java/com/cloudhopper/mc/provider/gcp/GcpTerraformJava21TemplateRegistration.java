@@ -92,20 +92,28 @@ import com.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
                     outputSubDirectory = "",
                     javaFile = false
             ),
-//            @Template(
-//                    phase = GenerationPhase.API,
-//                    templateName = "apiIntegrationClass.ftl",
-//                    description = "Generates an APIFunction",
-//                    outputFileExtension = "java",
-//                    outputSubDirectory = "",
-//                    javaFile = true
-//            ),
+            @Template(
+                    phase = GenerationPhase.API,
+                    templateName = "apiIntegrationClass.ftl",
+                    description = "Generates an APIFunction",
+                    outputFileExtension = "java",
+                    outputSubDirectory = "",
+                    javaFile = true
+            ),
             @Template(
                     phase = GenerationPhase.API,
                     templateName = "apiIntegration.ftl",
                     description = "Generates a openapi 2.0 snippet",
                     outputFileExtension = "json",
                     outputSubDirectory = "api-routes/",
+                    javaFile = false
+            ),
+            @Template(
+                    phase = GenerationPhase.API,
+                    templateName = "apiRegistration.ftl",
+                    description = "Generates a terraform function registration",
+                    outputFileExtension = "tf",
+                    outputSubDirectory = "",
                     javaFile = false
             ),
             @Template(

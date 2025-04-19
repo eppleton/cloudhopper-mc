@@ -74,7 +74,7 @@ public class TemplateRenderer {
 
     public void renderTemplate(TemplateDescriptor templateDescriptor, String outputDirName, Map<String, Object> dataModel, String fileName) throws ConfigGenerationException {
         try {
-  
+
             Template template = freemarkerConfig.getTemplate(templateDescriptor.getTemplateName());
 
             StringWriter writer = new StringWriter();
@@ -93,7 +93,7 @@ public class TemplateRenderer {
                 fileWriter.write(output);
             }
 
-            System.out.println("Generated file: " + outputPath.toString());
+            System.err.println("Generated file: " + outputPath.toString());
 
         } catch (IOException | TemplateException e) {
             throw new ConfigGenerationException("Failed to render template: " + templateDescriptor.getTemplateName(), e);
@@ -108,6 +108,8 @@ public class TemplateRenderer {
             String fileContent = writer.toString();
             final String extractedClassName = extractClassName(fileContent);
             handlerInfo.setWrapperClassName(extractedClassName);
+            System.err.println("Generate file extractedClassName: " + extractedClassName);
+
             createClassFile(processingEnv, handlerInfo.getHandlerPackage(), extractedClassName, fileContent);
         } catch (IOException | TemplateException e) {
             e.printStackTrace();

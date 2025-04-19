@@ -125,7 +125,7 @@
                     </execution>
                 </executions>
             </plugin>
-          <!--  <plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
@@ -189,7 +189,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
@@ -272,6 +272,9 @@
         </profile>
         <profile>
             <id>gcp</id>
+            <activation>      
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <cloud.provider>gcp</cloud.provider>
                 <generator.id>gcp-terraform-java21</generator.id>
@@ -313,9 +316,7 @@
         </profile>
         <profile>
             <id>aws</id>
-            <activation>      
-                <activeByDefault>true</activeByDefault>
-            </activation>
+
             <properties>
                 <cloud.provider>aws</cloud.provider>
                 <output.dir>target/generated-sources/aws</output.dir>

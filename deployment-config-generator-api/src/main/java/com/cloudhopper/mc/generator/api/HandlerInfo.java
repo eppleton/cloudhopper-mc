@@ -180,10 +180,12 @@ public class HandlerInfo {
      */
     public void setWrapperClassName(String wrapperFullyQualifiedName) {
         this.wrapperFullyQualifiedName = handlerPackage + "." + wrapperFullyQualifiedName;
+        System.err.println("setWrapperClassName "+this.wrapperFullyQualifiedName);
     }
 
     /** @return the fully qualified wrapper class name, if set */
     public String getWrapperFullyQualifiedName() {
+        System.err.println("getWrapperFullyQualifiedName "+wrapperFullyQualifiedName);
         return wrapperFullyQualifiedName;
     }
 
