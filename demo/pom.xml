@@ -125,71 +125,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>terraform-init</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${terraform.executable}</executable>
-                            <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
-                            <arguments>
-                                <argument>init</argument>
-                            </arguments>
-                            <environmentVariables>
-                                <AWS_PROFILE>dukehoff</AWS_PROFILE>
-                                <PATH>${path.extras}:${env.PATH}</PATH>
-                            </environmentVariables>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>terraform-plan</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${terraform.executable}</executable>
-                            <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
-                            <arguments>
-                                <argument>plan</argument>
-                            </arguments>
-                            <environmentVariables>
-                                <AWS_PROFILE>dukehoff</AWS_PROFILE>
-                                <PATH>${path.extras}:${env.PATH}</PATH>
-                            </environmentVariables>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>terraform-apply</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${terraform.executable}</executable>
-                            <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
-                            <arguments>
-                                <argument>apply</argument>
-                                <argument>-auto-approve</argument>
-                             <argument>-var</argument>
-                                <argument>gcp_project_id=cloudhopper</argument>
-
-                            </arguments>
-                            <environmentVariables>
-                                <AWS_PROFILE>dukehoff</AWS_PROFILE>
-                                <PATH>${path.extras}:${env.PATH}</PATH>
-                            </environmentVariables>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+           
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
@@ -214,8 +150,85 @@
     </build>
     <profiles>
         <profile>
-            <id>springboot</id>
+            <id>deploy</id>
+            <activation>
+                <activeByDefault>false</activeByDefault> 
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>terraform-init</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${terraform.executable}</executable>
+                                    <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
+                                    <arguments>
+                                        <argument>init</argument>
+                                    </arguments>
+                                    <environmentVariables>
+                                        <AWS_PROFILE>dukehoff</AWS_PROFILE>
+                                        <PATH>${path.extras}:${env.PATH}</PATH>
+                                    </environmentVariables>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>terraform-plan</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${terraform.executable}</executable>
+                                    <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
+                                    <arguments>
+                                        <argument>plan</argument>
+                                    </arguments>
+                                    <environmentVariables>
+                                        <AWS_PROFILE>dukehoff</AWS_PROFILE>
+                                        <PATH>${path.extras}:${env.PATH}</PATH>
+                                    </environmentVariables>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>terraform-apply</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${terraform.executable}</executable>
+                                    <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
+                                    <arguments>
+                                        <argument>apply</argument>
+                                        <argument>-auto-approve</argument>
+                                        <argument>-var</argument>
+                                        <argument>gcp_project_id=cloudhopper</argument>
 
+                                    </arguments>
+                                    <environmentVariables>
+                                        <AWS_PROFILE>dukehoff</AWS_PROFILE>
+                                        <PATH>${path.extras}:${env.PATH}</PATH>
+                                    </environmentVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>springboot</id>
+            <activation>
+                <activeByDefault>false</activeByDefault> 
+            </activation>
             <properties>
                 <cloud.provider>springboot</cloud.provider>
                 <generator.id>springboot-http</generator.id>
@@ -273,7 +286,7 @@
         <profile>
             <id>gcp</id>
             <activation>      
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <cloud.provider>gcp</cloud.provider>
@@ -316,7 +329,9 @@
         </profile>
         <profile>
             <id>aws</id>
-
+            <activation>
+                <activeByDefault>false</activeByDefault> 
+            </activation>
             <properties>
                 <cloud.provider>aws</cloud.provider>
                 <output.dir>target/generated-sources/aws</output.dir>
@@ -347,6 +362,9 @@
         </profile>
         <profile>
             <id>azure</id>
+            <activation>
+                <activeByDefault>false</activeByDefault> 
+            </activation>
             <properties>
                 <cloud.provider>azure</cloud.provider>
                 <generator.id>azure-terraform-java21</generator.id>
