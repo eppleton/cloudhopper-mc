@@ -113,5 +113,5 @@ public abstract class AwsLambdaRequestHandler<I, O> implements RequestHandler<I,
     // ...
 }
 ```
-
+ 
 These base classes form the backbone of Cloudhopper’s AWS Lambda support, enabling clean separation of infrastructure, runtime integration, and platform-neutral business logic.
