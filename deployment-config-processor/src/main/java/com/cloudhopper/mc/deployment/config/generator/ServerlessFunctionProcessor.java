@@ -62,11 +62,12 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        if (deploymentGenerator == null) return true;
         AnnotationFeatureValidator featureValidator = new AnnotationFeatureValidator(processingEnv, generatorFeatureInfo);
         System.err.println("Processing com.cloudhopper.mc.Function");
         if (roundEnv.processingOver()) {
             try {
-                deploymentGenerator.finalizeConfig(generatorID, configOutputDir);
+                deploymentGenerator.finalizeConfig(cloudProvider, configOutputDir);
             } catch (ConfigGenerationException e) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
@@ -114,14 +115,14 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                     );
 
                     try {
-                        deploymentGenerator.generateServerlessFunctionConfiguration(generatorID, configOutputDir, handlerInfo, processingEnv);
+                        deploymentGenerator.generateServerlessFunctionConfiguration(cloudProvider, configOutputDir, handlerInfo, processingEnv);
 
                         if (apiOperation != null) {
-                            deploymentGenerator.generateApiResourceAndIntegration(generatorID, configOutputDir, handlerInfo, apiOperation, processingEnv);
+                            deploymentGenerator.generateApiResourceAndIntegration(cloudProvider, configOutputDir, handlerInfo, apiOperation, processingEnv);
                         }
 
                         if (schedule != null) {
-                            deploymentGenerator.generateScheduledTrigger(generatorID, configOutputDir, handlerInfo, schedule, processingEnv);
+                            deploymentGenerator.generateScheduledTrigger(cloudProvider, configOutputDir, handlerInfo, schedule, processingEnv);
                         }
                         featureValidator.validate(methodElement);
                     } catch (ConfigGenerationException e) {

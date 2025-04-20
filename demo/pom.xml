@@ -227,7 +227,7 @@
         <profile>
             <id>springboot</id>
             <activation>
-                <activeByDefault>false</activeByDefault> 
+                <activeByDefault>true</activeByDefault> 
             </activation>
             <properties>
                 <cloud.provider>springboot</cloud.provider>
