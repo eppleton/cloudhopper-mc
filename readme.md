@@ -39,6 +39,11 @@ Many serverless frameworks and cloud ecosystems still impose hidden dependencies
 3. **Configuration**
    - Specify which templates or deployment targets to use in your build plugin configuration.
 
+## Licensing
+
+This project is licensed under the GNU General Public License, version 3 (GPLv3),
+with the Classpath Exception allowing linking this library with independent modules
+to produce an executable, without causing the resulting executable to be covered by the GPL.
 
 
 
