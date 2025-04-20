@@ -109,15 +109,16 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
         }
         // If no registered generator is found, try the GenericDeploymentConfigGenerator
         if (deploymentGenerator == null) {
-            //System.err.println("No custom generator found for " + cloudProvider);
-            String generatorId = processingEnv.getOptions().get("cloudprovider");
+            System.err.println("No custom generator found for " + cloudProvider);
             GenericDeploymentConfigGenerator genericDeploymentConfigGenerator = new GenericDeploymentConfigGenerator(processingEnv);
-            if (generatorId !=null && genericDeploymentConfigGenerator.supportsGenerator(generatorId)) {
-                deploymentGenerator = genericDeploymentConfigGenerator;
-            } else {
-                System.err.println("GenericDeploymentConfigGenerator doesn't support " + generatorId);
-                processingEnv.getMessager().printWarning("No generator found for generatorId " + generatorId);
-            }
+//            if (genericDeploymentConfigGenerator.supportsGenerator(cloudProvider)) {
+//                System.err.println("GenericDeploymentConfigGenerator supports " + cloudProvider);
+            deploymentGenerator = genericDeploymentConfigGenerator;
+//            System.err.println("Using GenericDeploymentConfigGenerator");
+//            } else {
+//                System.err.println("GenericDeploymentConfigGenerator doesn't support " + cloudProvider);
+//                processingEnv.getMessager().printError("No generator found for provider " + cloudProvider);
+//            }
         }
 
         return deploymentGenerator;
@@ -158,22 +159,22 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
     }
 
     private GeneratorFeatureInfo loadFeaturesFor(String generatorId) {
-
+        
         ObjectMapper objectMapper = new ObjectMapper();
 
         String filename = "META-INF/cloudhopper/" + generatorId + "-features.json";
-        System.err.println("Load Features for " + generatorId);
+        System.err.println("Load Features for "+generatorId);
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(filename)) {
             if (in == null) {
-                System.err.println("Could not find " + filename);
+               System.err.println("Could not find "+filename);
 
                 return null;
             }
-
+            
             return objectMapper.readValue(in, GeneratorFeatureInfo.class);
         } catch (IOException e) {
             // Logging oder fallback
-            System.err.println("Could not read " + filename);
+            System.err.println("Could not read "+filename);
             e.printStackTrace();
             return null;
         }
