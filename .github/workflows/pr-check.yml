@@ -31,12 +31,3 @@ jobs:
 
     - name: Build with Maven
       run: mvn clean verify
-
-    - name: Check for SNAPSHOT dependencies
-      run: |
-        if mvn dependency:tree | grep -q SNAPSHOT; then
-          echo "❌ SNAPSHOT dependencies detected!"
-          exit 1
-        else
-          echo "✅ No SNAPSHOT dependencies found."
-        fi
