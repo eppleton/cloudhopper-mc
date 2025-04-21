@@ -6,7 +6,8 @@ They are used by generated handler classes in the `generator-aws-terraform` modu
 
 - Plain Lambda invocations
 - Scheduled executions (e.g., EventBridge)
-- API Gateway HTTP APIs (v2), including both proxy and typed events
+- API Gateway HTTP APIs (v2), both proxy and typed events
+- Automatic runtime dispatch via a unified router
 
 ---
 
@@ -17,6 +18,7 @@ These base classes enable Cloudhopper functions to:
 - Stay **platform-neutral** in their logic
 - Be executed in **multiple AWS contexts**
 - Use a consistent interface for path/query parameters and runtime metadata
+- Simplify Lambda handler generation and reuse
 
 ---
 
@@ -24,10 +26,10 @@ These base classes enable Cloudhopper functions to:
 
 | Class | Trigger Type | Input | Output | Used for |
 |-------|--------------|-------|--------|----------|
-| `AwsLambdaRequestHandler<I, O>` | Lambda direct or scheduled | POJO or Map | POJO | `Plain`, `PlainSchedule` |
+| `AwsLambdaRequestHandler<I, O>` | Lambda direct or scheduled | `I` (or `null`) | POJO | `Plain` |
 | `ApiGatewayV2ProxyRequestHandler<I, O>` | API Gateway v2 (proxy) | `APIGatewayV2ProxyRequestEvent` | `APIGatewayV2ProxyResponseEvent` | `ApiProxyV2` |
 | `ApiGatewayV2HttpEventHandler<I, O>` | API Gateway v2 (typed) | `APIGatewayV2HTTPEvent` | `APIGatewayV2HTTPResponse` | `ApiHttpV2` |
-| `ApiGatewayEventRouter<I, O>` | Dynamic | `Object` | `Object` | `Auto` router that delegates to the correct handler |
+| `ApiGatewayEventRouter<I, O>` | Dynamic | `Object` | `Object` | `Auto` router that delegates to the appropriate handler |
 
 ---
 
@@ -40,12 +42,6 @@ public class AwsLambdaMyFunctionHandler {
 
     public static class Plain extends AwsLambdaRequestHandler<InputType, OutputType> {
         public Plain() {
-            super(new MyFunction());
-        }
-    }
-
-    public static class PlainSchedule extends AwsLambdaRequestHandler<Map<String, Object>, OutputType> {
-        public PlainSchedule() {
             super(new MyFunction());
         }
     }
@@ -64,21 +60,32 @@ public class AwsLambdaMyFunctionHandler {
 
     public static class Auto extends ApiGatewayEventRouter<InputType, OutputType> {
         public Auto() {
-            super(new Plain(), new PlainSchedule(), new ApiProxyV2(), new ApiHttpV2());
+            super(new Plain(), new ApiProxyV2(), new ApiHttpV2());
         }
     }
 }
 ```
 
-In AWS deployments, the `Auto` handler is typically registered to dynamically route events to the appropriate handler class.
+In Terraform-based deployments, the `Auto` class is typically used as the Lambda entry point:
+
+```hcl
+handler = "com.example.AwsLambdaMyFunctionHandler$Auto::handleRequest"
+```
+
+---
+
+## 🧭 Scheduled Events
+
+Scheduled EventBridge or CloudWatch invocations will result in `input == null`. These are automatically routed to the `Plain` handler.
+
+This behavior is consistent across cloud providers and allows developers to treat scheduled calls as "fire-and-forget" jobs.
 
 ---
 
 ## 📦 Packaging
 
-All classes in this module are runtime dependencies and **must** be included in the shaded JAR used for deployment.
-
-They are referenced by the generated handlers and are required for correct dispatch and integration with the AWS Lambda platform.
+All base classes in this module must be available at runtime (e.g., in the shaded JAR).  
+They are required for dispatch, input parsing, and context adaptation.
 
 ---
 
@@ -87,9 +94,8 @@ They are referenced by the generated handlers and are required for correct dispa
 If you're building your own AWS generator module (like `generator-aws-terraform`), you should:
 
 - Use the correct base class for each handler type
-- Route schedule and direct invocations to `AwsLambdaRequestHandler`
-- Route HTTP API events to one of the two API Gateway handler base classes
-- Optionally register `Auto` as the main handler to allow flexible dispatch
+- Register `Auto` as the Lambda entry point to allow unified routing
+- Pass `null` as input for scheduled calls
 
 ---
 
@@ -107,5 +113,4 @@ public abstract class AwsLambdaRequestHandler<I, O> implements RequestHandler<I,
     // ...
 }
 ```
-
-These base classes form the backbone of Cloudhopper’s AWS Lambda support, enabling a clean separation of infrastructure, runtime integration, and application logic.
+These base classes form the backbone of Cloudhopper’s AWS Lambda support, enabling clean separation of infrastructure, runtime integration, and platform-neutral business logic.
