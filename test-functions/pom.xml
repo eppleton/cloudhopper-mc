@@ -6,23 +6,17 @@
         <artifactId>cloudhopper-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>provider-azure</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>test-functions</artifactId>
+    <packaging>pom</packaging>
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>com.microsoft.azure.functions</groupId>
-            <artifactId>azure-functions-java-library</artifactId>
-            <version>3.1.0</version>
-        </dependency>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
             <artifactId>deployment-config-api</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
-
     </dependencies>
 </project>

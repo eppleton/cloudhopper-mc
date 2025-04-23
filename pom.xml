@@ -67,6 +67,11 @@
         <module>generator-springboot</module>
         <module>provider-http</module>
         <module>provider-springboot</module>
+        <module>test-support</module>
+        <module>test-functions</module>
+        <module>system-tests-gcp</module>
+        <module>system-tests-azure</module>
+        <module>system-tests-springboot</module>
     </modules>
     <build>
         <pluginManagement>
