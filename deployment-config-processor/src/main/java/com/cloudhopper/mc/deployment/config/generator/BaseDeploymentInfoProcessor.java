@@ -40,6 +40,7 @@ package com.cloudhopper.mc.deployment.config.generator;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+import com.cloudhopper.mc.generator.api.GeneratorFeatureInfo;
 import com.cloudhopper.mc.generator.generic.GenericDeploymentConfigGenerator;
 import com.cloudhopper.mc.generator.api.spi.DeploymentConfigGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -96,7 +97,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
             messager.printMessage(Diagnostic.Kind.WARNING, "One or more required compiler arguments (artifactId, classifier, version) are using default values. Please ensure these are provided.");
         }
         deploymentGenerator = getDeploymentGenerator();
-        generatorFeatureInfo = loadFeaturesFor(deploymentGenerator.getGeneratorID());
+        generatorFeatureInfo = GeneratorFeatureInfo.Loader.loadFeaturesFor(deploymentGenerator.getGeneratorID());
     }
 
     protected DeploymentConfigGenerator getDeploymentGenerator() {
@@ -158,26 +159,6 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
         return qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
     }
 
-    private GeneratorFeatureInfo loadFeaturesFor(String generatorId) {
-        
-        ObjectMapper objectMapper = new ObjectMapper();
 
-        String filename = "META-INF/cloudhopper/" + generatorId + "-features.json";
-        System.err.println("Load Features for "+generatorId);
-        try (InputStream in = getClass().getClassLoader().getResourceAsStream(filename)) {
-            if (in == null) {
-               System.err.println("Could not find "+filename);
-
-                return null;
-            }
-            
-            return objectMapper.readValue(in, GeneratorFeatureInfo.class);
-        } catch (IOException e) {
-            // Logging oder fallback
-            System.err.println("Could not read "+filename);
-            e.printStackTrace();
-            return null;
-        }
-    }
 
 }

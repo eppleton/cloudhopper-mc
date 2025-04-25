@@ -26,6 +26,7 @@ package com.cloudhopper.mc.deployment.config.generator;
  */
 
 
+import com.cloudhopper.mc.generator.api.GeneratorFeatureInfo;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -46,9 +47,9 @@ public class AnnotationFeatureValidator {
         );
 
         // Build map: annotation FQN → allowed attributes
-        this.supportedFeatures = generatorFeatureInfo.features.stream().collect(Collectors.toMap(
-                f -> f.supportedAnnotation,
-                f -> new HashSet<>(f.supportedAttributes)
+        this.supportedFeatures = generatorFeatureInfo.getFeatures().stream().collect(Collectors.toMap(
+                f -> f.getSupportedAnnotation(),
+                f -> new HashSet<>(f.getSupportedAttributes())
         ));
     }
 

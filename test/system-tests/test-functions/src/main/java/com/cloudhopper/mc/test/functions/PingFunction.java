@@ -1,4 +1,4 @@
-package com.cloudhopper.mc.demo;
+package com.cloudhopper.mc.test.functions;
 
 /*-
  * #%L
@@ -7,7 +7,7 @@ package com.cloudhopper.mc.demo;
  * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
  * exception as provided in the README.md file that accompanies this code.
  * %%
- * Copyright (C) 2024 - 2025 Eppleton IT Consulting
+ * Copyright (C) 2024 Eppleton IT Consulting
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -24,29 +24,24 @@ package com.cloudhopper.mc.demo;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 import com.cloudhopper.mc.annotations.ApiOperation;
 import com.cloudhopper.mc.annotations.Function;
 import com.cloudhopper.mc.runtime.CloudRequestHandler;
 import com.cloudhopper.mc.runtime.HandlerContext;
 import java.util.Map;
 
-public class ApiFunction implements CloudRequestHandler<Integer, String> {
-
+public class PingFunction implements CloudRequestHandler<Void, String>{
     @ApiOperation(
-                    description = "dummy description",
-                    operationId = "helloworld2",
-                    method = "POST",
-                    path = "/hello2/{id}",
-                    summary = "bla" //,
-//                    parameters = {
-//                        @Parameter(in = ParameterIn.PATH, name = "version", description = "APi Version", example = "2.0"),
-//            }
+                    description = "Ping",
+                    operationId = "ping",
+                    method = "GET",
+                    path = "/ping",
+                    summary = "bla" 
             )
-    @Function(name = "hello_world_2")
+    @Function(name = "ping")
     @Override
-    public String handleRequest(Integer input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        return "Hallo "+input;
+    public String handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
+        return "pong";
     }
 
 }
