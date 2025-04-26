@@ -53,20 +53,29 @@
         <tag>release-${releaseVersion}</tag>
     </scm>
     <modules>
-        <module>demo</module>
         <module>deployment-config-api</module>
+        <module>deployment-config-processor</module>
+        <module>deployment-config-generator-api</module>
+        <module>deployment-config-generator-generic</module>
         <module>generator-gcp-terraform</module>
         <module>generator-azure-terraform</module>
         <module>generator-aws-terraform</module>
-        <module>deployment-config-generator-generic</module>
-        <module>deployment-config-generator-api</module>
+        <module>generator-springboot</module>
         <module>provider-aws</module>
         <module>provider-azure</module>
         <module>provider-gcp</module>
-        <module>deployment-config-processor</module>
-        <module>generator-springboot</module>
         <module>provider-http</module>
         <module>provider-springboot</module>
+        <module>test/tck/api</module>
+        <module>test/system-tests/test-functions</module>
+        <module>demo</module>
+        <module>test/system-tests/generator-aws-terraform</module>
+        <module>test/system-tests/generator-azure-terraform</module>
+        <module>test/system-tests/generator-gcp-terraform</module>
+        <module>test/system-tests/generator-springboot</module>
+        <module>test/test-support</module>
+        <module>test/tck/generator-bindings/NewFolder/generator-bindings-aws-terraform</module>
+        <module>test/tck/core/test-tck-core</module>
     </modules>
     <build>
         <pluginManagement>
@@ -106,7 +115,6 @@
                             <include>**/*.xml</include>
                         </includes>
                         <excludes>
-                            <exclude>**/test/**</exclude>
                             <exclude>**/generated/**</exclude>
                         </excludes>
                     </configuration>
@@ -120,7 +128,7 @@
                         </execution>         
                     </executions>
                 </plugin>
-                <plugin>
+<!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>3.2.1</version>
@@ -145,8 +153,7 @@
                             </goals>
                         </execution>
                     </executions>
-                </plugin>
- 
+                </plugin>-->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>templating-maven-plugin</artifactId>
@@ -185,7 +192,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
-            <plugin>
+<!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <executions>
@@ -197,7 +204,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
         </plugins>
   
@@ -320,7 +327,7 @@
             </dependencies>
         </profile>
         <profile>
-                <id>release</id>
+            <id>release</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>

@@ -24,6 +24,7 @@ package com.cloudhopper.mc.deployment.config.generator;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+import com.cloudhopper.mc.generator.api.GeneratorFeatureInfo;
 import com.cloudhopper.mc.generator.api.annotations.GeneratorFeature;
 import com.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,22 +67,22 @@ public class GeneratorFeatureProcessor extends AbstractProcessor {
             }
 
             GeneratorFeatureInfo info = new GeneratorFeatureInfo();
-            info.generatorId = annotation.generatorId();
+            info.setGeneratorId( annotation.generatorId())  ;
 
             for (GeneratorFeature feature : annotation.supportedFeatures()) {
                 GeneratorFeatureInfo.FeatureEntry entry = new GeneratorFeatureInfo.FeatureEntry();
 
                 try {
-                    entry.supportedAnnotation = feature.supportedAnnotation().getCanonicalName();
+                    entry.setSupportedAnnotation(feature.supportedAnnotation().getCanonicalName());
                 } catch (MirroredTypeException e) {
-                    entry.supportedAnnotation = e.getTypeMirror().toString();
+                    entry.setSupportedAnnotation(e.getTypeMirror().toString());
                 }
 
-                entry.supportedAttributes = List.of(feature.supportedAttributes());
-                info.features.add(entry);
+                entry.setSupportedAttributes( List.of(feature.supportedAttributes()));
+                info.getFeatures().add(entry);
             }
 
-            writeJsonFile(info); // <--- direkt schreiben
+            writeJsonFile(info); 
         }
 
         return false;
@@ -91,7 +92,7 @@ public class GeneratorFeatureProcessor extends AbstractProcessor {
         ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
         try {
-            String filename = "META-INF/cloudhopper/" + info.generatorId + "-features.json";
+            String filename = "META-INF/cloudhopper/" + info.getGeneratorId() + "-features.json";
 
             FileObject resource = processingEnv.getFiler().createResource(
                     StandardLocation.CLASS_OUTPUT,
@@ -106,7 +107,7 @@ public class GeneratorFeatureProcessor extends AbstractProcessor {
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(
                     Diagnostic.Kind.ERROR,
-                    "Failed to write generator features for " + info.generatorId + ": " + e.getMessage()
+                    "Failed to write generator features for " + info.getGeneratorId() + ": " + e.getMessage()
             );
         }
     }

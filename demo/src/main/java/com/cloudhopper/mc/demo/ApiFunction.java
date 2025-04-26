@@ -7,7 +7,7 @@ package com.cloudhopper.mc.demo;
  * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
  * exception as provided in the README.md file that accompanies this code.
  * %%
- * Copyright (C) 2024 Eppleton IT Consulting
+ * Copyright (C) 2024 - 2025 Eppleton IT Consulting
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -24,6 +24,7 @@ package com.cloudhopper.mc.demo;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+
 import com.cloudhopper.mc.annotations.ApiOperation;
 import com.cloudhopper.mc.annotations.Function;
 import com.cloudhopper.mc.runtime.CloudRequestHandler;
