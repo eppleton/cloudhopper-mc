@@ -1,4 +1,4 @@
-package com.cloudhopper.mc.test.systemt.tests.generator.aws.terraform;
+package com.cloudhopper.mc.test.system.tests.generator.aws.terraform;
 
 /*-
  * #%L

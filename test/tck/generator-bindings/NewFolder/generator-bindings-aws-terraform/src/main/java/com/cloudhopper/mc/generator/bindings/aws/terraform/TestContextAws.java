@@ -24,7 +24,6 @@ package com.cloudhopper.mc.generator.bindings.aws.terraform;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 import com.cloudhopper.mc.test.support.TerraformDeployer;
 import com.cloudhopper.mc.test.support.TerraformUtil;
 import com.cloudhopper.mc.test.support.TestContext;
@@ -35,11 +34,13 @@ import java.util.List;
 
 public class TestContextAws implements TestContext {
 
-    private final Path terraformDir = Path.of("target/deployment/aws");
+    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "aws");
 
     @Override
     public void deployTestFunctions() {
         try {
+            System.out.println("🌍 CWD (user.dir): " + System.getProperty("user.dir"));
+            System.out.println("📁 Terraform dir: " + terraformDir.toAbsolutePath());
             TerraformDeployer deployer = new TerraformDeployer(terraformDir);
             deployer.init();
             deployer.apply();

@@ -42,8 +42,25 @@
         </dependency>
     </dependencies>
     <build>
-        <sourceDirectory>../test-functions/src/main/java</sourceDirectory> <!-- HERE -->
+        <sourceDirectory>../test-functions/src/main/java</sourceDirectory> 
+        <testSourceDirectory>src/test/java</testSourceDirectory>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.cloudhopper.mc.test.system.tests.generator.aws.terraform.TckLauncher</mainClass>
+                    <classpathScope>test</classpathScope>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -1,22 +1,13 @@
-# Start from Maven with Java 21
 FROM maven:3.9.6-eclipse-temurin-21
 
 LABEL maintainer="toni.epple@cloud-hopper.com"
 LABEL platform="aws"
 
-# Install Terraform
 RUN apt-get update && apt-get install -y wget unzip gnupg software-properties-common && \
     wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" > /etc/apt/sources.list.d/hashicorp.list && \
     apt-get update && apt-get install -y terraform
 
-# Install AWS CLI
 RUN apt-get install -y awscli
 
 WORKDIR /workspace
-
-# Default command: run the TCK inside the built module
-CMD mvn clean test-compile exec:java \
-    -Dexec.mainClass=cloudhopper.mc.test.system.tests.generator.aws.terraform.TckLauncher \
-    -pl system-tests-generator-aws-terraform \
-    -Dexec.classpathScope=test

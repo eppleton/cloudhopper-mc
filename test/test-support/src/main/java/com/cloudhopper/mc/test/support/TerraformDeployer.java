@@ -24,7 +24,6 @@ package com.cloudhopper.mc.test.support;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -41,6 +40,11 @@ public class TerraformDeployer {
     }
 
     public void init() throws IOException, InterruptedException {
+        System.out.println("🚧 Running terraform in: " + workingDir.toAbsolutePath());
+
+        if (!workingDir.toFile().exists()) {
+            throw new IllegalStateException("❌ Terraform directory not found: " + workingDir.toAbsolutePath());
+        }
         run("init");
     }
 
