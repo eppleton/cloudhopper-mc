@@ -15,3 +15,8 @@ resource "aws_lambda_function" "${handlerInfo.functionId}" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "${handlerInfo.functionId}_log_group" {
+  name              = "/aws/lambda/${handlerInfo.functionId}"
+  retention_in_days = 7
+}
+

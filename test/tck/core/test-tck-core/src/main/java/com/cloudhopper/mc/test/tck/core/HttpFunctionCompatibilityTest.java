@@ -24,19 +24,16 @@ package com.cloudhopper.mc.test.tck.core;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
-
 import com.cloudhopper.mc.test.support.HttpClientHelper;
 import com.cloudhopper.mc.test.support.TestContext;
 import com.cloudhopper.mc.test.support.CompatibilityTest;
 
 import java.net.URI;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Assert;
 
 /**
- * Compatibility test for HTTP-exposed functions.
- * Requires a function with @ApiOperation(path = "/ping") that returns "pong".
+ * Compatibility test for HTTP-exposed functions. Requires a function with
+ * @ApiOperation(path = "/ping") that returns "pong".
  */
 public class HttpFunctionCompatibilityTest implements CompatibilityTest {
 
@@ -46,16 +43,16 @@ public class HttpFunctionCompatibilityTest implements CompatibilityTest {
     public void run(TestContext context) throws Exception {
         System.out.println("🚀 Deploying test functions...");
         context.deployTestFunctions();
-
+        // 🛌 Sleep to allow API Gateway to stabilize
+        System.out.println("⏳ Waiting 30s for API Gateway to stabilize...");
+        Thread.sleep(30000);
         try {
             URI url = context.getHttpUrl(FUNCTION_NAME);
             System.out.println("🔗 Calling: " + url);
             String response = HttpClientHelper.get(url);
 
             System.out.println("✅ Response: " + response);
-            assertThat(response)
-                .withFailMessage("Expected response to be 'pong'")
-                .isEqualTo("pong");
+            Assert.assertEquals( "Expected response to be 'pong'", "pong", response);
 
         } finally {
             System.out.println("🧹 Cleaning up deployed functions...");

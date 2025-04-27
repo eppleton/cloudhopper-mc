@@ -12,6 +12,7 @@
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
     </properties>
+   
     <dependencies>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>

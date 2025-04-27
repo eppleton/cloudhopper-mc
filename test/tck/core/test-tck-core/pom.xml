@@ -11,12 +11,6 @@
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.27.3</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>com.cloudhopper.mc</groupId>
             <artifactId>test-support</artifactId>
             <version>${project.version}</version>
