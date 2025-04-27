@@ -27,12 +27,14 @@ package com.cloudhopper.mc.test.tck.core;
 import com.cloudhopper.mc.test.support.HttpClientHelper;
 import com.cloudhopper.mc.test.support.TestContext;
 import com.cloudhopper.mc.test.support.CompatibilityTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import org.junit.Assert;
 
 /**
  * Compatibility test for HTTP-exposed functions. Requires a function with
+ *
  * @ApiOperation(path = "/ping") that returns "pong".
  */
 public class HttpFunctionCompatibilityTest implements CompatibilityTest {
@@ -41,19 +43,24 @@ public class HttpFunctionCompatibilityTest implements CompatibilityTest {
 
     @Override
     public void run(TestContext context) throws Exception {
-        System.out.println("🚀 Deploying test functions...");
-        context.deployTestFunctions();
-        // 🛌 Sleep to allow API Gateway to stabilize
-        System.out.println("⏳ Waiting 30s for API Gateway to stabilize...");
-        Thread.sleep(30000);
         try {
+            System.out.println("🚀 Deploying test functions...");
+            context.deployTestFunctions();
+            // 🛌 Sleep to allow API Gateway to stabilize
+            System.out.println("⏳ Waiting 30s for API Gateway to stabilize...");
+            Thread.sleep(30000);
+
             URI url = context.getHttpUrl(FUNCTION_NAME);
             System.out.println("🔗 Calling: " + url);
             String response = HttpClientHelper.get(url);
+            System.out.println("✅ Raw Response: " + response);
 
-            System.out.println("✅ Response: " + response);
-            Assert.assertEquals( "Expected response to be 'pong'", "pong", response);
-
+            ObjectMapper mapper = new ObjectMapper();
+            String unwrappedResponse = mapper.readValue(response, String.class);
+            
+            System.out.println("✅ Response: " + unwrappedResponse);
+            Assert.assertEquals("Expected response to be 'pong'", "pong", unwrappedResponse);
+            System.out.println("😀");
         } finally {
             System.out.println("🧹 Cleaning up deployed functions...");
             context.cleanupTestFunctions();
