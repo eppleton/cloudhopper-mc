@@ -50,6 +50,10 @@ public class CompatibilityTestRunner {
             testsToRun.add(new HttpFunctionCompatibilityTest());
             // test if "complex" objects can be used
             testsToRun.add(new HttpGetPlayerCompatibilityTest());
+            // test post
+            testsToRun.add(new HttpRegisterPlayerCompatibilityTest());
+            // test put
+            testsToRun.add(new HttpUpdatePlayerCompatibilityTest());
         }
         try {
             System.out.println("🚀 Deploying test functions...");
