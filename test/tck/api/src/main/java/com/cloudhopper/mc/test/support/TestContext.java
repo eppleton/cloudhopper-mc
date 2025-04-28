@@ -25,11 +25,10 @@ package com.cloudhopper.mc.test.support;
  * #L%
  */
 
-import java.net.URI;
 import java.util.List;
 
 public interface TestContext {
-    URI getHttpUrl(String functionName);
+    String getHttpUrl(String functionName);
     Object invokeFunctionDirect(String functionName, Object input);
     List<String> fetchLogs(String functionName);
     void deployTestFunctions();

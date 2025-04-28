@@ -1,8 +1,8 @@
-package com.cloudhopper.mc.test.support;
+package com.cloudhopper.mc.test.domain;
 
 /*-
  * #%L
- * test-tck-api - a library from the "Cloudhopper" project.
+ * test-functions - a library from the "Cloudhopper" project.
  * 
  * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
  * exception as provided in the README.md file that accompanies this code.
@@ -24,22 +24,29 @@ package com.cloudhopper.mc.test.support;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+public class Player {
+    private int id;
+    private String name;
+    private int ranking;
 
-
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-
-public class HttpClientHelper {
-    public static String get(URI uri) throws Exception {
-        HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
-        conn.setRequestMethod("GET");
-        conn.setConnectTimeout(30000);
-        conn.setReadTimeout(30000);
-
-        try (InputStream in = conn.getInputStream()) {
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        }
+    public Player() {
+        // Default constructor for deserialization
     }
+
+    public Player(int id, String name, int ranking) {
+        this.id = id;
+        this.name = name;
+        this.ranking = ranking;
+    }
+
+    // Getters and setters
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public int getRanking() { return ranking; }
+    public void setRanking(int ranking) { this.ranking = ranking; }
 }

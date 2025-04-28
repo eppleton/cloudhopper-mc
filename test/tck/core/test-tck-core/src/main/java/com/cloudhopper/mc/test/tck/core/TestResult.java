@@ -1,8 +1,8 @@
-package com.cloudhopper.mc.test.support;
+package com.cloudhopper.mc.test.tck.core;
 
 /*-
  * #%L
- * test-tck-api - a library from the "Cloudhopper" project.
+ * test-tck-core - a library from the "Cloudhopper" project.
  * 
  * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
  * exception as provided in the README.md file that accompanies this code.
@@ -25,21 +25,18 @@ package com.cloudhopper.mc.test.support;
  * #L%
  */
 
+import java.util.List;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
+public class TestResult {
+    public final String feature;
+    public final List<String> attributes;
+    public final String testName;
+    public final boolean passed;
 
-public class HttpClientHelper {
-    public static String get(URI uri) throws Exception {
-        HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
-        conn.setRequestMethod("GET");
-        conn.setConnectTimeout(30000);
-        conn.setReadTimeout(30000);
-
-        try (InputStream in = conn.getInputStream()) {
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        }
+    public TestResult(String feature, List<String> attributes, String testName, boolean passed) {
+        this.feature = feature;
+        this.attributes = attributes;
+        this.testName = testName;
+        this.passed = passed;
     }
 }

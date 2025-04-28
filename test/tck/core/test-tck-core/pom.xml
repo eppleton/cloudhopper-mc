@@ -30,6 +30,11 @@
             <artifactId>generator-bindings-aws-terraform</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>test-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>

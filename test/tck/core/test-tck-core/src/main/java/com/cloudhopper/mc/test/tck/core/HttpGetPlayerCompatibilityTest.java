@@ -24,35 +24,36 @@ package com.cloudhopper.mc.test.tck.core;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+
+import com.cloudhopper.mc.test.domain.Player;
+import com.cloudhopper.mc.test.support.CompatibilityTest;
 import com.cloudhopper.mc.test.support.HttpClientHelper;
 import com.cloudhopper.mc.test.support.TestContext;
-import com.cloudhopper.mc.test.support.CompatibilityTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.net.URI;
 import org.junit.Assert;
 
-/**
- * Compatibility test for HTTP-exposed functions. Requires a function with
- *
- * @ApiOperation(path = "/ping") that returns "pong".
- */
-public class HttpFunctionCompatibilityTest implements CompatibilityTest {
+public class HttpGetPlayerCompatibilityTest implements CompatibilityTest {
 
-    private static final String FUNCTION_NAME = "Ping";
+    private static final String FUNCTION_NAME = "GetPlayer";
 
     @Override
     public void run(TestContext context) throws Exception {
-        String url = context.getHttpUrl(FUNCTION_NAME);
+        String baseUrl = context.getHttpUrl(FUNCTION_NAME);
+        URI url = new URI(baseUrl.replace("{id}", "1")); // Replace path variable manually
+
         System.out.println("📞 Calling: " + url);
 
-        String response = HttpClientHelper.get(URI.create(url));
+        String response = HttpClientHelper.get(url);
         System.out.println("📩 Raw Response: " + response);
 
         ObjectMapper mapper = new ObjectMapper();
-        String unwrappedResponse = mapper.readValue(response, String.class);
+        Player player = mapper.readValue(response, Player.class);
 
-        System.out.println("🏓 Response: " + unwrappedResponse);
-        Assert.assertEquals("Expected response to be 'pong'", "pong", unwrappedResponse);
+        System.out.println("👨 Parsed Player: " + player.getName() + " (ID " + player.getId() + ", Ranking " + player.getRanking() + ")");
+
+        Assert.assertEquals(1, player.getId());
+        Assert.assertEquals("Player1", player.getName());
+        Assert.assertEquals(42, player.getRanking());
     }
 }

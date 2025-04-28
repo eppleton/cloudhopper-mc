@@ -27,13 +27,15 @@ package com.cloudhopper.mc.generator.bindings.aws.terraform;
 import com.cloudhopper.mc.test.support.TerraformDeployer;
 import com.cloudhopper.mc.test.support.TerraformUtil;
 import com.cloudhopper.mc.test.support.TestContext;
+import java.io.IOException;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.*;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TestContextAws implements TestContext {
 
@@ -73,15 +75,19 @@ public class TestContextAws implements TestContext {
     }
 
     @Override
-    public URI getHttpUrl(String functionName) {
+    public String getHttpUrl(String functionId) {
+        String url = null;
+        usedFunctions.add(functionId);
         try {
-            usedFunctions.add(functionName); // 📌 Track used functions dynamically
-            String key = functionNameToOutputKey(functionName);
-            String url = TerraformUtil.getOutputString(terraformDir, key);
-            return URI.create(url);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch HTTP URL from Terraform output", e);
+            String key = functionNameToOutputKey(functionId);
+            url = TerraformUtil.getOutputString(terraformDir, key);
+            System.err.println("🌍 Resolved URL for function [" + functionId + "] key [" + key + "] → " + url);
+        } catch (IOException ex) {
+            Logger.getLogger(TestContextAws.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TestContextAws.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return url;
     }
 
     @Override
@@ -97,11 +103,11 @@ public class TestContextAws implements TestContext {
     }
 
     private String functionNameToOutputKey(String functionName) {
-        return functionName.toLowerCase().replace("function", "") + "_url";
+        return functionName.toLowerCase()+ "_url";
     }
 
     private void cleanupLogGroup(CloudWatchLogsClient logsClient, String functionName) {
-        String logGroupName = "/aws/lambda/" + functionName;
+        String logGroupName = "/aws/lambda/" + functionName.toLowerCase();
         try {
             DeleteLogGroupRequest deleteRequest = DeleteLogGroupRequest.builder()
                     .logGroupName(logGroupName)

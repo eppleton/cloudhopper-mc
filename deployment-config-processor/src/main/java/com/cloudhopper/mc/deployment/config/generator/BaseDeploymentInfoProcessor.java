@@ -43,9 +43,6 @@ package com.cloudhopper.mc.deployment.config.generator;
 import com.cloudhopper.mc.generator.api.GeneratorFeatureInfo;
 import com.cloudhopper.mc.generator.generic.GenericDeploymentConfigGenerator;
 import com.cloudhopper.mc.generator.api.spi.DeploymentConfigGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -158,7 +155,5 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
         String qualifiedName = classElement.getQualifiedName().toString();
         return qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
     }
-
-
 
 }

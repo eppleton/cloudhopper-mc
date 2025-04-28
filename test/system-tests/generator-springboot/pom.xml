@@ -26,6 +26,12 @@
         </dependency>
         <dependency>
             <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>test-domain</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
             <artifactId>deployment-config-processor</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -60,6 +66,11 @@
             <artifactId>javax.ws.rs-api</artifactId>
             <version>2.1.1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>test-domain</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>

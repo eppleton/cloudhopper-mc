@@ -66,7 +66,9 @@ resource "aws_apigatewayv2_deployment" "main_deployment" {
   triggers = {
     redeployment = sha1(join(",", tolist([
       jsonencode(aws_apigatewayv2_route.ping_route.route_key),
-      jsonencode(aws_apigatewayv2_integration.ping_integration.integration_uri)
+      jsonencode(aws_apigatewayv2_integration.ping_integration.integration_uri),
+      jsonencode(aws_apigatewayv2_route.getplayer_route.route_key),
+      jsonencode(aws_apigatewayv2_integration.getplayer_integration.integration_uri)
     ])))
   }
 

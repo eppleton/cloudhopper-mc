@@ -25,8 +25,6 @@ package com.cloudhopper.mc.test.tck.core;
  * #L%
  */
 import com.cloudhopper.mc.generator.api.GeneratorFeatureInfo;
-import com.cloudhopper.mc.generator.api.GeneratorFeatureInfo.Loader;
-import com.cloudhopper.mc.generator.bindings.aws.terraform.TestContextAws;
 import com.cloudhopper.mc.test.support.CompatibilityTest;
 import com.cloudhopper.mc.test.support.TestContext;
 
@@ -38,7 +36,6 @@ import java.util.List;
  */
 public class CompatibilityTestRunner {
 
-
     public static void runWith(String generatorId, TestContext context) throws Exception {
         System.out.println("🔍 Running TCK for generator: " + generatorId);
 
@@ -47,22 +44,33 @@ public class CompatibilityTestRunner {
             throw new IllegalStateException("Could not load generator features for: " + generatorId);
         }
 
-
         List<CompatibilityTest> testsToRun = new ArrayList<>();
         if (supportsAnnotation(info, "com.cloudhopper.mc.annotations.ApiOperation")) {
+            // minimal tests to ensure an API can be called
             testsToRun.add(new HttpFunctionCompatibilityTest());
+            // test if "complex" objects can be used
+            testsToRun.add(new HttpGetPlayerCompatibilityTest());
         }
+        try {
+            System.out.println("🚀 Deploying test functions...");
+            context.deployTestFunctions();
+            System.out.println("⏳ Waiting 20s for API Gateway to stabilize...");
+            Thread.sleep(20000);
 
-        for (CompatibilityTest test : testsToRun) {
-            String name = test.getClass().getSimpleName();
-            System.out.println("\n▶ Running test: " + name);
-            try {
-                test.run(context);
-                System.out.println("✅ " + name + " PASSED");
-            } catch (Throwable t) {
-                System.out.println("❌ " + name + " FAILED");
-                t.printStackTrace();
+            for (CompatibilityTest test : testsToRun) {
+                String name = test.getClass().getSimpleName();
+                System.out.println("\n▶ Running test: " + name);
+                try {
+                    test.run(context);
+                    System.out.println("✅ " + name + " PASSED");
+                } catch (Throwable t) {
+                    System.out.println("❌ " + name + " FAILED");
+                    t.printStackTrace();
+                }
             }
+        } finally {
+            System.out.println("\n🧹 Cleaning up deployed functions...");
+            context.cleanupTestFunctions();
         }
     }
 

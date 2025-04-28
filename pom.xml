@@ -76,6 +76,7 @@
         <module>test/test-support</module>
         <module>test/tck/generator-bindings/NewFolder/generator-bindings-aws-terraform</module>
         <module>test/tck/core/test-tck-core</module>
+        <module>test/system-tests/test-domain</module>
     </modules>
     <build>
         <pluginManagement>

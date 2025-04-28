@@ -34,6 +34,11 @@
             <artifactId>generator-gcp-terraform</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>test-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>../test-functions/src/main/java</sourceDirectory> <!-- HERE -->

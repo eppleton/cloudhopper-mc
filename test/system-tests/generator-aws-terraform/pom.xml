@@ -38,7 +38,11 @@
             <groupId>com.cloudhopper.mc</groupId>
             <artifactId>test-tck-core</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>test-domain</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>

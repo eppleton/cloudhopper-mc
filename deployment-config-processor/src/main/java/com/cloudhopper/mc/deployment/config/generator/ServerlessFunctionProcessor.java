@@ -47,7 +47,13 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
+import javax.lang.model.type.WildcardType;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 @AutoService(Processor.class)
@@ -55,14 +61,21 @@ import javax.tools.Diagnostic;
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
 
+    private Types typeUtils;
+    private Elements elementUtils;
+
     @Override
-    public void init(ProcessingEnvironment processingEnv) {
+    public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
+        this.typeUtils = processingEnv.getTypeUtils();
+        this.elementUtils = processingEnv.getElementUtils();
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (deploymentGenerator == null) return true;
+        if (deploymentGenerator == null) {
+            return true;
+        }
         AnnotationFeatureValidator featureValidator = new AnnotationFeatureValidator(processingEnv, generatorFeatureInfo);
         System.err.println("Processing com.cloudhopper.mc.Function");
         if (roundEnv.processingOver()) {
@@ -96,7 +109,7 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                     String handlerSimpleName = classElement.getSimpleName().toString();
                     TypeMirror inputType = methodElement.getParameters().isEmpty() ? null : methodElement.getParameters().get(0).asType();
                     TypeMirror outputType = methodElement.getReturnType();
-
+                    System.err.println("Resolved output type: " + getFqn(outputType));
                     final HandlerInfo handlerInfo = new HandlerInfo(
                             functionAnnotation.name(),
                             functionAnnotation.memory(),
@@ -106,8 +119,8 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                             handlerFQN,
                             packageName,
                             methodName,
-                            inputType != null ? inputType.toString() : "void",
-                            outputType.toString(),
+                            getFqn(inputType),
+                            getFqn(outputType),
                             artifactId,
                             version,
                             classifier,
@@ -133,6 +146,50 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns the fully-qualified binary name (with “$” for inners) of the
+     * given TypeMirror, or a human-readable fallback for primitives/arrays/etc.
+     */
+    public String getFqn(TypeMirror tm) {
+        if (tm == null) {
+            return "void";
+        }
+        switch (tm.getKind()) {
+            case DECLARED: {
+
+                // e.g. java.lang.String, com.foo.Bar<Baz>
+                DeclaredType dt = (DeclaredType) tm;
+                TypeElement te = (TypeElement) dt.asElement();
+                System.err.println("declared type " + dt);
+                return elementUtils.getBinaryName(te).toString();
+            }
+            case ARRAY: {
+                // recurse into component
+                ArrayType at = (ArrayType) tm;
+                return getFqn(at.getComponentType()) + "[]";
+            }
+            case TYPEVAR: {
+                // T extends Foo → use the bound
+                TypeVariable tv = (TypeVariable) tm;
+                return getFqn(tv.getUpperBound());
+            }
+            case WILDCARD: {
+                WildcardType wc = (WildcardType) tm;
+                if (wc.getExtendsBound() != null) {
+                    return "? extends " + getFqn(wc.getExtendsBound());
+                } else if (wc.getSuperBound() != null) {
+                    return "? super " + getFqn(wc.getSuperBound());
+                } else {
+                    return "?";
+                }
+            }
+            default:
+                System.err.println("default " + tm);
+                // primitives, void, etc.
+                return tm.toString();
+        }
     }
 
     private String[] extractPathParams(String path) {

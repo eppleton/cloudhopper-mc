@@ -104,7 +104,7 @@ public class HandlerInfo {
 
     /** @return the function ID */
     public String getFunctionId() {
-        return functionId;
+        return functionId.toLowerCase();
     }
 
     /** @return the configured memory (MB) */
