@@ -54,6 +54,8 @@ public class CompatibilityTestRunner {
             testsToRun.add(new HttpRegisterPlayerCompatibilityTest());
             // test put
             testsToRun.add(new HttpUpdatePlayerCompatibilityTest());
+            // test delete
+            testsToRun.add(new HttpDeletePlayerCompatibilityTest());
         }
         try {
             System.out.println("🚀 Deploying test functions...");
