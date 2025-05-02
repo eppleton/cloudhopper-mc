@@ -22,8 +22,6 @@ variable "environment" {
   default     = "dev"
 }
 
-
-
 #resource "aws_cognito_user_pool" "main" {
 #  name = "cloudhopper-user-pool"
 #}
@@ -59,42 +57,5 @@ variable "environment" {
 #    issuer   = "https://${aws_cognito_user_pool.main.endpoint}"
 #  }
 #}
-
-# Trigger new Deployment when anything in the API changes
-resource "aws_apigatewayv2_deployment" "main_deployment" {
-  api_id = aws_apigatewayv2_api.main.id
-
-  triggers = {
-    redeployment = sha1(join(",", tolist([
-      jsonencode(aws_apigatewayv2_route.ping_route.route_key),
-      jsonencode(aws_apigatewayv2_integration.ping_integration.integration_uri),
-      jsonencode(aws_apigatewayv2_route.getplayer_route.route_key),
-      jsonencode(aws_apigatewayv2_integration.getplayer_integration.integration_uri),
-      jsonencode(aws_apigatewayv2_route.deleteplayer_route.route_key),
-      jsonencode(aws_apigatewayv2_integration.deleteplayer_integration.integration_uri),
-      jsonencode(aws_apigatewayv2_route.getmatch_route.route_key),
-      jsonencode(aws_apigatewayv2_integration.getmatch_integration.integration_uri),
-      jsonencode(aws_apigatewayv2_route.searchplayers_route.route_key),
-      jsonencode(aws_apigatewayv2_integration.searchplayers_integration.integration_uri),
-      jsonencode(aws_apigatewayv2_route.updateplayer_route.route_key),
-      jsonencode(aws_apigatewayv2_integration.updateplayer_integration.integration_uri),
-    ])))
-  }
-
-  depends_on = [
-    aws_apigatewayv2_route.ping_route
-  ]
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_apigatewayv2_stage" "main_stage" {
-  api_id        = aws_apigatewayv2_api.main.id
-  name          = "test"
-  deployment_id = aws_apigatewayv2_deployment.main_deployment.id
-}
-
 
 

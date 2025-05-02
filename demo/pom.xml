@@ -209,8 +209,8 @@
                                     <arguments>
                                         <argument>apply</argument>
                                         <argument>-auto-approve</argument>
-                                        <argument>-var</argument>
-                                        <argument>gcp_project_id=cloudhopper</argument>
+<!--                                        <argument>-var</argument>
+                                        <argument>gcp_project_id=cloudhopper</argument>-->
 
                                     </arguments>
                                     <environmentVariables>
