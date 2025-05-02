@@ -1,3 +1,8 @@
+resource "aws_s3_bucket" "lambda_artifacts" {
+  bucket = "${"$"}{var.project_name}-${"$"}{var.environment}-lambda-artifacts"
+  force_destroy = true  # only for tests; deletes all objects when bucket is deleted
+}
+
 resource "aws_iam_role" "lambda_exec" {
   name = "${"$"}{var.project_name}-lambda-execution-role"
 
@@ -18,9 +23,15 @@ resource "aws_iam_role_policy_attachment" "lambda_exec_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-variable "deployment_bucket" {
-  type = string
-  description = "S3 bucket where Lambda JARs are stored"
+resource "aws_iam_role_policy_attachment" "lambda_s3_access" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
 }
 
+resource "aws_s3_object" "lambda_jar" {
+  bucket = aws_s3_bucket.lambda_artifacts.bucket
+  key    = "systemtests/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.jar"
+  source = "${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.jar"
+  etag   = filemd5("${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.jar")
+}
 

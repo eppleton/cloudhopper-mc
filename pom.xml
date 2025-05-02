@@ -229,7 +229,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- 👇 Copy JavaDocs into Docusaurus -->
+                    <!-- Copy JavaDocs into Docusaurus -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
