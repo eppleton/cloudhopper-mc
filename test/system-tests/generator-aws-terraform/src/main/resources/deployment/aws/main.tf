@@ -68,7 +68,15 @@ resource "aws_apigatewayv2_deployment" "main_deployment" {
       jsonencode(aws_apigatewayv2_route.ping_route.route_key),
       jsonencode(aws_apigatewayv2_integration.ping_integration.integration_uri),
       jsonencode(aws_apigatewayv2_route.getplayer_route.route_key),
-      jsonencode(aws_apigatewayv2_integration.getplayer_integration.integration_uri)
+      jsonencode(aws_apigatewayv2_integration.getplayer_integration.integration_uri),
+      jsonencode(aws_apigatewayv2_route.deleteplayer_route.route_key),
+      jsonencode(aws_apigatewayv2_integration.deleteplayer_integration.integration_uri),
+      jsonencode(aws_apigatewayv2_route.getmatch_route.route_key),
+      jsonencode(aws_apigatewayv2_integration.getmatch_integration.integration_uri),
+      jsonencode(aws_apigatewayv2_route.searchplayers_route.route_key),
+      jsonencode(aws_apigatewayv2_integration.searchplayers_integration.integration_uri),
+      jsonencode(aws_apigatewayv2_route.updateplayer_route.route_key),
+      jsonencode(aws_apigatewayv2_integration.updateplayer_integration.integration_uri),
     ])))
   }
 

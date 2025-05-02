@@ -25,35 +25,44 @@ package com.cloudhopper.mc.test.tck.core;
  * #L%
  */
 
-import com.cloudhopper.mc.test.domain.Player;
-import com.cloudhopper.mc.test.support.CompatibilityTest;
+
 import com.cloudhopper.mc.test.support.HttpClientHelper;
 import com.cloudhopper.mc.test.support.TestContext;
+import com.cloudhopper.mc.test.domain.Player;
+import com.cloudhopper.mc.test.support.CompatibilityTest;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
 import org.junit.Assert;
 
-public class HttpGetPlayerCompatibilityTest implements CompatibilityTest {
+import java.net.URI;
+import java.util.List;
 
-    private static final String FUNCTION_NAME = "GetPlayer";
+public class HttpSearchPlayersCompatibilityTest implements CompatibilityTest {
+
+    private static final String FUNCTION_NAME = "SearchPlayers";
 
     @Override
     public void run(TestContext context) throws Exception {
-        String baseUrl = context.getHttpUrl(FUNCTION_NAME);
-        URI url = new URI(baseUrl.replace("{id}", "1")); // Replace path variable manually
+        URI baseUrl = new URI(context.getHttpUrl(FUNCTION_NAME));
+        // Add query params manually
+        URI url = new URI(baseUrl.toString() + "?minRanking=10&maxRanking=20");
 
         System.out.println("📞 Calling: " + url);
 
         HttpClientHelper.HttpResponse response = HttpClientHelper.get(url);
+
         System.out.println("📩 Raw Response: " + response.getBody());
 
+        Assert.assertEquals(200, response.getStatusCode());
+
         ObjectMapper mapper = new ObjectMapper();
-        Player player = mapper.readValue(response.getBody(), Player.class);
+        List<Player> players = mapper.readValue(response.getBody(), new TypeReference<List<Player>>() {});
 
-        System.out.println("👨 Parsed Player: " + player.getName() + " (ID " + player.getId() + ", Ranking " + player.getRanking() + ")");
+        Assert.assertFalse("Expected non-empty player list", players.isEmpty());
 
-        Assert.assertEquals(1, player.getId());
-        Assert.assertEquals("Player1", player.getName());
-        Assert.assertEquals(42, player.getRanking());
+        for (Player player : players) {
+            System.out.println("🏓 Player: " + player.getName() + " (Ranking: " + player.getRanking() + ")");
+            Assert.assertTrue(player.getRanking() >= 10 && player.getRanking() <= 20);
+        }
     }
 }

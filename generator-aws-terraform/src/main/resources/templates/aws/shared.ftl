@@ -18,4 +18,9 @@ resource "aws_iam_role_policy_attachment" "lambda_exec_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+variable "deployment_bucket" {
+  type = string
+  description = "S3 bucket where Lambda JARs are stored"
+}
+
 

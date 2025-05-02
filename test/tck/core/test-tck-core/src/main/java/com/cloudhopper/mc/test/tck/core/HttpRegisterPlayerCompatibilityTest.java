@@ -45,11 +45,11 @@ public class HttpRegisterPlayerCompatibilityTest implements CompatibilityTest {
         Player newPlayer = new Player(0, "Toni", 5);
         String jsonBody = new ObjectMapper().writeValueAsString(newPlayer);
 
-        String response = HttpClientHelper.post(uri, jsonBody);
-        System.out.println("📩 Raw Response: " + response);
+        HttpClientHelper.HttpResponse response = HttpClientHelper.post(uri, jsonBody);
+        System.out.println("📩 Raw Response: " + response.getBody());
 
         ObjectMapper mapper = new ObjectMapper();
-        Player player = mapper.readValue(response, Player.class);
+        Player player = mapper.readValue(response.getBody(), Player.class);
 
         System.out.println("👨 Parsed Player: " + player.getName() + " (ID " + player.getId() + ", Ranking " + player.getRanking() + ")");
 

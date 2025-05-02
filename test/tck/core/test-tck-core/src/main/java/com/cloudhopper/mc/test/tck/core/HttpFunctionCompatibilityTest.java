@@ -46,11 +46,11 @@ public class HttpFunctionCompatibilityTest implements CompatibilityTest {
         String url = context.getHttpUrl(FUNCTION_NAME);
         System.out.println("📞 Calling: " + url);
 
-        String response = HttpClientHelper.get(URI.create(url));
-        System.out.println("📩 Raw Response: " + response);
+        HttpClientHelper.HttpResponse response = HttpClientHelper.get(URI.create(url));
+        System.out.println("📩 Raw Response: " + response.getBody());
 
         ObjectMapper mapper = new ObjectMapper();
-        String unwrappedResponse = mapper.readValue(response, String.class);
+        String unwrappedResponse = mapper.readValue(response.getBody(), String.class);
 
         System.out.println("🏓 Response: " + unwrappedResponse);
         Assert.assertEquals("Expected response to be 'pong'", "pong", unwrappedResponse);

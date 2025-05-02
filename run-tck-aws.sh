@@ -1,44 +1,36 @@
 #!/bin/bash
 set -e
 
-# local on commandline: eval $(aws configure export-credentials --profile dukehoff --format env)
-
-# Check AWS environment variables
-if [ -z "$AWS_ACCESS_KEY_ID" ]; then
-  echo "❌ AWS_ACCESS_KEY_ID is not set. Please export it before running."
-  exit 1
-fi
-
-if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
-  echo "❌ AWS_SECRET_ACCESS_KEY is not set. Please export it before running."
-  exit 1
-fi
-
-if [ -z "$AWS_REGION" ]; then
-  echo "❌ AWS_REGION is not set. Please export it before running."
+if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ] || [ -z "$AWS_REGION" ]; then
+  echo "❌ AWS credentials not set"
   exit 1
 fi
 
 echo "✅ AWS credentials detected."
 
-echo "📦 Building Docker image..."
-docker build -f test/system-tests/generator-aws-terraform/Dockerfile.dockerfile \
-  -t cloudhopper-tck-aws .
+# Build Docker image only if necessary
+if [[ "$1" == "--rebuild" ]]; then
+  echo "🔄 Rebuilding Docker image..."
+  docker build -f test/system-tests/generator-aws-terraform/Dockerfile.dockerfile \
+    -t cloudhopper-tck-aws .
+else
+  echo "📦 Skipping Docker rebuild (pass --rebuild to force)"
+fi
 
 echo "🚀 Running containerized TCK for AWS"
 docker run --rm \
   -v "$PWD":/workspace \
+  -v "$HOME/.m2":/root/.m2 \
   -w /workspace \
   -e AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY \
   -e AWS_REGION \
   cloudhopper-tck-aws bash -c "
-    echo '🔧 Installing all modules (no tests)...'
-    mvn -f /workspace/pom.xml clean install -DskipTests &&
-    echo '▶ Executing TCK test launcher...'
+    echo '🔍 Recompiling only system tests...'
+    mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-aws-terraform &&
+    echo '▶ Running TCK...'
     cd /workspace/test/system-tests/generator-aws-terraform/
-    mvn -f pom.xml \
-      exec:java \
+    mvn exec:java \
       -Dexec.mainClass=com.cloudhopper.mc.test.system.tests.generator.aws.terraform.TckLauncher \
       -Dexec.classpathScope=test
   "

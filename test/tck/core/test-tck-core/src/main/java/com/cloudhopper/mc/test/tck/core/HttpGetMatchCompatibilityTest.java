@@ -25,35 +25,43 @@ package com.cloudhopper.mc.test.tck.core;
  * #L%
  */
 
-import com.cloudhopper.mc.test.domain.Player;
-import com.cloudhopper.mc.test.support.CompatibilityTest;
+
 import com.cloudhopper.mc.test.support.HttpClientHelper;
 import com.cloudhopper.mc.test.support.TestContext;
+import com.cloudhopper.mc.test.domain.Match;
+import com.cloudhopper.mc.test.support.CompatibilityTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
 import org.junit.Assert;
 
-public class HttpGetPlayerCompatibilityTest implements CompatibilityTest {
+import java.net.URI;
 
-    private static final String FUNCTION_NAME = "GetPlayer";
+public class HttpGetMatchCompatibilityTest implements CompatibilityTest {
+
+    private static final String FUNCTION_NAME = "GetMatch";
 
     @Override
     public void run(TestContext context) throws Exception {
+        System.out.println("⏳ Waiting 30s for API Gateway to stabilize...");
+        Thread.sleep(30000);
+
         String baseUrl = context.getHttpUrl(FUNCTION_NAME);
-        URI url = new URI(baseUrl.replace("{id}", "1")); // Replace path variable manually
+        URI url = URI.create(baseUrl.toString()
+                .replace("{tournamentId}", "5")
+                .replace("{matchId}", "42"));
 
         System.out.println("📞 Calling: " + url);
 
         HttpClientHelper.HttpResponse response = HttpClientHelper.get(url);
+
         System.out.println("📩 Raw Response: " + response.getBody());
 
-        ObjectMapper mapper = new ObjectMapper();
-        Player player = mapper.readValue(response.getBody(), Player.class);
+        Assert.assertEquals(200, response.getStatusCode());
 
-        System.out.println("👨 Parsed Player: " + player.getName() + " (ID " + player.getId() + ", Ranking " + player.getRanking() + ")");
-
-        Assert.assertEquals(1, player.getId());
-        Assert.assertEquals("Player1", player.getName());
-        Assert.assertEquals(42, player.getRanking());
+        Match match = new ObjectMapper().readValue(response.getBody(), Match.class);
+        Assert.assertEquals(5, match.getTournamentId());
+        Assert.assertEquals(42, match.getMatchId());
+        Assert.assertEquals("PlayerA", match.getPlayer1());
+        Assert.assertEquals("PlayerB", match.getPlayer2());
+        Assert.assertEquals("Scheduled", match.getStatus());
     }
 }

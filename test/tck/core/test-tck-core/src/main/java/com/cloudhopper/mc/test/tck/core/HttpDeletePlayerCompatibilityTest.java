@@ -38,18 +38,15 @@ public class HttpDeletePlayerCompatibilityTest implements CompatibilityTest {
     @Override
     public void run(TestContext context) throws Exception {
 
-        System.out.println("⏳ Waiting 30s for API Gateway to stabilize...");
-        Thread.sleep(30000);
-
         String baseUrl = context.getHttpUrl(FUNCTION_NAME);
         URI url = URI.create(baseUrl.replace("{id}", "1"));
 
         System.out.println("🗑️ Sending DELETE to: " + url);
-        String response = HttpClientHelper.delete(url);
+        HttpClientHelper.HttpResponse response = HttpClientHelper.delete(url);
 
-        System.out.println("📩 Raw Response: " + response);
+        System.out.println("📩 Raw Response: " + response.getBody());
 
-        Assert.assertTrue("Expected response to confirm deletion", response.contains("deleted"));
+        Assert.assertTrue("Expected response to confirm deletion", response.getBody().contains("deleted"));
 
     }
 }

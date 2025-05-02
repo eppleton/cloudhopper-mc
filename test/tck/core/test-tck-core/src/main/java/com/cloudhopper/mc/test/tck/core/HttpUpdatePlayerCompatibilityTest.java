@@ -24,7 +24,6 @@ package com.cloudhopper.mc.test.tck.core;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 import com.cloudhopper.mc.test.support.HttpClientHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.cloudhopper.mc.test.domain.Player;
@@ -40,30 +39,22 @@ public class HttpUpdatePlayerCompatibilityTest implements CompatibilityTest {
 
     @Override
     public void run(TestContext context) throws Exception {
-        try {
-            System.out.println("⏳ Waiting 30s for API Gateway to stabilize...");
-            Thread.sleep(30000);
+        String baseUrl = context.getHttpUrl(FUNCTION_NAME);
+        URI url = new URI(baseUrl.replace("{id}", "1")); // Replace {id} manually
 
-            URI baseUrl = new URI(context.getHttpUrl(FUNCTION_NAME));
-            URI url = new URI(baseUrl.toString().replace("{id}", "1")); // Replace {id} manually
+        Player updatedPlayer = new Player(1, "UpdatedName", 15);
+        String jsonBody = new ObjectMapper().writeValueAsString(updatedPlayer);
 
-            Player updatedPlayer = new Player(1, "UpdatedName", 15);
-            String jsonBody = new ObjectMapper().writeValueAsString(updatedPlayer);
+        System.out.println("📦 Sending updated player to: " + url);
+        HttpClientHelper.HttpResponse response = HttpClientHelper.put(url, jsonBody);
 
-            System.out.println("📦 Sending updated player to: " + url);
-            String response = HttpClientHelper.put(url, jsonBody);
+        System.out.println("📩 Raw Response: " + response.getBody());
 
-            System.out.println("📩 Raw Response: " + response);
+        Player player = new ObjectMapper().readValue(response.getBody(), Player.class);
+        System.out.println("👨 Parsed Player: " + player.getName() + " (ID " + player.getId() + ", Ranking " + player.getRanking() + ")");
 
-            Player player = new ObjectMapper().readValue(response, Player.class);
-            System.out.println("👨 Parsed Player: " + player.getName() + " (ID " + player.getId() + ", Ranking " + player.getRanking() + ")");
-
-            Assert.assertEquals("Player ID mismatch", 1, player.getId());
-            Assert.assertEquals("Player name mismatch", "UpdatedName", player.getName());
-            Assert.assertEquals("Player ranking mismatch", 15, player.getRanking());
-        } finally {
-            System.out.println("🧹 Cleaning up after update test...");
-            context.cleanupTestFunctions();
-        }
+        Assert.assertEquals("Player ID mismatch", 1, player.getId());
+        Assert.assertEquals("Player name mismatch", "UpdatedName", player.getName());
+        Assert.assertEquals("Player ranking mismatch", 15, player.getRanking());
     }
 }

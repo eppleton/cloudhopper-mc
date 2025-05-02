@@ -148,48 +148,11 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
         return true;
     }
 
-    /**
-     * Returns the fully-qualified binary name (with “$” for inners) of the
-     * given TypeMirror, or a human-readable fallback for primitives/arrays/etc.
-     */
-    public String getFqn(TypeMirror tm) {
-        if (tm == null) {
-            return "void";
+    private String getFqn(TypeMirror typeMirror) {
+        if (typeMirror == null) {
+            return "java.lang.Void"; // or just "Void"
         }
-        switch (tm.getKind()) {
-            case DECLARED: {
-
-                // e.g. java.lang.String, com.foo.Bar<Baz>
-                DeclaredType dt = (DeclaredType) tm;
-                TypeElement te = (TypeElement) dt.asElement();
-                System.err.println("declared type " + dt);
-                return elementUtils.getBinaryName(te).toString();
-            }
-            case ARRAY: {
-                // recurse into component
-                ArrayType at = (ArrayType) tm;
-                return getFqn(at.getComponentType()) + "[]";
-            }
-            case TYPEVAR: {
-                // T extends Foo → use the bound
-                TypeVariable tv = (TypeVariable) tm;
-                return getFqn(tv.getUpperBound());
-            }
-            case WILDCARD: {
-                WildcardType wc = (WildcardType) tm;
-                if (wc.getExtendsBound() != null) {
-                    return "? extends " + getFqn(wc.getExtendsBound());
-                } else if (wc.getSuperBound() != null) {
-                    return "? super " + getFqn(wc.getSuperBound());
-                } else {
-                    return "?";
-                }
-            }
-            default:
-                System.err.println("default " + tm);
-                // primitives, void, etc.
-                return tm.toString();
-        }
+        return typeMirror.toString(); // <-- Include generics as-is!
     }
 
     private String[] extractPathParams(String path) {

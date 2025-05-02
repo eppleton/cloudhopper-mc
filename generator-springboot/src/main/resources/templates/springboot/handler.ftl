@@ -2,8 +2,8 @@ package ${packageName};
 
 import com.cloudhopper.mc.provider.springboot.SpringBootRequestHandler;
 import ${handlerInfo.handlerFullyQualifiedName};
-import ${handlerInfo.inputType};
-import ${handlerInfo.outputType};
+import ${handlerInfo.inputTypeImport};
+import ${handlerInfo.outputTypeImport};
 import javax.ws.rs.*;
 
 import org.springframework.http.ResponseEntity;

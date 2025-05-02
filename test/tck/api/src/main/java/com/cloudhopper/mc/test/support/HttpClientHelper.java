@@ -33,33 +33,31 @@ import java.nio.charset.StandardCharsets;
 
 public class HttpClientHelper {
 
-    private static final int TIMEOUT = 30000;
-
-    public static String get(URI uri) throws Exception {
+    public static HttpResponse get(URI uri) throws Exception {
         return request("GET", uri, null);
     }
 
-    public static String post(URI uri, String jsonBody) throws Exception {
+    public static HttpResponse post(URI uri, String jsonBody) throws Exception {
         return request("POST", uri, jsonBody);
     }
 
-    public static String put(URI uri, String jsonBody) throws Exception {
+    public static HttpResponse put(URI uri, String jsonBody) throws Exception {
         return request("PUT", uri, jsonBody);
     }
 
-    public static String delete(URI uri) throws Exception {
+    public static HttpResponse delete(URI uri) throws Exception {
         return request("DELETE", uri, null);
     }
 
-    public static String patch(URI uri, String jsonBody) throws Exception {
+    public static HttpResponse patch(URI uri, String jsonBody) throws Exception {
         return request("PATCH", uri, jsonBody);
     }
 
-    private static String request(String method, URI uri, String body) throws Exception {
+    private static HttpResponse request(String method, URI uri, String body) throws Exception {
         HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
         conn.setRequestMethod(method);
-        conn.setConnectTimeout(TIMEOUT);
-        conn.setReadTimeout(TIMEOUT);
+        conn.setConnectTimeout(30000);
+        conn.setReadTimeout(30000);
 
         if (body != null) {
             conn.setDoOutput(true);
@@ -79,30 +77,24 @@ public class HttpClientHelper {
 
         String responseBody = new String(responseStream.readAllBytes(), StandardCharsets.UTF_8);
 
-        if (responseCode >= 400) {
-            throw new HttpRequestException("HTTP " + responseCode + " error for " + method + " " + uri + ": " + responseBody, responseCode, responseBody);
-        }
-
-        return responseBody;
+        return new HttpResponse(responseCode, responseBody);
     }
 
-    public static class HttpRequestException extends RuntimeException {
-
+    public static class HttpResponse {
         private final int statusCode;
-        private final String responseBody;
+        private final String body;
 
-        public HttpRequestException(String message, int statusCode, String responseBody) {
-            super(message);
+        public HttpResponse(int statusCode, String body) {
             this.statusCode = statusCode;
-            this.responseBody = responseBody;
+            this.body = body;
         }
 
         public int getStatusCode() {
             return statusCode;
         }
 
-        public String getResponseBody() {
-            return responseBody;
+        public String getBody() {
+            return body;
         }
     }
 }

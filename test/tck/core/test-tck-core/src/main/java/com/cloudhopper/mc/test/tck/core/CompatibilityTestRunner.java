@@ -56,6 +56,8 @@ public class CompatibilityTestRunner {
             testsToRun.add(new HttpUpdatePlayerCompatibilityTest());
             // test delete
             testsToRun.add(new HttpDeletePlayerCompatibilityTest());
+            // test with multiple path params
+            testsToRun.add(new HttpGetMatchCompatibilityTest());
         }
         try {
             System.out.println("🚀 Deploying test functions...");
