@@ -51,6 +51,7 @@ public class CompatibilityTestRunner {
         }
 
         List<CompatibilityTest> availableTests = List.of(
+            new PlainFunctionCompatibilityTest(),
             new HttpFunctionCompatibilityTest(),
             new HttpGetPlayerCompatibilityTest(),
             new HttpRegisterPlayerCompatibilityTest(),
@@ -97,6 +98,8 @@ public class CompatibilityTestRunner {
         }
 
         System.out.println("\n🧹 Cleaning up deployed functions...");
+        System.out.println("⏳ Waiting 20s for log streams to stabilize...");
+        Thread.sleep(20000);
         context.cleanupTestFunctions();
 
         long passed = results.stream().filter(TestResult::passed).count();

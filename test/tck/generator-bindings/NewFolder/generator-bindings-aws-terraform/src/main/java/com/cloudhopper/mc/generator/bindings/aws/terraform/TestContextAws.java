@@ -27,18 +27,27 @@ package com.cloudhopper.mc.generator.bindings.aws.terraform;
 import com.cloudhopper.mc.test.support.TerraformDeployer;
 import com.cloudhopper.mc.test.support.TerraformUtil;
 import com.cloudhopper.mc.test.tck.api.TestContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.*;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.lambda.model.InvokeRequest;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 
 public class TestContextAws implements TestContext {
 
+    private final CloudWatchLogsClient logsClient = CloudWatchLogsClient.create();
     private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "aws");
     private final Set<String> usedFunctions = new HashSet<>();
 
@@ -57,6 +66,7 @@ public class TestContextAws implements TestContext {
 
     @Override
     public void cleanupTestFunctions() {
+
         try (CloudWatchLogsClient logsClient = CloudWatchLogsClient.create()) {
             // 🧹 First, clean up log groups for used functions
             for (String functionName : usedFunctions) {
@@ -92,18 +102,85 @@ public class TestContextAws implements TestContext {
 
     @Override
     public Object invokeFunctionDirect(String functionName, Object input) {
-        usedFunctions.add(functionName);
-        throw new UnsupportedOperationException("Direct invocation not supported for AWS");
+        ObjectMapper mapper = new ObjectMapper();
+        String sanitizedFunctionName = functionName.toLowerCase();
+        usedFunctions.add(sanitizedFunctionName);
+        try (LambdaClient lambdaClient = LambdaClient.create()) {
+            String payload = input != null
+                    ? new ObjectMapper().writeValueAsString(input)
+                    : "{}";
+
+            InvokeRequest request = InvokeRequest.builder()
+                    .functionName(sanitizedFunctionName)
+                    .payload(SdkBytes.fromUtf8String(payload))
+                    .build();
+
+            InvokeResponse response = lambdaClient.invoke(request);
+
+            String responseString = response.payload().asUtf8String();
+            // Try to parse as JSON
+            JsonNode json = mapper.readTree(responseString);
+
+            if (json.has("errorMessage")) {
+                String error = json.get("errorMessage").asText();
+                System.err.println("❗ Lambda returned error: " + error);
+
+                try {
+                    // Try to fetch logs (optional)
+                    System.err.println("Fetch logs, wait 20s to stablize log streams");
+                    Thread.sleep(20000);
+                    List<String> logs = fetchLogs(functionName);
+                    System.err.println("📜 Logs for " + functionName + ":");
+                    logs.forEach(line -> System.err.println("  " + line));
+                } catch (Exception logEx) {
+                    System.err.println("⚠️ Could not fetch logs: " + logEx.getMessage());
+                }
+
+                throw new RuntimeException("Lambda error: " + error);
+            }
+
+            return mapper.treeToValue(json, Object.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to invoke Lambda function: " + sanitizedFunctionName, e);
+        }
     }
 
     @Override
     public List<String> fetchLogs(String functionName) {
-        usedFunctions.add(functionName);
-        throw new UnsupportedOperationException("Fetching logs not yet supported for AWS");
+        try {
+            String logGroupName = "/aws/lambda/" + functionName;
+
+            DescribeLogStreamsResponse streamsResponse = logsClient.describeLogStreams(DescribeLogStreamsRequest.builder()
+                    .logGroupName(logGroupName)
+                    .orderBy("LastEventTime")
+                    .descending(true)
+                    .limit(1)
+                    .build());
+
+            if (streamsResponse.logStreams().isEmpty()) {
+                return List.of("[No log streams found]");
+            }
+
+            String streamName = streamsResponse.logStreams().get(0).logStreamName();
+
+            GetLogEventsResponse events = logsClient.getLogEvents(GetLogEventsRequest.builder()
+                    .logGroupName(logGroupName)
+                    .logStreamName(streamName)
+                    .limit(50)
+                    .startFromHead(false)
+                    .build());
+
+            return events.events().stream()
+                    .map(OutputLogEvent::message)
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            return List.of("[Failed to fetch logs: " + e.getMessage() + "]");
+        }
     }
 
     private String functionNameToOutputKey(String functionName) {
-        return functionName.toLowerCase()+ "_url";
+        return functionName.toLowerCase() + "_url";
     }
 
     private void cleanupLogGroup(CloudWatchLogsClient logsClient, String functionName) {

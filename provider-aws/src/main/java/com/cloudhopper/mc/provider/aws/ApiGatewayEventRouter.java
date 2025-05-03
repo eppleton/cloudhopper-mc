@@ -76,6 +76,8 @@ public class ApiGatewayEventRouter<I, O> implements RequestHandler<Object, Objec
                 // Scheduled event
                 return plain.handleRequest(null, context);
             }
+            // simple call
+            return plain.handleRequest(null, context);
         }
 
         // fallback
