@@ -31,9 +31,9 @@ import com.cloudhopper.mc.test.tck.api.TestContext;
 import java.util.List;
 import org.junit.Assert;
 
-public class PlainFunctionCompatibilityTest implements FeatureAwareTest {
+public class DirectCallToAPIFunctionCompatibilityTest implements FeatureAwareTest {
 
-    private static final String FUNCTION_NAME = "plainping";
+    private static final String FUNCTION_NAME = "ping";
 
     @Override
     public void run(TestContext context) throws Exception {

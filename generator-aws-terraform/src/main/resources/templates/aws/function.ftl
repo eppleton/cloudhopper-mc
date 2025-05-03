@@ -8,9 +8,10 @@ resource "aws_lambda_function" "${handlerInfo.functionId}" {
   s3_key        = aws_s3_object.lambda_jar.key
   source_code_hash = filebase64sha256("${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.jar")
 
-  timeout = 30
+  timeout = ${handlerInfo.timeout}
+  memory_size = ${handlerInfo.memory}
   runtime = "java21"
-
+  
   environment {
     variables = {
       # Add any environment variables your function needs

@@ -24,26 +24,19 @@ package com.cloudhopper.mc.test.tck.core;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+
 import com.cloudhopper.mc.generator.api.GeneratorFeatureInfo;
 import com.cloudhopper.mc.test.tck.api.CompatibilityTest;
 import com.cloudhopper.mc.test.tck.api.FeatureAwareTest;
 import com.cloudhopper.mc.test.tck.api.RequiredFeature;
 import com.cloudhopper.mc.test.tck.api.TestContext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-/**
- * The TCK test runner for verifying generator compatibility.
- */
-
+import java.util.*;
 
 public class CompatibilityTestRunner {
 
     public static void runWith(String generatorId, TestContext context) throws Exception {
-        System.out.println("🔍 Running TCK for generator: " + generatorId);
+        System.out.println("\uD83D\uDD0D Running TCK for generator: " + generatorId);
 
         GeneratorFeatureInfo info = GeneratorFeatureInfo.Loader.loadFeaturesFor(generatorId);
         if (info == null) {
@@ -51,14 +44,19 @@ public class CompatibilityTestRunner {
         }
 
         List<CompatibilityTest> availableTests = List.of(
-            new PlainFunctionCompatibilityTest(),
-            new HttpFunctionCompatibilityTest(),
-            new HttpGetPlayerCompatibilityTest(),
-            new HttpRegisterPlayerCompatibilityTest(),
-            new HttpUpdatePlayerCompatibilityTest(),
-            new HttpDeletePlayerCompatibilityTest(),
-            new HttpGetMatchCompatibilityTest(),
-            new HttpSearchPlayersCompatibilityTest()
+                new PlainFunctionCompatibilityTest(),
+                new DirectCallToAPIFunctionCompatibilityTest(),
+                new MemoryFunctionCompatibilityTest(),
+                new TimeoutFunctionCompatibilityTest(),
+                new HttpFunctionCompatibilityTest(),
+                new HttpGetPlayerCompatibilityTest(),
+                new HttpRegisterPlayerCompatibilityTest(),
+                new HttpUpdatePlayerCompatibilityTest(),
+                new HttpDeletePlayerCompatibilityTest(),
+                new HttpGetMatchCompatibilityTest(),
+                new HttpSearchPlayersCompatibilityTest(),
+                new ScheduledFunctionCompatibilityTest() // This should be last test to later give us a chance to delete the log group.
+                // This way the log group will be deleted about 30s after the last call giving us a 30s window before it would be executed again.
         );
 
         List<CompatibilityTest> selectedTests = new ArrayList<>();
@@ -78,26 +76,27 @@ public class CompatibilityTestRunner {
         }
 
         List<TestResult> results = new ArrayList<>();
-        System.out.println("\n🚀 Deploying test functions...");
+        System.out.println("\n\uD83D\uDE80 Deploying test functions...");
         context.deployTestFunctions();
         System.out.println("⏳ Waiting 20s for API Gateway to stabilize...");
         Thread.sleep(20000);
 
         for (CompatibilityTest test : selectedTests) {
             String name = test.getClass().getSimpleName();
+            List<RequiredFeature> tested = test instanceof FeatureAwareTest fat ? fat.requiredFeatures() : List.of();
             System.out.println("\n▶ Running test: " + name);
             try {
                 test.run(context);
                 System.out.println("✅ " + name + " PASSED");
-                results.add(new TestResult(name, true, null));
+                results.add(new TestResult(name, true, null, tested));
             } catch (Throwable t) {
                 System.out.println("❌ " + name + " FAILED");
                 t.printStackTrace();
-                results.add(new TestResult(name, false, t));
+                results.add(new TestResult(name, false, t, tested));
             }
         }
 
-        System.out.println("\n🧹 Cleaning up deployed functions...");
+        System.out.println("\n\uD83D\uDEA9 Cleaning up deployed functions...");
         System.out.println("⏳ Waiting 20s for log streams to stabilize...");
         Thread.sleep(20000);
         context.cleanupTestFunctions();
@@ -105,7 +104,7 @@ public class CompatibilityTestRunner {
         long passed = results.stream().filter(TestResult::passed).count();
         long failed = results.size() - passed;
 
-        System.out.println("\n📊 Compatibility Summary:");
+        System.out.println("\n\uD83D\uDCCA Compatibility Summary:");
         System.out.printf("✅ Passed: %d\n", passed);
         System.out.printf("❌ Failed: %d\n", failed);
         System.out.printf("🔎 Skipped due to unsupported features: %d\n", unsupportedTests.size());
@@ -120,8 +119,31 @@ public class CompatibilityTestRunner {
             }
         }
 
+        // Feature coverage breakdown
+        Map<String, Map<List<String>, List<String>>> featureTree = new HashMap<>();
+        for (TestResult result : results) {
+            if (!result.passed()) continue;
+            for (RequiredFeature rf : result.testedFeatures()) {
+                featureTree
+                    .computeIfAbsent(rf.annotationFqcn(), k -> new HashMap<>())
+                    .computeIfAbsent(rf.requiredAttributes(), k -> new ArrayList<>())
+                    .add(result.name());
+            }
+        }
+
+        System.out.println("\n\uD83E\uDDEA Feature Coverage Tree:");
+        for (var annotation : featureTree.entrySet()) {
+            System.out.println("📌 " + annotation.getKey());
+            for (var attrGroup : annotation.getValue().entrySet()) {
+                System.out.println("  🔹 Attributes: " + attrGroup.getKey());
+                for (String testName : attrGroup.getValue()) {
+                    System.out.println("    ✔ " + testName);
+                }
+            }
+        }
+
         if (failed == 0) {
-            System.out.println("\n🎉 Certification PASSED — generator is compatible with all claimed features!");
+            System.out.println("\n\uD83C\uDF89 Certification PASSED — generator is compatible with all claimed features!");
         } else {
             System.out.println("\n❗ Certification FAILED — see above for failed tests.");
         }
@@ -130,15 +152,15 @@ public class CompatibilityTestRunner {
     private static boolean supportsAllFeatures(List<RequiredFeature> required, GeneratorFeatureInfo declared) {
         for (RequiredFeature rf : required) {
             boolean matched = declared.getFeatures().stream().anyMatch(supported ->
-                supported.getSupportedAnnotation().equals(rf.annotationFqcn()) &&
-                supported.getSupportedAttributes().containsAll(rf.requiredAttributes())
-            );
-            if (!matched) return false;
+                    supported.getSupportedAnnotation().equals(rf.annotationFqcn()) &&
+                            supported.getSupportedAttributes().containsAll(rf.requiredAttributes()));
+            if (!matched) {
+                return false;
+            }
         }
         return true;
     }
 
-    record TestResult(String name, boolean passed, Throwable error) {}
-
-
+    record TestResult(String name, boolean passed, Throwable error, List<RequiredFeature> testedFeatures) {
+    }
 }

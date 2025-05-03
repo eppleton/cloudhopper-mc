@@ -24,30 +24,35 @@ package com.cloudhopper.mc.test.tck.core;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import com.cloudhopper.mc.annotations.Function;
+
+import com.cloudhopper.mc.annotations.Schedule;
 import com.cloudhopper.mc.test.tck.api.FeatureAwareTest;
 import com.cloudhopper.mc.test.tck.api.RequiredFeature;
 import com.cloudhopper.mc.test.tck.api.TestContext;
 import java.util.List;
 import org.junit.Assert;
 
-public class PlainFunctionCompatibilityTest implements FeatureAwareTest {
+public class ScheduledFunctionCompatibilityTest implements FeatureAwareTest {
 
-    private static final String FUNCTION_NAME = "plainping";
+    private static final String FUNCTION_NAME = "scheduled";
 
     @Override
     public void run(TestContext context) throws Exception {
-        System.out.println("📞 Directly invoking: " + FUNCTION_NAME);
-        Object result = context.invokeFunctionDirect(FUNCTION_NAME, null);
-        System.out.println("🏓 Raw result: " + result);
+        System.out.println("⏰ Waiting 70s to allow scheduled trigger to run...");
+        Thread.sleep(70_000);
 
-        Assert.assertEquals("pong", result);
+        List<String> logs = context.fetchLogs(FUNCTION_NAME);
+        System.out.println("📜 Fetched logs:");
+        logs.forEach(System.out::println);
+
+        boolean triggered = logs.stream().anyMatch(line -> line.contains("Method was called"));
+        Assert.assertTrue("Scheduled function did not appear to run as expected", triggered);
     }
-
+    
     @Override
     public List<RequiredFeature> requiredFeatures() {
         return List.of(
-                new RequiredFeature(Function.class.getName(), List.of(Function.FunctionAttribute.NAME)));
+                new RequiredFeature(Schedule.class.getName(), List.of(Schedule.ScheduleAttribute.CRON)));
 
     }
 }

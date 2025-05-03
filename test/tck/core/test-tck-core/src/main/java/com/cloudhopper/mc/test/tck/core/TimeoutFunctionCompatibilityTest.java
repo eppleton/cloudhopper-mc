@@ -31,23 +31,22 @@ import com.cloudhopper.mc.test.tck.api.TestContext;
 import java.util.List;
 import org.junit.Assert;
 
-public class PlainFunctionCompatibilityTest implements FeatureAwareTest {
+public class TimeoutFunctionCompatibilityTest implements FeatureAwareTest {
 
-    private static final String FUNCTION_NAME = "plainping";
+    private static final String FUNCTION_NAME = "timeout";
 
     @Override
     public void run(TestContext context) throws Exception {
         System.out.println("📞 Directly invoking: " + FUNCTION_NAME);
         Object result = context.invokeFunctionDirect(FUNCTION_NAME, null);
-        System.out.println("🏓 Raw result: " + result);
-
-        Assert.assertEquals("pong", result);
+        System.out.println("📩 Raw result: " + result);
+        Assert.assertTrue("Result should be smaller than 20s", ((Integer)result) <= 20000);
     }
 
     @Override
     public List<RequiredFeature> requiredFeatures() {
         return List.of(
-                new RequiredFeature(Function.class.getName(), List.of(Function.FunctionAttribute.NAME)));
+                new RequiredFeature(Function.class.getName(), List.of(Function.FunctionAttribute.NAME,Function.FunctionAttribute.TIMEOUT)));
 
     }
 }

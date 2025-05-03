@@ -147,6 +147,8 @@ public class TestContextAws implements TestContext {
 
     @Override
     public List<String> fetchLogs(String functionName) {
+        String sanitizedFunctionName = functionName.toLowerCase();
+        usedFunctions.add(sanitizedFunctionName);
         try {
             String logGroupName = "/aws/lambda/" + functionName;
 

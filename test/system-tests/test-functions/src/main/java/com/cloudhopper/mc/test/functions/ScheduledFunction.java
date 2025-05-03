@@ -1,8 +1,8 @@
-package com.cloudhopper.mc.test.tck.core;
+package com.cloudhopper.mc.test.functions;
 
 /*-
  * #%L
- * test-tck-core - a library from the "Cloudhopper" project.
+ * demo - a library from the "Cloudhopper" project.
  * 
  * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
  * exception as provided in the README.md file that accompanies this code.
@@ -25,29 +25,24 @@ package com.cloudhopper.mc.test.tck.core;
  * #L%
  */
 import com.cloudhopper.mc.annotations.Function;
-import com.cloudhopper.mc.test.tck.api.FeatureAwareTest;
-import com.cloudhopper.mc.test.tck.api.RequiredFeature;
-import com.cloudhopper.mc.test.tck.api.TestContext;
-import java.util.List;
-import org.junit.Assert;
+import com.cloudhopper.mc.annotations.Schedule;
+import com.cloudhopper.mc.runtime.CloudRequestHandler;
+import com.cloudhopper.mc.runtime.HandlerContext;
+import java.util.Map;
 
-public class PlainFunctionCompatibilityTest implements FeatureAwareTest {
+/**
+ *
+ * @author antonepple
+ */
+public class ScheduledFunction implements CloudRequestHandler<Void, Void> {
 
-    private static final String FUNCTION_NAME = "plainping";
-
+    @Function(name = "scheduled")
+    @Schedule(cron = "* * * * *")
     @Override
-    public void run(TestContext context) throws Exception {
-        System.out.println("📞 Directly invoking: " + FUNCTION_NAME);
-        Object result = context.invokeFunctionDirect(FUNCTION_NAME, null);
-        System.out.println("🏓 Raw result: " + result);
-
-        Assert.assertEquals("pong", result);
+    public Void handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
+        System.out.println("Method was called");
+        System.out.println("Memory "+context.getMemoryLimitInMB());
+        return null;
     }
 
-    @Override
-    public List<RequiredFeature> requiredFeatures() {
-        return List.of(
-                new RequiredFeature(Function.class.getName(), List.of(Function.FunctionAttribute.NAME)));
-
-    }
 }
