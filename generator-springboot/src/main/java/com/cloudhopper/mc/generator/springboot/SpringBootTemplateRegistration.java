@@ -52,7 +52,6 @@ import com.cloudhopper.mc.generator.generic.annotations.TemplateRegistration;
                 ApiOperationAttribute.OPERATION_ID,
                 ApiOperationAttribute.PATH,
                 ApiOperationAttribute.METHOD,
-                ApiOperationAttribute.PARAMETERS
             }
         )
     }

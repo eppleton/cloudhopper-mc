@@ -114,6 +114,5 @@ public @interface ApiOperation {
         public static final String OPERATION_ID = "operationId";
         public static final String PATH = "path";
         public static final String METHOD = "method";
-        public static final String PARAMETERS = "parameters";
     }
 }

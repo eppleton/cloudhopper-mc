@@ -26,14 +26,20 @@ package com.cloudhopper.mc.test.tck.core;
  */
 import com.cloudhopper.mc.generator.api.GeneratorFeatureInfo;
 import com.cloudhopper.mc.test.support.CompatibilityTest;
+import com.cloudhopper.mc.test.support.FeatureAwareTest;
+import com.cloudhopper.mc.test.support.RequiredFeature;
 import com.cloudhopper.mc.test.support.TestContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The TCK test runner for verifying generator compatibility.
  */
+
+
 public class CompatibilityTestRunner {
 
     public static void runWith(String generatorId, TestContext context) throws Exception {
@@ -44,46 +50,92 @@ public class CompatibilityTestRunner {
             throw new IllegalStateException("Could not load generator features for: " + generatorId);
         }
 
-        List<CompatibilityTest> testsToRun = new ArrayList<>();
-        if (supportsAnnotation(info, "com.cloudhopper.mc.annotations.ApiOperation")) {
-            // minimal tests to ensure an API can be called
-            testsToRun.add(new HttpFunctionCompatibilityTest());
-            // test if "complex" objects can be used
-            testsToRun.add(new HttpGetPlayerCompatibilityTest());
-            // test post
-            testsToRun.add(new HttpRegisterPlayerCompatibilityTest());
-            // test put
-            testsToRun.add(new HttpUpdatePlayerCompatibilityTest());
-            // test delete
-            testsToRun.add(new HttpDeletePlayerCompatibilityTest());
-            // test with multiple path params
-            testsToRun.add(new HttpGetMatchCompatibilityTest());
-        }
-        try {
-            System.out.println("🚀 Deploying test functions...");
-            context.deployTestFunctions();
-            System.out.println("⏳ Waiting 20s for API Gateway to stabilize...");
-            Thread.sleep(20000);
+        List<CompatibilityTest> availableTests = List.of(
+            new HttpFunctionCompatibilityTest(),
+            new HttpGetPlayerCompatibilityTest(),
+            new HttpRegisterPlayerCompatibilityTest(),
+            new HttpUpdatePlayerCompatibilityTest(),
+            new HttpDeletePlayerCompatibilityTest(),
+            new HttpGetMatchCompatibilityTest(),
+            new HttpSearchPlayersCompatibilityTest()
+        );
 
-            for (CompatibilityTest test : testsToRun) {
-                String name = test.getClass().getSimpleName();
-                System.out.println("\n▶ Running test: " + name);
-                try {
-                    test.run(context);
-                    System.out.println("✅ " + name + " PASSED");
-                } catch (Throwable t) {
-                    System.out.println("❌ " + name + " FAILED");
-                    t.printStackTrace();
+        List<CompatibilityTest> selectedTests = new ArrayList<>();
+        Map<CompatibilityTest, List<RequiredFeature>> unsupportedTests = new HashMap<>();
+
+        for (CompatibilityTest test : availableTests) {
+            if (test instanceof FeatureAwareTest fat) {
+                List<RequiredFeature> required = fat.requiredFeatures();
+                if (supportsAllFeatures(required, info)) {
+                    selectedTests.add(test);
+                } else {
+                    unsupportedTests.put(test, required);
+                }
+            } else {
+                selectedTests.add(test); // fallback: always run
+            }
+        }
+
+        List<TestResult> results = new ArrayList<>();
+        System.out.println("\n🚀 Deploying test functions...");
+        context.deployTestFunctions();
+        System.out.println("⏳ Waiting 20s for API Gateway to stabilize...");
+        Thread.sleep(20000);
+
+        for (CompatibilityTest test : selectedTests) {
+            String name = test.getClass().getSimpleName();
+            System.out.println("\n▶ Running test: " + name);
+            try {
+                test.run(context);
+                System.out.println("✅ " + name + " PASSED");
+                results.add(new TestResult(name, true, null));
+            } catch (Throwable t) {
+                System.out.println("❌ " + name + " FAILED");
+                t.printStackTrace();
+                results.add(new TestResult(name, false, t));
+            }
+        }
+
+        System.out.println("\n🧹 Cleaning up deployed functions...");
+        context.cleanupTestFunctions();
+
+        long passed = results.stream().filter(TestResult::passed).count();
+        long failed = results.size() - passed;
+
+        System.out.println("\n📊 Compatibility Summary:");
+        System.out.printf("✅ Passed: %d\n", passed);
+        System.out.printf("❌ Failed: %d\n", failed);
+        System.out.printf("🔎 Skipped due to unsupported features: %d\n", unsupportedTests.size());
+
+        if (!unsupportedTests.isEmpty()) {
+            System.out.println("\n⏩ Skipped tests (unsupported features):");
+            for (Map.Entry<CompatibilityTest, List<RequiredFeature>> entry : unsupportedTests.entrySet()) {
+                System.out.println(" - " + entry.getKey().getClass().getSimpleName());
+                for (RequiredFeature feat : entry.getValue()) {
+                    System.out.println("    ↳ Requires: " + feat.annotationFqcn() + " → " + feat.requiredAttributes());
                 }
             }
-        } finally {
-            System.out.println("\n🧹 Cleaning up deployed functions...");
-            context.cleanupTestFunctions();
+        }
+
+        if (failed == 0) {
+            System.out.println("\n🎉 Certification PASSED — generator is compatible with all claimed features!");
+        } else {
+            System.out.println("\n❗ Certification FAILED — see above for failed tests.");
         }
     }
 
-    private static boolean supportsAnnotation(GeneratorFeatureInfo info, String annotationFqcn) {
-        return info.getFeatures().stream()
-                .anyMatch(f -> annotationFqcn.equals(f.getSupportedAnnotation()));
+    private static boolean supportsAllFeatures(List<RequiredFeature> required, GeneratorFeatureInfo declared) {
+        for (RequiredFeature rf : required) {
+            boolean matched = declared.getFeatures().stream().anyMatch(supported ->
+                supported.getSupportedAnnotation().equals(rf.annotationFqcn()) &&
+                supported.getSupportedAttributes().containsAll(rf.requiredAttributes())
+            );
+            if (!matched) return false;
+        }
+        return true;
     }
+
+    record TestResult(String name, boolean passed, Throwable error) {}
+
+
 }

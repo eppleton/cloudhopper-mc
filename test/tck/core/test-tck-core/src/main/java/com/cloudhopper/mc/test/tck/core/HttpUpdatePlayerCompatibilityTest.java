@@ -24,16 +24,21 @@ package com.cloudhopper.mc.test.tck.core;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+import com.cloudhopper.mc.annotations.ApiOperation;
+import com.cloudhopper.mc.annotations.Function;
 import com.cloudhopper.mc.test.support.HttpClientHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.cloudhopper.mc.test.domain.Player;
 import com.cloudhopper.mc.test.support.CompatibilityTest;
+import com.cloudhopper.mc.test.support.FeatureAwareTest;
+import com.cloudhopper.mc.test.support.RequiredFeature;
 import com.cloudhopper.mc.test.support.TestContext;
 import org.junit.Assert;
 
 import java.net.URI;
+import java.util.List;
 
-public class HttpUpdatePlayerCompatibilityTest implements CompatibilityTest {
+public class HttpUpdatePlayerCompatibilityTest implements FeatureAwareTest {
 
     private static final String FUNCTION_NAME = "updatePlayer";
 
@@ -56,5 +61,18 @@ public class HttpUpdatePlayerCompatibilityTest implements CompatibilityTest {
         Assert.assertEquals("Player ID mismatch", 1, player.getId());
         Assert.assertEquals("Player name mismatch", "UpdatedName", player.getName());
         Assert.assertEquals("Player ranking mismatch", 15, player.getRanking());
+    }
+
+    @Override
+    public List<RequiredFeature> requiredFeatures() {
+        return List.of(
+                new RequiredFeature(Function.class.getName(), List.of(Function.FunctionAttribute.NAME)),
+                new RequiredFeature(ApiOperation.class.getName(),
+                        List.of(
+                                ApiOperation.ApiOperationAttribute.METHOD,
+                                ApiOperation.ApiOperationAttribute.OPERATION_ID,
+                                ApiOperation.ApiOperationAttribute.PATH
+                        )
+                ));
     }
 }

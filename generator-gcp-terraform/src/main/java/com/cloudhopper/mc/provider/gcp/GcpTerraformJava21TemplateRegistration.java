@@ -60,7 +60,6 @@ import com.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
                         ApiOperationAttribute.OPERATION_ID,
                         ApiOperationAttribute.PATH,
                         ApiOperationAttribute.METHOD,
-                        ApiOperationAttribute.PARAMETERS
                     }
             )
         }
