@@ -1,4 +1,4 @@
-package com.cloudhopper.mc.test.support;
+package com.cloudhopper.mc.test.tck.api;
 
 /*-
  * #%L
@@ -25,7 +25,8 @@ package com.cloudhopper.mc.test.support;
  * #L%
  */
 
-public interface CompatibilityTest {
-    void run(TestContext context) throws Exception;
-}
+import java.util.List;
 
+public record RequiredFeature(String annotationFqcn, List<String> requiredAttributes) {
+
+}

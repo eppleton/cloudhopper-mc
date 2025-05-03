@@ -1,4 +1,4 @@
-package com.cloudhopper.mc.test.support;
+package com.cloudhopper.mc.test.tck.api;
 
 /*-
  * #%L
@@ -25,8 +25,7 @@ package com.cloudhopper.mc.test.support;
  * #L%
  */
 
-import java.util.List;
-
-public interface FeatureAwareTest extends CompatibilityTest {
-    List<RequiredFeature> requiredFeatures();
+public interface CompatibilityTest {
+    void run(TestContext context) throws Exception;
 }
+

@@ -1,4 +1,4 @@
-package com.cloudhopper.mc.test.support;
+package com.cloudhopper.mc.test.tck.api;
 
 /*-
  * #%L
@@ -27,6 +27,6 @@ package com.cloudhopper.mc.test.support;
 
 import java.util.List;
 
-public record RequiredFeature(String annotationFqcn, List<String> requiredAttributes) {
-
+public interface FeatureAwareTest extends CompatibilityTest {
+    List<RequiredFeature> requiredFeatures();
 }

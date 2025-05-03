@@ -1,4 +1,4 @@
-package com.cloudhopper.mc.test.support;
+package com.cloudhopper.mc.test.tck.api;
 
 /*-
  * #%L

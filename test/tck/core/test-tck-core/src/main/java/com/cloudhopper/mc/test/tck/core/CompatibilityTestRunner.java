@@ -25,10 +25,10 @@ package com.cloudhopper.mc.test.tck.core;
  * #L%
  */
 import com.cloudhopper.mc.generator.api.GeneratorFeatureInfo;
-import com.cloudhopper.mc.test.support.CompatibilityTest;
-import com.cloudhopper.mc.test.support.FeatureAwareTest;
-import com.cloudhopper.mc.test.support.RequiredFeature;
-import com.cloudhopper.mc.test.support.TestContext;
+import com.cloudhopper.mc.test.tck.api.CompatibilityTest;
+import com.cloudhopper.mc.test.tck.api.FeatureAwareTest;
+import com.cloudhopper.mc.test.tck.api.RequiredFeature;
+import com.cloudhopper.mc.test.tck.api.TestContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;

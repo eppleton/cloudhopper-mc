@@ -26,7 +26,7 @@ package com.cloudhopper.mc.generator.bindings.aws.terraform;
  */
 import com.cloudhopper.mc.test.support.TerraformDeployer;
 import com.cloudhopper.mc.test.support.TerraformUtil;
-import com.cloudhopper.mc.test.support.TestContext;
+import com.cloudhopper.mc.test.tck.api.TestContext;
 import java.io.IOException;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.*;

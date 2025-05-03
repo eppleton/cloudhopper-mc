@@ -26,10 +26,10 @@ package com.cloudhopper.mc.test.tck.core;
  */
 import com.cloudhopper.mc.annotations.ApiOperation;
 import com.cloudhopper.mc.annotations.Function;
-import com.cloudhopper.mc.test.support.FeatureAwareTest;
-import com.cloudhopper.mc.test.support.HttpClientHelper;
-import com.cloudhopper.mc.test.support.RequiredFeature;
-import com.cloudhopper.mc.test.support.TestContext;
+import com.cloudhopper.mc.test.tck.api.FeatureAwareTest;
+import com.cloudhopper.mc.test.tck.api.HttpClientHelper;
+import com.cloudhopper.mc.test.tck.api.RequiredFeature;
+import com.cloudhopper.mc.test.tck.api.TestContext;
 import org.junit.Assert;
 
 import java.net.URI;
