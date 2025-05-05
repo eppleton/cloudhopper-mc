@@ -25,3 +25,8 @@ resource "google_cloudfunctions_function_iam_member" "${handlerInfo.functionId}_
   role   = "roles/cloudfunctions.invoker"
   member = "allUsers"
 }
+
+
+output "${handlerInfo.functionId}_url" {
+  value = "https://${"$"}{google_api_gateway_gateway.main.default_hostname}${path}"
+}

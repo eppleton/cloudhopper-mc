@@ -24,12 +24,12 @@ package com.cloudhopper.mc.generator.bindings.gcp.terraform;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
-
 import com.cloudhopper.mc.test.support.TerraformDeployer;
 import com.cloudhopper.mc.test.support.TerraformUtil;
 import com.cloudhopper.mc.test.tck.api.TestContext;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.gax.paging.Page;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.logging.*;
@@ -90,22 +90,47 @@ public class TestContextGcp implements TestContext {
             String region = System.getenv("GCP_REGION");
 
             String functionUrl = String.format(
-                    "https://cloudfunctions.googleapis.com/v1/projects/%s/locations/%s/functions/%s:call",
-                    projectId, region, functionName
+                    "https://%s-%s.cloudfunctions.net/%s",
+                    region, projectId, functionName
             );
+            System.out.println("Calling " + functionUrl);
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode payloadJson = mapper.createObjectNode();
+            if (input != null) {
+                payloadJson.set("data", mapper.valueToTree(input));
+            } else {
+                payloadJson.putNull("data");
+            }
 
-            String payload = new ObjectMapper().writeValueAsString(Map.of("data", input));
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(functionUrl))
-                    .header("Authorization", "Bearer " + accessToken)
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(payload))
-                    .build();
-
+            HttpRequest request;
+            if (input == null) {
+                request = HttpRequest.newBuilder()
+                        .uri(URI.create(functionUrl))
+                        .header("Authorization", "Bearer " + accessToken)
+                        .GET()
+                        .build();
+            } else {
+                String payload = mapper.writeValueAsString(
+                        mapper.createObjectNode().set("data", mapper.valueToTree(input))
+                );
+                request = HttpRequest.newBuilder()
+                        .uri(URI.create(functionUrl))
+                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(payload))
+                        .build();
+            }
             HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(request, HttpResponse.BodyHandlers.ofString());
-
-            return new ObjectMapper().readTree(response.body()).get("result");
+            System.out.println("Response " + response.body());
+            JsonNode root = mapper.readTree(response.body());
+            if (root.isObject() && root.has("result")) {
+                return root.get("result").asText();  
+            } else if (root.isTextual()) {
+                return root.asText();  
+            } else {
+                return root;
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to invoke GCP function: " + functionName, e);
         }

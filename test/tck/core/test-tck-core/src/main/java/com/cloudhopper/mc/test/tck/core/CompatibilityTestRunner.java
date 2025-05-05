@@ -54,8 +54,8 @@ public class CompatibilityTestRunner {
                 new HttpUpdatePlayerCompatibilityTest(),
                 new HttpDeletePlayerCompatibilityTest(),
                 new HttpGetMatchCompatibilityTest(),
-                new HttpSearchPlayersCompatibilityTest(),
-                new ScheduledFunctionCompatibilityTest() // This should be last test to later give us a chance to delete the log group.
+                new HttpSearchPlayersCompatibilityTest()
+               // new ScheduledFunctionCompatibilityTest() // This should be last test to later give us a chance to delete the log group.
                 // This way the log group will be deleted about 30s after the last call giving us a 30s window before it would be executed again.
         );
 

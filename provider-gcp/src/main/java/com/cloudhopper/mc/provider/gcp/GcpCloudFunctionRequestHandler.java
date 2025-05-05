@@ -85,6 +85,7 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
         });
         Map<String, String> pathParams = Collections.emptyMap();
         String routePattern = getRoutePattern();
+        System.out.println("routePattern is "+routePattern);
         if (routePattern != null && !routePattern.isBlank()) {
             pathParams = extractPathParams(request.getPath(), routePattern);
         }
@@ -118,8 +119,10 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
     }
 
     private Map<String, String> extractPathParams(String actualPath, String routePattern) {
-        String[] actualParts = actualPath.split("/");
-        String[] routeParts = routePattern.split("/");
+        System.out.println("Extract path params from "+actualPath);
+        System.out.println("routePattern "+routePattern);
+        String[] actualParts = actualPath.replaceAll("^/+", "").split("/");
+        String[] routeParts = routePattern.replaceAll("^/+", "").split("/");
 
         Map<String, String> pathParams = new HashMap<>();
         for (int i = 0; i < Math.min(routeParts.length, actualParts.length); i++) {
@@ -217,7 +220,11 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
          */
         @Override
         public int getMemoryLimitInMB() {
-            return Integer.parseInt(System.getenv("FUNCTION_MEMORY_MB"));
+            String mem = System.getenv("FUNCTION_MEMORY_MB");
+            if (mem == null || mem.isBlank()) {
+                return -1; // or a default, or throw a meaningful exception
+            }
+            return Integer.parseInt(mem);
         }
     }
 }

@@ -1,13 +1,12 @@
-locals {
-  openapi_paths_fragments = [
-  <#list lambdaMap?keys as key>
-    templatefile("${"$"}{path.module}/api-routes/${lambdaMap[key]}_api_apiIntegration.json", {
-      region  = var.gcp_region,
-      project = var.gcp_project_id
-    })<#if key_has_next>,</#if>
-  </#list>
-  ]
+<#-- Step 1: Group keys by path -->
+<#assign pathMap = {} />
+<#list lambdaMetaMap?keys as key>
+  <#assign path = lambdaMetaMap[key]["path"]>
+  <#assign existing = pathMap[path]![]>
+  <#assign pathMap = pathMap + { (path): existing + [key] }>
+</#list>
 
+locals {
   openapi_description = <<EOF
 {
   "swagger": "2.0",
@@ -16,10 +15,25 @@ locals {
     "version": "1.0"
   },
   "paths": {
-    ${"$"}{join(",\n", local.openapi_paths_fragments)}
+<#list pathMap?keys as path>
+    "${path}": {
+<#list pathMap[path] as key>
+      "${lambdaMetaMap[key]['method']?lower_case}":
+      ${"$"}{templatefile("${"$"}{path.module}/api-routes/${lambdaMetaMap[key]['functionId']}_api_apiIntegration.json", {
+        region  = var.gcp_region,
+        project = var.gcp_project_id
+      })}<#if key_has_next>,</#if>
+</#list>
+    }<#if path_has_next>,</#if>
+</#list>
   }
 }
 EOF
+}
+
+resource "local_file" "openapi_debug" {
+  content  = local.openapi_description
+  filename = "./openapi-debug.json"
 }
 
 resource "google_api_gateway_api" "api" {

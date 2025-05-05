@@ -149,7 +149,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     public void generateApiResourceAndIntegration(String generatorId, String outputDir, HandlerInfo handlerInfo, ApiOperation apiOperation, ProcessingEnvironment env) throws ConfigGenerationException {
         Map<String, Object> dataModel = getApiIntegrationDataModelForTemplateRendering(handlerInfo, apiOperation);
         templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(generatorId));
-        saveHandlerInfo(handlerInfo, outputDir);
+        saveHandlerInfo(handlerInfo, apiOperation, outputDir);
         runPhase(processingEnv, GenerationPhase.API, dataModel, handlerInfo, outputDir, handlerInfo.getFunctionId().toLowerCase() + "_api");
     }
 
@@ -159,8 +159,19 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
 
         Properties properties = loadProperties(configOutputDir);
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("lambdaMap", new HashMap<>(properties.stringPropertyNames().stream()
-                .collect(Collectors.toMap(k -> k, properties::getProperty))));
+        final Map<String, String> lambdaMap = properties.stringPropertyNames().stream()
+                .filter(k -> k.endsWith("_Arn"))
+                .collect(Collectors.toMap(k -> k, properties::getProperty));
+        Map<String, Map<String, String>> lambdaMetaMap = new HashMap<>();
+        for (String key : properties.stringPropertyNames()) {
+            if (key.endsWith("_functionId") || key.endsWith("_path") || key.endsWith("_method") || key.endsWith("_operationId")) {
+                String baseKey = key.substring(0, key.lastIndexOf('_'));
+                lambdaMetaMap.computeIfAbsent(baseKey, k -> new HashMap<>())
+                        .put(key.substring(key.lastIndexOf('_') + 1), properties.getProperty(key));
+            }
+        }
+        dataModel.put("lambdaMap", lambdaMap);
+        dataModel.put("lambdaMetaMap", lambdaMetaMap);
 
         try {
             runPhase(processingEnv, GenerationPhase.FINALIZE, dataModel, null, configOutputDir, "api");
@@ -219,7 +230,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
                 }
             } else {
                 String base = fileName;
-                String effectiveFileName = base + "_" + stripExtension(descriptor.getTemplateName()) ;
+                String effectiveFileName = base + "_" + stripExtension(descriptor.getTemplateName());
                 templateRenderer.renderTemplate(descriptor, outputDir, dataModel, effectiveFileName);
             }
         }
@@ -289,9 +300,13 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         }
     }
 
-    private void saveHandlerInfo(HandlerInfo handlerInfo, String configOutputDir) {
+    private void saveHandlerInfo(HandlerInfo handlerInfo, ApiOperation apiOperation, String configOutputDir) {
         Properties properties = loadProperties(configOutputDir);
         properties.setProperty(handlerInfo.getHandlerClassName() + "_Arn", handlerInfo.getFunctionId().toLowerCase());
+        properties.setProperty(handlerInfo.getHandlerClassName() + "_functionId", handlerInfo.getFunctionId());
+        properties.setProperty(handlerInfo.getHandlerClassName() + "_path", apiOperation.path());
+        properties.setProperty(handlerInfo.getHandlerClassName() + "_method", apiOperation.method().toUpperCase());
+        properties.setProperty(handlerInfo.getHandlerClassName() + "_operationId", apiOperation.operationId());
         saveProperties(properties, configOutputDir);
     }
 
