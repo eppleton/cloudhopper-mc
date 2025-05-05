@@ -19,8 +19,8 @@
       }
     },
     "x-google-backend": {
-      "address": "https://${"$"}{region}-${"$"}{project}.cloudfunctions.net/${handlerInfo.functionId}_api",
-      "protocol": "h2"
+        "address": "https://${"$"}{region}-${"$"}{project}.cloudfunctions.net/${handlerInfo.functionId}_api",
+        "protocol": "h2"
     }
   }
 }

@@ -49,8 +49,6 @@ public class DeletePlayerFunction implements CloudRequestHandler<Void, String> {
         int id = idStr != null ? Integer.parseInt(idStr) : 0;
 
         System.out.println("Deleted player with ID: " + id);
-
-        // Simulate deletion: In real apps, you would delete from database
         return "Player with ID " + id + " deleted";
     }
 }

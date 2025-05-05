@@ -218,9 +218,16 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
                     dataModel.put("handlerWrapperFullyQualifiedName", handlerInfo.getWrapperFullyQualifiedName());
                 }
             } else {
-                templateRenderer.renderTemplate(descriptor, outputDir, dataModel, fileName);
+                String base = fileName;
+                String effectiveFileName = base + "_" + stripExtension(descriptor.getTemplateName()) ;
+                templateRenderer.renderTemplate(descriptor, outputDir, dataModel, effectiveFileName);
             }
         }
+    }
+
+    private String stripExtension(String name) {
+        int dot = name.lastIndexOf('.');
+        return dot == -1 ? name : name.substring(0, dot);
     }
 
     protected Map<String, Object> createBaseDataModel(HandlerInfo handlerInfo) {
@@ -250,7 +257,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
             param.put("in", "PATH");
             param.put("name", matcher.group(1));
             parameters.add(param);
-        }      
+        }
         dataModel.put("parameters", parameters);
         return dataModel;
     }
@@ -327,7 +334,5 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     public String getGeneratorID() {
         return generatorId;
     }
-
-
 
 }

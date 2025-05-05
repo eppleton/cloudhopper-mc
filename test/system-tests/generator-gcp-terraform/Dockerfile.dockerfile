@@ -1,6 +1,6 @@
 FROM maven:3.9.6-eclipse-temurin-21
 
-LABEL maintainer="toni.epple@cloud-hopper.com""
+LABEL maintainer="toni.epple@cloud-hopper.com"
 LABEL platform="gcp"
 
 # Install Terraform

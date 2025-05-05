@@ -74,9 +74,10 @@
         <module>test/system-tests/generator-gcp-terraform</module>
         <module>test/system-tests/generator-springboot</module>
         <module>test/test-support</module>
-        <module>test/tck/generator-bindings/NewFolder/generator-bindings-aws-terraform</module>
         <module>test/tck/core/test-tck-core</module>
         <module>test/system-tests/test-domain</module>
+        <module>test/tck/generator-bindings/aws-terraform</module>
+        <module>test/tck/generator-bindings/gcp-terraform</module>
     </modules>
     <build>
         <pluginManagement>
