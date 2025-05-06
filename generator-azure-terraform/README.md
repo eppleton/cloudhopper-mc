@@ -4,6 +4,8 @@ This module provides a Cloudhopper generator that enables the deployment of anno
 
 Azure is unique in that Cloudhopper generates most of the glue code as Java classes. Only shared Terraform infrastructure (like the Function App and Storage Account) is generated as `.tf` files.
 
+‼️ Azure support is currently experimental due to limitations in Microsoft’s developer onboarding process.
+
 ---
 
 ## 📦 How to Use
