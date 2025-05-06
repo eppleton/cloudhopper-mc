@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "lambda_artifacts" {
-  bucket = "${"$"}{var.project_name}-${"$"}{var.environment}-lambda-artifacts"
+  bucket = "${"$"}{var.project_name}-${"$"}{var.environment}-lambda-artifacts-${"$"}{data.aws_caller_identity.current.account_id}"
   force_destroy = true  # only for tests; deletes all objects when bucket is deleted
 }
 

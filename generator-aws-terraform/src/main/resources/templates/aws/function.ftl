@@ -11,6 +11,7 @@ resource "aws_lambda_function" "${handlerInfo.functionId}" {
   timeout = ${handlerInfo.timeout}
   memory_size = ${handlerInfo.memory}
   runtime = "java21"
+  architectures = ["${handlerInfo.architecture}"]
   
   environment {
     variables = {

@@ -51,6 +51,7 @@ public class HandlerInfo {
     private final int memory;
     private final int timeout;
     private final int minInstances;
+    private final String architecture;
 
     /**
      * Constructs a new {@code HandlerInfo} with the required properties.
@@ -59,6 +60,7 @@ public class HandlerInfo {
      * @param memory                      memory limit in MB
      * @param timeout                     timeout in seconds
      * @param minInstances                minimum instances (e.g., warm start)
+     * @param architecture                function architecture
      * @param handlerClassName           simple name of the handler class
      * @param handlerFullyQualifiedName  fully qualified name of the handler class
      * @param handlerPackage             package name of the handler class
@@ -75,6 +77,7 @@ public class HandlerInfo {
         int memory,
         int timeout,
         int minInstances,
+        String architecture,
         String handlerClassName,
         String handlerFullyQualifiedName,
         String handlerPackage,
@@ -90,6 +93,7 @@ public class HandlerInfo {
         this.memory = memory;
         this.timeout = timeout;
         this.minInstances = minInstances;
+        this.architecture = architecture;
         this.handlerClassName = handlerClassName;
         this.handlerFullyQualifiedName = handlerFullyQualifiedName;
         this.handlerPackage = handlerPackage;
@@ -120,6 +124,11 @@ public class HandlerInfo {
     /** @return the configured minimum number of instances */
     public int getMinInstances() {
         return minInstances;
+    }
+
+    /** @return the configured function architecture */
+    public String getArchitecture() {
+        return architecture;
     }
 
     /** @return the handler class name (simple name) */

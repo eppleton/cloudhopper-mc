@@ -78,6 +78,7 @@ public @interface Function {
         public static final String MEMORY = "memory";
         public static final String TIMEOUT = "timeout";
         public static final String MIN_INSTANCES = "minInstances";
+        public static final String ARCHITECTURE = "architecture";
     }
 
     /**
@@ -111,4 +112,10 @@ public @interface Function {
      */
     int minInstances() default 0;
 
+    /**
+     * The function architecture. Default is arm64.
+     *
+     * @return function architecture
+     */
+    String architecture() default "arm64";
 }
