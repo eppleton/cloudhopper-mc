@@ -78,6 +78,7 @@
         <module>test/system-tests/test-domain</module>
         <module>test/tck/generator-bindings/aws-terraform</module>
         <module>test/tck/generator-bindings/gcp-terraform</module>
+        <module>test/tck/generator-bindings/azure-terraform</module>
     </modules>
     <build>
         <pluginManagement>

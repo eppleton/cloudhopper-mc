@@ -42,6 +42,7 @@ provider "google-beta" {
 variable "gcp_project_id" {
   description = "The GCP project ID"
   type        = string
+  default     = "cloudhopper-tck"
 }
 
 variable "gcp_region" {

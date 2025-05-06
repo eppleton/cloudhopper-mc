@@ -13,7 +13,8 @@ resource "google_cloudfunctions_function" "${handlerInfo.functionId}" {
   entry_point           = "${handlerWrapperFullyQualifiedName}"
   
   environment_variables = {
-    # Add any environment variables your function needs
+    FUNCTION_MEMORY_MB  = ${handlerInfo.memory}
+    FUNCTION_TIMEOUT_SECONDS = ${handlerInfo.timeout}
   }
 }
 

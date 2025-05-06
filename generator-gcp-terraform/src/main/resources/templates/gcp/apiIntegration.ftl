@@ -1,5 +1,4 @@
-"${path}": {
-  "${httpMethod?lower_case}": {
+ {
     "operationId": "${operationId}",
 <#if parameters?has_content>
     "parameters": [
@@ -19,8 +18,9 @@
       }
     },
     "x-google-backend": {
-        "address": "https://${"$"}{region}-${"$"}{project}.cloudfunctions.net/${handlerInfo.functionId}_api",
-        "protocol": "h2"
+        "address": "https://${"$"}{region}-${"$"}{project}.cloudfunctions.net/${handlerInfo.functionId}-api",
+        "protocol": "h2",
+        "path_translation": "APPEND_PATH_TO_ADDRESS" 
     }
   }
-}
+

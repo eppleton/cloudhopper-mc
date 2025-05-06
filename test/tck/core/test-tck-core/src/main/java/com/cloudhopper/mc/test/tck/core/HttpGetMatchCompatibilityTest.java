@@ -40,7 +40,7 @@ import java.util.List;
 
 public class HttpGetMatchCompatibilityTest implements FeatureAwareTest {
 
-    private static final String FUNCTION_NAME = "GetMatch";
+    private static final String FUNCTION_NAME = "getmatch";
 
     @Override
     public void run(TestContext context) throws Exception {
@@ -55,7 +55,6 @@ public class HttpGetMatchCompatibilityTest implements FeatureAwareTest {
         HttpClientHelper.HttpResponse response = HttpClientHelper.get(url);
 
         System.out.println("📩 Raw Response: " + response.getBody());
-
         Assert.assertEquals(200, response.getStatusCode());
 
         Match match = new ObjectMapper().readValue(response.getBody(), Match.class);

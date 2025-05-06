@@ -46,8 +46,7 @@ public class DeletePlayerFunction implements CloudRequestHandler<Void, String> {
     @Override
     public String handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
         String idStr = pathParams.get("id");
-        int id = idStr != null ? Integer.parseInt(idStr) : 0;
-
+        int id = idStr != null ? Integer.parseInt(idStr) : 0;          
         System.out.println("Deleted player with ID: " + id);
         return "Player with ID " + id + " deleted";
     }

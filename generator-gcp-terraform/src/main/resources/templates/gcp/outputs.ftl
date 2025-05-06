@@ -1,6 +1,6 @@
 <#list lambdaMap?keys as key>
 output "${lambdaMap[key]}_url" {
-  value = "https://${"$"}{google_api_gateway_gateway.main.default_hostname}/${"$"}{var.gcp_project_id}/${"$"}{var.environment}/${lambdaMap[key]}"
+  value = "https://${"$"}{google_api_gateway_gateway.main.default_hostname}/${lambdaMap[key]}"
 }
 </#list>
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e
+GCP_PROJECT_ID="cloudhopper-tck"
+GCP_REGION="us-central1"
 
 # Ensure GCP credentials are available
 if [ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]; then
@@ -30,8 +32,9 @@ docker run --rm \
   -v "$GOOGLE_APPLICATION_CREDENTIALS":/root/gcp-key.json \
   -w /workspace \
   -e GOOGLE_APPLICATION_CREDENTIALS=/root/gcp-key.json \
-  -e GOOGLE_CLOUD_PROJECT \
-  -e GCP_REGION \
+  -e GOOGLE_CLOUD_PROJECT=$GCP_PROJECT_ID \
+  -e GCP_PROJECT_ID=$GCP_PROJECT_ID \
+  -e GCP_REGION=$GCP_REGION \
   cloudhopper-tck-gcp bash -c "
     echo '🔍 Recompiling only system tests...'
     mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-gcp-terraform &&

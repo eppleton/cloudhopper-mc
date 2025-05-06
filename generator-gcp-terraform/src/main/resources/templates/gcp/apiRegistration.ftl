@@ -12,7 +12,8 @@ resource "google_cloudfunctions_function" "${handlerInfo.functionId}_api" {
   entry_point           = "${handlerWrapperFullyQualifiedName}"
 
   environment_variables = {
-    # Add any environment variables your function needs
+    FUNCTION_MEMORY_MB  = ${handlerInfo.memory}
+    FUNCTION_TIMEOUT_SECONDS = ${handlerInfo.timeout}
   }
 }
 
@@ -24,4 +25,9 @@ resource "google_cloudfunctions_function_iam_member" "${handlerInfo.functionId}_
 
   role   = "roles/cloudfunctions.invoker"
   member = "allUsers"
+}
+
+
+output "${handlerInfo.functionId}_url" {
+  value = "https://${"$"}{google_api_gateway_gateway.main.default_hostname}${path}"
 }

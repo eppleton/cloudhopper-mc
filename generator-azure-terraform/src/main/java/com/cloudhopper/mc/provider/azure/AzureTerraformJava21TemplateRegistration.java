@@ -97,7 +97,15 @@ import com.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
                     outputFileExtension = "java",
                     outputSubDirectory = "",
                     javaFile = true
-            )
+            ),
+            @Template(
+                    phase = GenerationPhase.FINALIZE,
+                    templateName = "outputs.ftl",
+                    description = "Generates the URLs to call our functions",
+                    outputFileExtension = "tf",
+                    outputSubDirectory = "",
+                    javaFile = false
+            ),
         }
 )
 public class AzureTerraformJava21TemplateRegistration {
