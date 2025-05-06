@@ -37,11 +37,7 @@ import java.net.URI;
 import java.util.List;
 import org.junit.Assert;
 
-/**
- * Compatibility test for HTTP-exposed functions. Requires a function with
- *
- * @ApiOperation(path = "/ping") that returns "pong".
- */
+
 public class HttpFunctionCompatibilityTest implements FeatureAwareTest {
 
     private static final String FUNCTION_NAME = "Ping";
