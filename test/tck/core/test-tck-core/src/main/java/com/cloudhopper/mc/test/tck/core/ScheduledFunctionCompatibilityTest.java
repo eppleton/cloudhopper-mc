@@ -43,7 +43,6 @@ public class ScheduledFunctionCompatibilityTest implements FeatureAwareTest {
 
         List<String> logs = context.fetchLogs(FUNCTION_NAME);
         System.out.println("📜 Fetched logs:");
-        logs.forEach(System.out::println);
 
         boolean triggered = logs.stream().anyMatch(line -> line.contains("Method was called"));
         Assert.assertTrue("Scheduled function did not appear to run as expected", triggered);

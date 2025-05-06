@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,18 +78,21 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
     @Override
     public void service(HttpRequest request, HttpResponse response) throws IOException {
         I input = parseInput(request);
+
         Map<String, String> queryParams = new HashMap<>();
         request.getQueryParameters().forEach((key, valueList) -> {
             if (valueList != null && !valueList.isEmpty()) {
                 queryParams.put(key, valueList.get(0));
             }
         });
+
         Map<String, String> pathParams = Collections.emptyMap();
         String routePattern = getRoutePattern();
-        System.out.println("routePattern is "+routePattern);
+        
         if (routePattern != null && !routePattern.isBlank()) {
             pathParams = extractPathParams(request.getPath(), routePattern);
         }
+
         O output = handler.handleRequest(input, pathParams, queryParams, new GcpContextAdapter(request));
         writeOutput(response, output);
     }
@@ -119,8 +123,8 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
     }
 
     private Map<String, String> extractPathParams(String actualPath, String routePattern) {
-        System.out.println("Extract path params from "+actualPath);
-        System.out.println("routePattern "+routePattern);
+        System.out.println("Extract path params from " + actualPath);
+        System.out.println("routePattern " + routePattern);
         String[] actualParts = actualPath.replaceAll("^/+", "").split("/");
         String[] routeParts = routePattern.replaceAll("^/+", "").split("/");
 
@@ -212,7 +216,11 @@ public abstract class GcpCloudFunctionRequestHandler<I, O> implements HttpFuncti
          */
         @Override
         public long getRemainingTimeInMillis() {
-            return -1; // Not provided by GCP
+           String mem = System.getenv("FUNCTION_TIMEOUT_SECONDS");
+            if (mem == null || mem.isBlank()) {
+                return -1; // or a default, or throw a meaningful exception
+            }
+            return Integer.parseInt(mem)*1000;
         }
 
         /**

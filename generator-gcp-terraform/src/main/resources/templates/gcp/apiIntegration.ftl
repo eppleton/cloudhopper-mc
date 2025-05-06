@@ -19,7 +19,8 @@
     },
     "x-google-backend": {
         "address": "https://${"$"}{region}-${"$"}{project}.cloudfunctions.net/${handlerInfo.functionId}-api",
-        "protocol": "h2"
+        "protocol": "h2",
+        "path_translation": "APPEND_PATH_TO_ADDRESS" 
     }
   }
 

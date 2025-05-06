@@ -125,9 +125,9 @@ public class TestContextGcp implements TestContext {
             System.out.println("Response " + response.body());
             JsonNode root = mapper.readTree(response.body());
             if (root.isObject() && root.has("result")) {
-                return root.get("result").asText();  
-            } else if (root.isTextual()) {
-                return root.asText();  
+                return mapper.treeToValue(root.get("result"), Object.class);
+            } else if (root.isValueNode()) {
+                return mapper.treeToValue(root, Object.class);  // ✅ will convert IntNode to Integer, etc.
             } else {
                 return root;
             }

@@ -51,7 +51,7 @@ public class GetMatchFunction implements CloudRequestHandler<Void, Match> {
 
         int tournamentId = tournamentIdStr != null ? Integer.parseInt(tournamentIdStr) : 0;
         int matchId = matchIdStr != null ? Integer.parseInt(matchIdStr) : 0;
-
+        System.err.println("tournamentIdStr "+tournamentIdStr);
         return new Match(tournamentId, matchId, "PlayerA", "PlayerB", "Scheduled");
     }
 }

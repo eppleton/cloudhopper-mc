@@ -40,7 +40,6 @@ public class DirectCallToAPIFunctionCompatibilityTest implements FeatureAwareTes
         System.out.println("📞 Directly invoking: " + FUNCTION_NAME);
         Object result = context.invokeFunctionDirect(FUNCTION_NAME, null);
         System.out.println("🏓 Raw result: " + result);
-
         Assert.assertEquals("pong", result);
     }
 
