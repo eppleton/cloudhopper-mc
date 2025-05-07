@@ -24,7 +24,6 @@ package com.cloudhopper.mc.test.support;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -64,9 +63,7 @@ public class TerraformDeployer {
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.directory(workingDir.toFile());
         pb.inheritIO();
-        pb.redirectOutput(new File(args[0]+"-output.log"));
-        pb.redirectErrorStream(true); // redirects stderr to stdout
-        System.out.println(command);
+
         Map<String, String> env = pb.environment();
         env.put("PATH", System.getenv("PATH"));
 
