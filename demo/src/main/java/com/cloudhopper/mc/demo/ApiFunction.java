@@ -24,8 +24,9 @@ package com.cloudhopper.mc.demo;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 import com.cloudhopper.mc.annotations.ApiOperation;
+import com.cloudhopper.mc.annotations.Extension;
+import com.cloudhopper.mc.annotations.ExtensionKeys;
 import com.cloudhopper.mc.annotations.Function;
 import com.cloudhopper.mc.runtime.CloudRequestHandler;
 import com.cloudhopper.mc.runtime.HandlerContext;
@@ -34,19 +35,23 @@ import java.util.Map;
 public class ApiFunction implements CloudRequestHandler<Integer, String> {
 
     @ApiOperation(
-                    description = "dummy description",
-                    operationId = "helloworld2",
-                    method = "POST",
-                    path = "/hello2/{id}",
-                    summary = "bla" //,
-//                    parameters = {
-//                        @Parameter(in = ParameterIn.PATH, name = "version", description = "APi Version", example = "2.0"),
-//            }
-            )
-    @Function(name = "hello_world_2")
+            description = "dummy description",
+            operationId = "helloworld2",
+            method = "POST",
+            path = "/hello2/{id}",
+            summary = "bla"
+    )
+    @Function(
+            name = "hello_world_2",
+            extensions = {
+                @Extension(
+                        name = ExtensionKeys.Aws.Architecture.KEY,
+                        value = ExtensionKeys.Aws.Architecture.Values.ARM64
+                )
+            })
     @Override
     public String handleRequest(Integer input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        return "Hallo "+input;
+        return "Hallo " + input;
     }
 
 }

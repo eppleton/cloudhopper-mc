@@ -56,7 +56,8 @@ public @interface Function {
      * Constants representing the attribute names of {@link Function}.
      *
      * These are intended for use by generator implementors when declaring which
-     * attributes their generator supports in {see: com.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
+     * attributes their generator supports in {see:
+     * com.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
      *
      * Example usage:
      * <pre>{@code
@@ -78,6 +79,7 @@ public @interface Function {
         public static final String MEMORY = "memory";
         public static final String TIMEOUT = "timeout";
         public static final String MIN_INSTANCES = "minInstances";
+        public static final String ARCHITECTURE = "architecture";
     }
 
     /**
@@ -110,5 +112,12 @@ public @interface Function {
      * @return minimum instance count
      */
     int minInstances() default 0;
+    
+    /**
+     * Register extension attributes, for example vendor specific extensions
+     * or unsupported attributes you need for your generator.
+     * @return 
+     */
+    Extension[] extensions() default {};
 
 }

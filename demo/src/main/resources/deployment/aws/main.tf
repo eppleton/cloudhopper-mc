@@ -55,6 +55,7 @@ variable "environment" {
   default     = "dev"
 }
 
+data "aws_caller_identity" "current" {}
 
 #
 #resource "aws_cognito_user_pool" "main" {
