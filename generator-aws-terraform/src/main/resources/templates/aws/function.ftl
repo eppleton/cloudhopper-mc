@@ -11,8 +11,11 @@ resource "aws_lambda_function" "${handlerInfo.functionId}" {
   timeout = ${handlerInfo.timeout}
   memory_size = ${handlerInfo.memory}
   runtime = "java21"
-  architectures = ["${handlerInfo.architecture}"]
-  
+  <#-- look up the AWS architecture extension (falls back to empty string) -->
+  <#assign awsArch = handlerInfo.extensionsMap["x-aws-architecture"]!>
+  <#if awsArch?has_content>
+  architectures = ["${awsArch}"]
+  </#if>
   environment {
     variables = {
       # Add any environment variables your function needs

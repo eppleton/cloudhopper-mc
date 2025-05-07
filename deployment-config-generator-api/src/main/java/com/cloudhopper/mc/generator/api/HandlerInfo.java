@@ -1,5 +1,11 @@
 package com.cloudhopper.mc.generator.api;
 
+import com.cloudhopper.mc.annotations.Extension;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /*-
  * #%L
  * deployment-config-api - a library from the "Cloudhopper" project.
@@ -24,15 +30,16 @@ package com.cloudhopper.mc.generator.api;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 /**
- * Describes a discovered handler class annotated with {@link com.cloudhopper.mc.annotations.Function}.
+ * Describes a discovered handler class annotated with
+ * {@link com.cloudhopper.mc.annotations.Function}.
  * <p>
- * This class is used internally during annotation processing and generation to hold
- * metadata about each function implementation, including handler location, input/output types,
- * function configuration, and build artifact metadata.
+ * This class is used internally during annotation processing and generation to
+ * hold metadata about each function implementation, including handler location,
+ * input/output types, function configuration, and build artifact metadata.
  * <p>
- * It is passed into template processing or custom generators to drive generation logic.
+ * It is passed into template processing or custom generators to drive
+ * generation logic.
  */
 public class HandlerInfo {
 
@@ -51,49 +58,50 @@ public class HandlerInfo {
     private final int memory;
     private final int timeout;
     private final int minInstances;
-    private final String architecture;
+    private final Extension[] extensions;
 
     /**
      * Constructs a new {@code HandlerInfo} with the required properties.
      *
-     * @param functionId                  unique identifier of the function
-     * @param memory                      memory limit in MB
-     * @param timeout                     timeout in seconds
-     * @param minInstances                minimum instances (e.g., warm start)
-     * @param architecture                function architecture
-     * @param handlerClassName           simple name of the handler class
-     * @param handlerFullyQualifiedName  fully qualified name of the handler class
-     * @param handlerPackage             package name of the handler class
-     * @param handlerMethod              method name implementing the handler
-     * @param inputType                  input type (possibly generic)
-     * @param outputType                 output type (possibly generic)
-     * @param artifactId                 Maven artifactId of the module
-     * @param version                    Maven version of the module
-     * @param classifier                 optional classifier
-     * @param targetDir                  build output directory
+     * @param functionId unique identifier of the function
+     * @param memory memory limit in MB
+     * @param timeout timeout in seconds
+     * @param minInstances minimum instances (e.g., warm start)
+     * @param extensions extensions, e.g. function architecture
+     * @param handlerClassName simple name of the handler class
+     * @param handlerFullyQualifiedName fully qualified name of the handler
+     * class
+     * @param handlerPackage package name of the handler class
+     * @param handlerMethod method name implementing the handler
+     * @param inputType input type (possibly generic)
+     * @param outputType output type (possibly generic)
+     * @param artifactId Maven artifactId of the module
+     * @param version Maven version of the module
+     * @param classifier optional classifier
+     * @param targetDir build output directory
      */
     public HandlerInfo(
-        String functionId,
-        int memory,
-        int timeout,
-        int minInstances,
-        String architecture,
-        String handlerClassName,
-        String handlerFullyQualifiedName,
-        String handlerPackage,
-        String handlerMethod,
-        String inputType,
-        String outputType,
-        String artifactId,
-        String version,
-        String classifier,
-        String targetDir
+            String functionId,
+            int memory,
+            int timeout,
+            int minInstances,
+            Extension[] extensions,
+            String handlerClassName,
+            String handlerFullyQualifiedName,
+            String handlerPackage,
+            String handlerMethod,
+            String inputType,
+            String outputType,
+            String artifactId,
+            String version,
+            String classifier,
+            String targetDir
     ) {
         this.functionId = functionId;
         this.memory = memory;
         this.timeout = timeout;
         this.minInstances = minInstances;
-        this.architecture = architecture;
+        this.extensions = extensions;
         this.handlerClassName = handlerClassName;
         this.handlerFullyQualifiedName = handlerFullyQualifiedName;
         this.handlerPackage = handlerPackage;
@@ -106,95 +114,127 @@ public class HandlerInfo {
         this.targetDir = targetDir;
     }
 
-    /** @return the function ID */
+    /**
+     * @return the function ID
+     */
     public String getFunctionId() {
         return functionId.toLowerCase();
     }
 
-    /** @return the configured memory (MB) */
+    /**
+     * @return the configured memory (MB)
+     */
     public int getMemory() {
         return memory;
     }
 
-    /** @return the configured timeout (seconds) */
+    /**
+     * @return the configured timeout (seconds)
+     */
     public int getTimeout() {
         return timeout;
     }
 
-    /** @return the configured minimum number of instances */
+    /**
+     * @return the configured minimum number of instances
+     */
     public int getMinInstances() {
         return minInstances;
     }
 
-    /** @return the configured function architecture */
-    public String getArchitecture() {
-        return architecture;
-    }
-
-    /** @return the handler class name (simple name) */
+    /**
+     * @return the handler class name (simple name)
+     */
     public String getHandlerClassName() {
         return handlerClassName;
     }
 
-    /** @return the fully qualified handler class name */
+    /**
+     * @return the fully qualified handler class name
+     */
     public String getHandlerFullyQualifiedName() {
         return handlerFullyQualifiedName;
     }
 
-    /** @return the handler package name */
+    /**
+     * @return the handler package name
+     */
     public String getHandlerPackage() {
         return handlerPackage;
     }
 
-    /** @return the method name that handles the request */
+    /**
+     * @return the method name that handles the request
+     */
     public String getHandlerMethod() {
         return handlerMethod;
     }
 
-    /** @return the handler input type (with generics if present) */
+    /**
+     * @return the handler input type (with generics if present)
+     */
     public String getInputType() {
         return inputType;
     }
 
-    /** @return the handler output type (with generics if present) */
+    /**
+     * @return the handler output type (with generics if present)
+     */
     public String getOutputType() {
         return outputType;
     }
 
-    /** @return the artifactId of the module containing the function */
+    /**
+     * @return the artifactId of the module containing the function
+     */
     public String getArtifactId() {
         return artifactId;
     }
 
-    /** @return the version of the module containing the function */
+    /**
+     * @return the version of the module containing the function
+     */
     public String getVersion() {
         return version;
     }
 
-    /** @return the classifier (if any) of the artifact */
+    /**
+     * @return the classifier (if any) of the artifact
+     */
     public String getClassifier() {
         return classifier;
     }
 
-    /** @return the build output directory */
+    /**
+     * @return the build output directory
+     */
     public String getTargetDir() {
         return targetDir;
     }
 
     /**
-     * Sets the fully qualified name of the generated wrapper class.
-     * Typically used by generators when wrapping the handler for runtime platforms.
+     * @return the extensions as map 
+     */
+    public Map<String, String> getExtensionsMap() {
+        return Arrays.asList(extensions).stream().collect(Collectors.toMap(extension -> extension.name(), extension -> extension.value()));
+    }
+
+    /**
+     * Sets the fully qualified name of the generated wrapper class. Typically
+     * used by generators when wrapping the handler for runtime platforms.
      *
      * @param wrapperFullyQualifiedName name to assign
      */
     public void setWrapperClassName(String wrapperFullyQualifiedName) {
         this.wrapperFullyQualifiedName = handlerPackage + "." + wrapperFullyQualifiedName;
-        System.err.println("setWrapperClassName "+this.wrapperFullyQualifiedName);
+        System.err.println("setWrapperClassName " + this.wrapperFullyQualifiedName);
     }
 
-    /** @return the fully qualified wrapper class name, if set */
+    /**
+     * @return the fully qualified wrapper class name, if set
+     */
     public String getWrapperFullyQualifiedName() {
-        System.err.println("getWrapperFullyQualifiedName "+wrapperFullyQualifiedName);
+        System.err.println("getWrapperFullyQualifiedName " + wrapperFullyQualifiedName);
         return wrapperFullyQualifiedName;
     }
 

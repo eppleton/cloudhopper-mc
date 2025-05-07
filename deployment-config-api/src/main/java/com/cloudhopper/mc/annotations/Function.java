@@ -56,7 +56,8 @@ public @interface Function {
      * Constants representing the attribute names of {@link Function}.
      *
      * These are intended for use by generator implementors when declaring which
-     * attributes their generator supports in {see: com.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
+     * attributes their generator supports in {see:
+     * com.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
      *
      * Example usage:
      * <pre>{@code
@@ -111,11 +112,12 @@ public @interface Function {
      * @return minimum instance count
      */
     int minInstances() default 0;
-
+    
     /**
-     * The function architecture. Default is arm64.
-     *
-     * @return function architecture
+     * Register extension attributes, for example vendor specific extensions
+     * or unsupported attributes you need for your generator.
+     * @return 
      */
-    String architecture() default "arm64";
+    Extension[] extensions() default {};
+
 }
