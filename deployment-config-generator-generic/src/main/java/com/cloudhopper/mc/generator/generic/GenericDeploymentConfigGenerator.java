@@ -123,6 +123,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         this.templateRenderer = new TemplateRenderer();
         this.sharedConfigGenerated = false;
         generatorId = processingEnv.getOptions().getOrDefault("generatorId", "").trim();
+        this.templateRenderer.initTemplateLoaders(this.getClass(), getTemplateDirectory(generatorId), processingEnv, generatorId);
         generatorConfig = GeneratorConfigLoader.loadGeneratorConfig(processingEnv, GENERATOR_CONFIG_DIR + generatorId + "-templates.json");
     }
 
@@ -133,7 +134,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
 
     @Override
     public void generateServerlessFunctionConfiguration(String generatorId, String outputDir, HandlerInfo handlerInfo, ProcessingEnvironment env) throws ConfigGenerationException {
-        templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(generatorId));
+    
         Map<String, Object> dataModel = createBaseDataModel(handlerInfo);
         try {
             if (!sharedConfigGenerated) {
@@ -148,14 +149,12 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     @Override
     public void generateApiResourceAndIntegration(String generatorId, String outputDir, HandlerInfo handlerInfo, ApiOperation apiOperation, ProcessingEnvironment env) throws ConfigGenerationException {
         Map<String, Object> dataModel = getApiIntegrationDataModelForTemplateRendering(handlerInfo, apiOperation);
-        templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(generatorId));
         saveHandlerInfo(handlerInfo, apiOperation, outputDir);
         runPhase(processingEnv, GenerationPhase.API, dataModel, handlerInfo, outputDir, handlerInfo.getFunctionId().toLowerCase() + "_api");
     }
 
     @Override
     public void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException {
-        templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(providerName));
 
         Properties properties = loadProperties(configOutputDir);
         Map<String, Object> dataModel = new HashMap<>();
@@ -192,7 +191,6 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
 
     @Override
     public void generateScheduledTrigger(String generatorID, String configOutputDir, HandlerInfo handlerInfo, Schedule schedule, ProcessingEnvironment processingEnv) {
-        templateRenderer.setClassForTemplateLoading(this.getClass(), getTemplateDirectory(generatorID));
 
         Map<String, Object> dataModel = createBaseDataModel(handlerInfo);
         dataModel.put("scheduleExpression", schedule.cron());

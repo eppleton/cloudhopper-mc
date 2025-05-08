@@ -55,7 +55,6 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${com.google.code.gson.version}</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
 
@@ -80,7 +79,7 @@
                     <compilerArgs>
                         <arg>-Acloudprovider=${cloud.provider}</arg>
                         <arg>-AgeneratorId=${generator.id}</arg>
-                        <arg>-AconfigOutputDir=${project.build.directory}/deployment/${cloud.provider}</arg>
+                        <arg>-AconfigOutputDir=${project.build.directory}/deployment/${generator.id}</arg>
                         <arg>-AartifactId=${project.artifactId}</arg>
                         <arg>-Aversion=${project.version}</arg>
                         <arg>-Aclassifier=${jar.classifier}</arg>

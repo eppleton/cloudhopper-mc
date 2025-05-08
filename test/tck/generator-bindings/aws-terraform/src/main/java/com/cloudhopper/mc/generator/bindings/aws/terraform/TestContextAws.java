@@ -48,7 +48,7 @@ import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 public class TestContextAws implements TestContext {
 
     private final CloudWatchLogsClient logsClient = CloudWatchLogsClient.create();
-    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "aws");
+    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "aws-terraform-java21");
     private final Set<String> usedFunctions = new HashSet<>();
 
     @Override
@@ -74,6 +74,9 @@ public class TestContextAws implements TestContext {
             }
         } catch (Exception e) {
             System.out.println("❗ Error during CloudWatch cleanup: " + e.getMessage());
+        }
+        finally{
+            logsClient.close();
         }
 
         // Then destroy infrastructure

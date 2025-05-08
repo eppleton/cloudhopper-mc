@@ -77,7 +77,7 @@
                     <compilerArgs>
                         <arg>-Acloudprovider=${cloud.provider}</arg>
                         <arg>-AgeneratorId=${generator.id}</arg>
-                        <arg>-AconfigOutputDir=${project.build.directory}/deployment/${cloud.provider}</arg>
+                        <arg>-AconfigOutputDir=${project.build.directory}/deployment/${generator.id}</arg>
                         <arg>-AartifactId=${project.artifactId}</arg>
                         <arg>-Aversion=${project.version}</arg>
                         <arg>-Aclassifier=${jar.classifier}</arg>
@@ -134,10 +134,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/deployment/${cloud.provider}</outputDirectory>
+                            <outputDirectory>${project.build.directory}/deployment/${generator.id}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources/deployment/${cloud.provider}</directory>
+                                    <directory>src/main/resources/deployment/${generator.id}</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -225,7 +225,7 @@
         <profile>
             <id>springboot</id>
             <activation>
-                <activeByDefault>true</activeByDefault> 
+                <activeByDefault>false</activeByDefault> 
             </activation>
             <properties>
                 <cloud.provider>springboot</cloud.provider>
@@ -328,7 +328,7 @@
         <profile>
             <id>aws</id>
             <activation>
-                <activeByDefault>false</activeByDefault> 
+                <activeByDefault>true</activeByDefault> 
             </activation>
             <properties>
                 <cloud.provider>aws</cloud.provider>
