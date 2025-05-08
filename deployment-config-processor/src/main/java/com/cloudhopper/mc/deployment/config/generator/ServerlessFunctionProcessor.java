@@ -111,6 +111,7 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                             functionAnnotation.memory(),
                             functionAnnotation.timeout(),
                             functionAnnotation.minInstances(),
+                            functionAnnotation.extensions(),
                             handlerSimpleName,
                             handlerFQN,
                             packageName,

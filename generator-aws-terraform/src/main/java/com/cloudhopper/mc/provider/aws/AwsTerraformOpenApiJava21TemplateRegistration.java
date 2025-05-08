@@ -43,6 +43,7 @@ import com.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
                         Function.FunctionAttribute.NAME,
                         Function.FunctionAttribute.MEMORY,
                         Function.FunctionAttribute.MIN_INSTANCES,
+                        Function.FunctionAttribute.ARCHITECTURE,
                         Function.FunctionAttribute.TIMEOUT
                     }
             ),
