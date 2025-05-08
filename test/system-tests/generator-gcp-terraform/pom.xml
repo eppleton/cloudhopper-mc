@@ -105,7 +105,7 @@
                     <compilerArgs>
                         <arg>-Acloudprovider=${cloud.provider}</arg>
                         <arg>-AgeneratorId=${generator.id}</arg>
-                        <arg>-AconfigOutputDir=${project.build.directory}/deployment/${cloud.provider}</arg>
+                        <arg>-AconfigOutputDir=${project.build.directory}/deployment/${generator.id}</arg>
                         <arg>-AartifactId=${project.artifactId}</arg>
                         <arg>-Aversion=${project.version}</arg>
                         <arg>-Aclassifier=${jar.classifier}</arg>

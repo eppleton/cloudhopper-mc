@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2024 antonepple
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package com.cloudhopper.mc.generator.generic.internal;
 
 /*-
@@ -42,10 +26,12 @@ package com.cloudhopper.mc.generator.generic.internal;
  */
 import com.cloudhopper.mc.generator.api.ConfigGenerationException;
 import com.cloudhopper.mc.generator.api.HandlerInfo;
-import com.cloudhopper.mc.generator.generic.internal.TemplateDescriptor;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -55,6 +41,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -68,9 +55,30 @@ public class TemplateRenderer {
 
     private final Configuration freemarkerConfig = new Configuration(Configuration.VERSION_2_3_32);
 
-    public void setClassForTemplateLoading(Class aClass, String templateDir) {
-        this.freemarkerConfig.setClassForTemplateLoading(this.getClass(), templateDir);
+        /**
+     * Call this once during processor init.
+     *
+     * @param anchorClass   any class in your JAR so ClassTemplateLoader can find "/templates"
+     * @param classpathBase e.g. "/templates"
+     * @param processingEnv your ProcessingEnvironment
+     * @param generatorId   the same id you used in @TemplateRegistration
+     */
+    public void initTemplateLoaders(
+        Class<?> anchorClass,
+        String classpathBase,
+        ProcessingEnvironment processingEnv,
+        String generatorId
+    ) {
+        List<TemplateLoader> loaders = new ArrayList<>();
+
+        String overrideBase = "cloudhopper-templates/" + generatorId;
+        loaders.add(new FilerTemplateLoader(processingEnv.getFiler(), overrideBase));
+
+        loaders.add(new ClassTemplateLoader(anchorClass, classpathBase));
+
+        freemarkerConfig.setTemplateLoader(new MultiTemplateLoader(loaders.toArray(new TemplateLoader[0])));
     }
+    
 
     public void renderTemplate(TemplateDescriptor templateDescriptor, String outputDirName, Map<String, Object> dataModel, String fileName) throws ConfigGenerationException {
         try {

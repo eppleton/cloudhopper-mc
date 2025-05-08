@@ -104,7 +104,7 @@
                     <compilerArgs>
                         <arg>-Acloudprovider=${cloud.provider}</arg>
                         <arg>-AgeneratorId=${generator.id}</arg>
-                        <arg>-AconfigOutputDir=${project.build.directory}/deployment/${cloud.provider}</arg>
+                        <arg>-AconfigOutputDir=${project.build.directory}/deployment/${generator.id}</arg>
                         <arg>-AartifactId=${project.artifactId}</arg>
                         <arg>-Aversion=${project.version}</arg>
                         <arg>-Aclassifier=${jar.classifier}</arg>
@@ -122,10 +122,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/deployment/${cloud.provider}</outputDirectory>
+                            <outputDirectory>${project.build.directory}/deployment/${generator.id}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources/deployment/${cloud.provider}</directory>
+                                    <directory>src/main/resources/deployment/${generator.id}</directory>
                                 </resource>
                             </resources>
                         </configuration>
