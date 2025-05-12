@@ -29,7 +29,7 @@ resource "google_cloudfunctions2_function" "${handlerInfo.functionId}" {
 # IAM entry for all users to invoke the function
 resource "google_cloudfunctions2_function_iam_member" "${handlerInfo.functionId}_invoker" {
   project        = google_cloudfunctions2_function.${handlerInfo.functionId}.project
-  location       = google_cloudfunctions2_function.scheduledfunction.location
+  location       = google_cloudfunctions2_function.${handlerInfo.functionId}.location
   cloud_function = google_cloudfunctions2_function.${handlerInfo.functionId}.name
 
   role   = "roles/cloudfunctions.invoker"

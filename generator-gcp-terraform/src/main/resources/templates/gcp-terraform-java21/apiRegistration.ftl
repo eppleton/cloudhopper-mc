@@ -28,7 +28,7 @@ resource "google_cloudfunctions2_function" "${handlerInfo.functionId}_api" {
 # IAM permission for the API function
 resource "google_cloudfunctions2_function_iam_member" "${handlerInfo.functionId}_api_invoker" {
   project        = google_cloudfunctions2_function.${handlerInfo.functionId}_api.project
-  location       = google_cloudfunctions2_function.scheduledfunction.location
+  location       = google_cloudfunctions2_function.${handlerInfo.functionId}.location
   cloud_function = google_cloudfunctions2_function.${handlerInfo.functionId}_api.name
 
   role   = "roles/cloudfunctions.invoker"
