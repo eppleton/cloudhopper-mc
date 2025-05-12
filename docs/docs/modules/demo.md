@@ -9,7 +9,7 @@ Please note that there are some properties in the pom.xml that need to be change
 
 Before you can build and deploy the demo project, make sure the following tools are installed and available in your `PATH`.
 
-### 🧱 Build Tools
+### 🧱 Build Tools 
 
 | Tool   | Required Version | Notes |
 |--------|------------------|-------|

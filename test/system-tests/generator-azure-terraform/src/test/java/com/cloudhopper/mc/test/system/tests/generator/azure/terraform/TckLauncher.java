@@ -1,8 +1,8 @@
-package com.cloudhopper.mc.test.functions;
+package com.cloudhopper.mc.test.system.tests.generator.azure.terraform;
 
 /*-
  * #%L
- * demo - a library from the "Cloudhopper" project.
+ * system-tests-generator-aws-terraform - a library from the "Cloudhopper" project.
  * 
  * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
  * exception as provided in the README.md file that accompanies this code.
@@ -24,24 +24,16 @@ package com.cloudhopper.mc.test.functions;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import com.cloudhopper.mc.annotations.Function;
-import com.cloudhopper.mc.annotations.Schedule;
-import com.cloudhopper.mc.runtime.CloudRequestHandler;
-import com.cloudhopper.mc.runtime.HandlerContext;
-import java.util.Map;
+
+import com.cloudhopper.mc.generator.bindings.azure.terraform.TestContextAzure;
+import com.cloudhopper.mc.test.tck.core.CompatibilityTestRunner;
+
 
 /**
- *
- * @author antonepple
+ * Entry point for the system test container for this generator.
  */
-public class ScheduledFunction implements CloudRequestHandler<Void, Void> {
-
-    @Function(name = "scheduled")
-    @Schedule(cron = "* * * * *")
-    @Override
-    public Void handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        System.out.println("Method was called");
-        return null;
+public class TckLauncher {
+    public static void main(String[] args) throws Exception {
+        CompatibilityTestRunner.runWith("azure-terraform-java21", new TestContextAzure("https://my-shared-function-app.azurewebsites.net/api/"));
     }
-
 }

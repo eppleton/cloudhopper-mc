@@ -56,12 +56,25 @@
             <artifactId>gson</artifactId>
             <version>${com.google.code.gson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>generator-bindings-azure-terraform</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudhopper.mc</groupId>
+            <artifactId>test-tck-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>
         <sourceDirectory>../test-functions/src/main/java</sourceDirectory>
         <plugins>
-
             <!-- Annotation processor config -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -132,9 +145,28 @@
                     </execution>
                 </executions>
             </plugin>
-
+          
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-terraform-files</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/deployment/${generator.id}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/deployment/${generator.id}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>    
         </plugins>
     </build>
-
     <name>system-tests-generator-azure-terraform</name>
 </project>

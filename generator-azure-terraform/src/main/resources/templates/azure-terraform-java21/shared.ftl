@@ -25,6 +25,7 @@ resource "azurerm_storage_container" "function_container" {
   name                  = "function-container"
   storage_account_name  = azurerm_storage_account.function_storage.name
   container_access_type = "private"
+  depends_on = [azurerm_storage_account.function_storage]
 }
 
 # Shared JAR file for all functions
@@ -34,6 +35,24 @@ resource "azurerm_storage_blob" "function_code" {
   storage_container_name = azurerm_storage_container.function_container.name
   type                   = "Block"
   source = "${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.zip"
+  depends_on = [azurerm_storage_container.function_container]
+}
+
+data "azurerm_storage_account_blob_container_sas" "function_zip_sas" {
+  connection_string = azurerm_storage_account.function_storage.primary_connection_string
+  container_name    = azurerm_storage_container.function_container.name
+
+  start  = "2024-01-01"
+  expiry = "2099-01-01"
+
+  permissions {
+    read   = true
+    list   = false
+    add    = false
+    create = false
+    write  = false
+    delete = false
+  }
 }
 
 resource "azurerm_linux_function_app" "shared_function_app" {
@@ -47,15 +66,43 @@ resource "azurerm_linux_function_app" "shared_function_app" {
 
   site_config {
     application_stack {
-      java_version = "11"  # or "17" if you're using Java 17
+      java_version = "21" 
     }
   }
 
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME       = "java"
     AzureWebJobsDisableHomepage    = "true"
-    WEBSITE_RUN_FROM_PACKAGE = azurerm_storage_blob.function_code.url
-  }
+    WEBSITE_RUN_FROM_PACKAGE = "${"$"}{azurerm_storage_blob.function_code.url}?${"$"}{trim(data.azurerm_storage_account_blob_container_sas.function_zip_sas.sas, "?")}"
+    
+    # Enable Application Logging (Filesystem)
+    "AzureWebJobsDashboard"          = "true" # Not strictly required anymore, but harmless
+    "WEBSITE_ENABLE_APP_SERVICE_STORAGE" = "true"
+
+    # Set the logging level
+    "FUNCTIONS_EXTENSION_VERSION"    = "~4"    # You're already using this
+    "FUNCTIONS_LOGGING_CONSOLE_LEVEL" = "Information"  # or "Verbose" for even more
+
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.function_app_insights.connection_string
+    APPLICATIONINSIGHTS_ROLE_NAME = "my-shared-function-app"
+  }  
+  depends_on = [azurerm_storage_blob.function_code]
+}
+
+
+resource "azurerm_application_insights" "function_app_insights" {
+  name                = "${"$"}{var.project_name}-${"$"}{var.environment}-ai"
+  location            = azurerm_resource_group.function_rg.location
+  resource_group_name = azurerm_resource_group.function_rg.name
+  application_type    = "web"
+}
+
+
+output "application_insights_name" {
+  value = azurerm_application_insights.function_app_insights.name
+}
+output "resource_group_name" {
+  value = azurerm_resource_group.function_rg.name
 }
 
 output "function_storage_name" {
