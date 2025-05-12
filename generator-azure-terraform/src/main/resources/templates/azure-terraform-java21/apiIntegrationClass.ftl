@@ -18,9 +18,9 @@ public class Azure${handlerInfo.handlerClassName}ApiFunction extends AzureBaseFu
     @FunctionName("${handlerInfo.functionId}_api")
     public HttpResponseMessage run(
             @HttpTrigger(name = "req", 
-                        methods = {HttpMethod.GET, HttpMethod.POST},
+                        methods = {HttpMethod.${httpMethod}},
                         authLevel = AuthorizationLevel.ANONYMOUS,
-                        route = "${path}"
+                        route = "${path?remove_beginning("/")}"
                         ) 
             HttpRequestMessage<String> request,
             final ExecutionContext context) {

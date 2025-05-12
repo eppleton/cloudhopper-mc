@@ -24,7 +24,6 @@ package com.cloudhopper.mc.test.tck.core;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 import com.cloudhopper.mc.annotations.Schedule;
 import com.cloudhopper.mc.test.tck.api.FeatureAwareTest;
 import com.cloudhopper.mc.test.tck.api.RequiredFeature;
@@ -33,17 +32,17 @@ import java.util.List;
 import org.junit.Assert;
 
 public class ScheduledFunctionCompatibilityTest implements FeatureAwareTest {
-
+    
     private static final String FUNCTION_NAME = "scheduled";
-
+    
     @Override
     public void run(TestContext context) throws Exception {
         System.out.println("⏰ Waiting 70s to allow scheduled trigger to run...");
         Thread.sleep(70_000);
-
+        
         List<String> logs = context.fetchLogs(FUNCTION_NAME);
         System.out.println("📜 Fetched logs:");
-
+        logs.stream().forEach(System.out::println);
         boolean triggered = logs.stream().anyMatch(line -> line.contains("Method was called"));
         Assert.assertTrue("Scheduled function did not appear to run as expected", triggered);
     }
@@ -52,6 +51,6 @@ public class ScheduledFunctionCompatibilityTest implements FeatureAwareTest {
     public List<RequiredFeature> requiredFeatures() {
         return List.of(
                 new RequiredFeature(Schedule.class.getName(), List.of(Schedule.ScheduleAttribute.CRON)));
-
+        
     }
 }

@@ -21,11 +21,10 @@ docker run --rm \
   -v "$PWD":/workspace \
   -v "$HOME/.m2":/root/.m2 \
   -w /workspace \
-  -e AZURE_SUBSCRIPTION_ID \
-  -e AZURE_TENANT_ID \
-  -e AZURE_CLIENT_ID \
-  -e AZURE_CLIENT_SECRET \
-  -e AZURE_REGION \
+  -e ARM_SUBSCRIPTION_ID \
+  -e ARM_CLIENT_ID \
+  -e ARM_CLIENT_SECRET \
+  -e ARM_TENANT_ID \
   cloudhopper-tck-azure bash -c "
     echo '🔍 Recompiling only system tests...'
     mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-azure-terraform &&

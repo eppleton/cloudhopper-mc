@@ -3,27 +3,24 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.0"
+      version = "~> 4.0"
     }
   }
-
-#  backend "azurerm" {
-#    resource_group_name  = "terraform-state-rg"
-#    storage_account_name = "terrastateYOURUNIQUENAME"
-#    container_name       = "tfstate"
-#    key                  = "terraform.tfstate"
-#  }
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 # Variables
 variable "azure_region" {
   description = "The Azure region to deploy to"
   type        = string
-  default     = "East US"  # Change this to your preferred default region
+  default     = "germanywestcentral"  # Change this to your preferred default region
 }
 
 variable "project_name" {
@@ -37,3 +34,4 @@ variable "environment" {
   type        = string
   default     = "test"
 }
+

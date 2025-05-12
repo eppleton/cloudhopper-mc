@@ -32,16 +32,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 
 public class TestContextAzure implements TestContext {
 
-    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "azure");
+    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "azure-terraform-java21");
     private final Set<String> usedFunctions = new HashSet<>();
+    private final String azureFunctionBaseUrl;
+
+    public TestContextAzure(String azureFunctionBaseUrl) {
+        this.azureFunctionBaseUrl = azureFunctionBaseUrl;  // e.g., "https://my-shared-function-app.azurewebsites.net/api/"
+    }
 
     @Override
     public void deployTestFunctions() {
@@ -79,43 +86,149 @@ public class TestContextAzure implements TestContext {
         return url;
     }
 
-    @Override
-    public Object invokeFunctionDirect(String functionUrl, Object input) {
+    public Object invokeFunctionDirect(String functionName, Object input) {
         HttpClient client = HttpClient.newHttpClient();
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            String payload = input != null
-                    ? mapper.writeValueAsString(input)
-                    : "{}";
+            String fullUrl = azureFunctionBaseUrl.endsWith("/")
+                    ? azureFunctionBaseUrl + functionName + "_http_function_trigger"
+                    : azureFunctionBaseUrl + "/" + functionName + "_http_function_trigger";
+            System.err.println("full URL " + fullUrl);
+            HttpRequest request;
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(functionUrl))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(payload))
-                    .build();
+            if (input == null) {
+                request = HttpRequest.newBuilder()
+                        .uri(URI.create(fullUrl))
+                        .GET()
+                        .build();
+            } else {
+                String payload = mapper.writeValueAsString(input);
+                request = HttpRequest.newBuilder()
+                        .uri(URI.create(fullUrl))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(payload))
+                        .build();
+            }
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             String body = response.body();
-
             if (response.statusCode() >= 400) {
                 System.err.println("❗ Azure Function returned error code " + response.statusCode());
                 System.err.println("Response: " + body);
                 throw new RuntimeException("Azure Function error: " + body);
             }
 
-            JsonNode json = mapper.readTree(body);
-            return mapper.treeToValue(json, Object.class);
+            JsonNode root = mapper.readTree(body);
+            if (root.isObject() && root.has("result")) {
+                return mapper.treeToValue(root.get("result"), Object.class);
+            } else if (root.isValueNode()) {
+                return mapper.treeToValue(root, Object.class);
+            } else {
+                return root;
+            }
+
         } catch (Exception e) {
-            throw new RuntimeException("Failed to invoke Azure Function: " + functionUrl, e);
+            throw new RuntimeException("Failed to invoke Azure Function: " + functionName, e);
         }
     }
 
     @Override
     public List<String> fetchLogs(String functionName) {
-        // Optional: implement with Azure Monitor or Log Analytics Workspace
-        return List.of("[Azure log fetching not implemented]");
+        try {
+            String subscriptionId = System.getenv("ARM_SUBSCRIPTION_ID");
+            String resourceGroup = TerraformUtil.getOutputString(terraformDir, "resource_group_name");
+            String appInsightsName = TerraformUtil.getOutputString(terraformDir, "application_insights_name");
+            String accessToken = getAzureAccessToken(); // OAuth2 token
+
+            String query = "traces | where timestamp > ago(10m) | project message";
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(String.format(
+                            "https://management.azure.com/subscriptions/%s/resourceGroups/%s/providers/microsoft.insights/components/%s/query?api-version=2018-04-20",
+                            subscriptionId, resourceGroup, appInsightsName)))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"query\": \"" + query + "\"}"))
+                    .build();
+
+            HttpClient client = HttpClient.newHttpClient();
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Retry loop
+            long start = System.currentTimeMillis();
+            long timeoutMs = 240_000; // 240 seconds timeout
+            List<String> logs = new ArrayList<>();
+
+            while ((System.currentTimeMillis() - start) < timeoutMs) {
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println("🌐 Raw Azure REST Response:");
+                System.out.println(response.body());
+                JsonNode root = mapper.readTree(response.body());
+                JsonNode tables = root.path("tables");
+
+                logs.clear();
+                if (tables.isArray() && tables.size() > 0) {
+                    JsonNode rows = tables.get(0).path("rows");
+                    for (JsonNode row : rows) {
+                        logs.add(row.get(0).asText());
+                    }
+                }
+
+                if (!logs.isEmpty()) {
+                    System.out.println("✅ Found logs after " + ((System.currentTimeMillis() - start) / 1000) + " seconds.");
+                    break;
+                } else {
+                    System.out.println("🔄 No logs yet, retrying...");
+                    Thread.sleep(5000); // wait 5 seconds before retry
+                }
+            }
+
+            if (logs.isEmpty()) {
+                System.out.println("⚠ No logs found after waiting " + (timeoutMs / 1000) + " seconds.");
+            }
+
+            return logs;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch Azure Function logs", e);
+        }
+    }
+
+    public static String getAzureAccessToken() {
+        try {
+            String tenantId = System.getenv("ARM_TENANT_ID");
+            String clientId = System.getenv("ARM_CLIENT_ID");
+            String clientSecret = System.getenv("ARM_CLIENT_SECRET");
+
+            if (tenantId == null || clientId == null || clientSecret == null) {
+                throw new IllegalStateException("Azure credentials are not set (ARM_TENANT_ID, ARM_CLIENT_ID, ARM_CLIENT_SECRET)");
+            }
+
+            String body = "grant_type=client_credentials"
+                    + "&client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8)
+                    + "&client_secret=" + URLEncoder.encode(clientSecret, StandardCharsets.UTF_8)
+                    + "&scope=https%3A%2F%2Fmanagement.azure.com%2F.default";
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://login.microsoftonline.com/" + tenantId + "/oauth2/v2.0/token"))
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(body))
+                    .build();
+
+            HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() >= 400) {
+                throw new RuntimeException("Failed to fetch Azure access token: " + response.body());
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.body());
+            return root.get("access_token").asText();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to obtain Azure access token", e);
+        }
     }
 
     private String functionNameToOutputKey(String functionName) {

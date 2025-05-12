@@ -48,6 +48,8 @@ public class TerraformUtil {
 
     public static String getOutputString(Path terraformDir, String key) throws IOException, InterruptedException {
         JsonNode outputs = readTerraformOutput(terraformDir);
-        return outputs.path(key).path("value").asText();
+        final String value = outputs.path(key).path("value").asText();
+        System.out.println("Terraform output key = "+key+" value = "+value);
+        return value;
     }
 }

@@ -24,7 +24,9 @@ package com.cloudhopper.mc.test.support;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,9 +69,26 @@ public class TerraformDeployer {
         Map<String, String> env = pb.environment();
         env.put("PATH", System.getenv("PATH"));
 
-        Process p = pb.start();
-        if (p.waitFor() != 0) {
-            throw new RuntimeException("Terraform failed: " + Arrays.toString(args));
+        Process process = pb.start();
+
+        // Start a thread to continuously read output
+        Thread outputReader = new Thread(() -> {
+            try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        outputReader.start();
+
+        int exitCode = process.waitFor();
+        outputReader.join();  // wait until all output is printed
+
+        if (exitCode != 0) {
+            throw new RuntimeException("Terraform command failed with exit code " + exitCode);
         }
     }
 }
