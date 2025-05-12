@@ -91,7 +91,7 @@ resource "azurerm_linux_function_app" "shared_function_app" {
 
 
 resource "azurerm_application_insights" "function_app_insights" {
-  name                = "${var.project_name}-${var.environment}-ai"
+  name                = "${"$"}{var.project_name}-${"$"}{var.environment}-ai"
   location            = azurerm_resource_group.function_rg.location
   resource_group_name = azurerm_resource_group.function_rg.name
   application_type    = "web"

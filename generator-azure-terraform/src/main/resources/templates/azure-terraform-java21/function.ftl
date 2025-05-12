@@ -19,7 +19,7 @@ public class Azure${handlerInfo.handlerClassName}Function extends AzureBaseFunct
             @HttpTrigger(name = "req", 
                          methods = {HttpMethod.POST, HttpMethod.GET}, 
                          authLevel = AuthorizationLevel.ANONYMOUS,
-                         route = "${handlerInfo.functionId}")
+                         route = "${handlerInfo.functionId}_http_function_trigger")
             HttpRequestMessage<String> request,
             final ExecutionContext context) {
         return handleRequest(request, context, "/${handlerInfo.functionId}_http_function_trigger");

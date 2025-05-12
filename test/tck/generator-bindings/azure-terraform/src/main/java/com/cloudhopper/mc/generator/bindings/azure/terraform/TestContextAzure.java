@@ -92,7 +92,7 @@ public class TestContextAzure implements TestContext {
 
         try {
             String fullUrl = azureFunctionBaseUrl.endsWith("/")
-                    ? azureFunctionBaseUrl + functionName
+                    ? azureFunctionBaseUrl + functionName + "_http_function_trigger"
                     : azureFunctionBaseUrl + "/" + functionName + "_http_function_trigger";
             System.err.println("full URL " + fullUrl);
             HttpRequest request;
@@ -137,15 +137,12 @@ public class TestContextAzure implements TestContext {
     @Override
     public List<String> fetchLogs(String functionName) {
         try {
-            String subscriptionId = System.getenv("AZURE_SUBSCRIPTION_ID");
-            String resourceGroup = System.getenv("AZURE_RESOURCE_GROUP");
-            String appInsightsName = System.getenv("AZURE_APPINSIGHTS_NAME");
-            String accessToken = getAzureAccessToken(); // OAuth2 token from CLI or managed identity
+            String subscriptionId = System.getenv("ARM_SUBSCRIPTION_ID");
+            String resourceGroup = TerraformUtil.getOutputString(terraformDir, "resource_group_name");
+            String appInsightsName = TerraformUtil.getOutputString(terraformDir, "application_insights_name");
+            String accessToken = getAzureAccessToken(); // OAuth2 token
 
-            String query = String.format(
-                    "traces | where timestamp > ago(5m) | where message contains '%s' | project message",
-                    functionName
-            );
+            String query = "traces | where timestamp > ago(10m) | project message";
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(String.format(
@@ -156,20 +153,42 @@ public class TestContextAzure implements TestContext {
                     .POST(HttpRequest.BodyPublishers.ofString("{\"query\": \"" + query + "\"}"))
                     .build();
 
-            HttpResponse<String> response = HttpClient.newHttpClient()
-                    .send(request, HttpResponse.BodyHandlers.ofString());
-
+            HttpClient client = HttpClient.newHttpClient();
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response.body());
-            JsonNode tables = root.path("tables");
 
+            // Retry loop
+            long start = System.currentTimeMillis();
+            long timeoutMs = 240_000; // 240 seconds timeout
             List<String> logs = new ArrayList<>();
-            if (tables.isArray() && tables.size() > 0) {
-                JsonNode rows = tables.get(0).path("rows");
-                for (JsonNode row : rows) {
-                    logs.add(row.get(0).asText());
+
+            while ((System.currentTimeMillis() - start) < timeoutMs) {
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println("🌐 Raw Azure REST Response:");
+                System.out.println(response.body());
+                JsonNode root = mapper.readTree(response.body());
+                JsonNode tables = root.path("tables");
+
+                logs.clear();
+                if (tables.isArray() && tables.size() > 0) {
+                    JsonNode rows = tables.get(0).path("rows");
+                    for (JsonNode row : rows) {
+                        logs.add(row.get(0).asText());
+                    }
+                }
+
+                if (!logs.isEmpty()) {
+                    System.out.println("✅ Found logs after " + ((System.currentTimeMillis() - start) / 1000) + " seconds.");
+                    break;
+                } else {
+                    System.out.println("🔄 No logs yet, retrying...");
+                    Thread.sleep(5000); // wait 5 seconds before retry
                 }
             }
+
+            if (logs.isEmpty()) {
+                System.out.println("⚠ No logs found after waiting " + (timeoutMs / 1000) + " seconds.");
+            }
+
             return logs;
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch Azure Function logs", e);
