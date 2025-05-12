@@ -8,7 +8,6 @@ import ${handlerInfo.outputTypeImport};
 import ${handlerInfo.handlerFullyQualifiedName};
 import com.google.gson.reflect.TypeToken;
 
-
 public class Azure${handlerInfo.handlerClassName}Function extends AzureBaseFunctionWrapper<${handlerInfo.inputType}, ${handlerInfo.outputType}> {
 
     public Azure${handlerInfo.handlerClassName}Function() {
@@ -17,9 +16,12 @@ public class Azure${handlerInfo.handlerClassName}Function extends AzureBaseFunct
 
     @FunctionName("${handlerInfo.functionId}")
     public HttpResponseMessage run(
+            @HttpTrigger(name = "req", 
+                         methods = {HttpMethod.POST, HttpMethod.GET}, 
+                         authLevel = AuthorizationLevel.ANONYMOUS,
+                         route = "${handlerInfo.functionId}")
             HttpRequestMessage<String> request,
             final ExecutionContext context) {
-        return handleRequest(request, context);
+        return handleRequest(request, context, "/${handlerInfo.functionId}_http_function_trigger");
     }
 }
-

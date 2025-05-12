@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Abstract base class used by generated Azure Functions to invoke
@@ -84,7 +86,11 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
      */
     protected HttpResponseMessage handleRequest(HttpRequestMessage<String> request, ExecutionContext context) {
         try {
-            I input = parseInput(request);
+            I input = null;
+
+            if (expectsRequestBody(request)) {
+                input = parseInput(request);
+            }
 
             O output = handler.handleRequest(input, new AzureContextAdapter(context));
             return createSuccessResponse(request, output);
@@ -104,7 +110,11 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
      */
     protected HttpResponseMessage handleRequest(HttpRequestMessage<String> request, ExecutionContext context, String routePattern) {
         try {
-            I input = parseInput(request);
+            I input = null;
+
+            if (expectsRequestBody(request)) {
+                input = parseInput(request);
+            }
 
             Map<String, String> pathParams = extractPathParams(request, routePattern);
             Map<String, String> queryParams = request.getQueryParameters();
@@ -116,24 +126,43 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
         }
     }
 
+    private boolean expectsRequestBody(HttpRequestMessage<String> request) {
+        HttpMethod method = request.getHttpMethod();
+        return method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.PATCH;
+    }
+
     /**
-     * Extract the path params by using the routePattern as a template for extracting the ids and the coresponding values
+     * Extract the path params by using the routePattern as a template for
+     * extracting the ids and the coresponding values
+     *
      * @param request
      * @param routePattern
      * @return a map of param id -> param value
      */
     protected Map<String, String> extractPathParams(HttpRequestMessage<?> request, String routePattern) {
-        String actualPath = request.getUri().getPath();
-        String[] routeParts = routePattern.split("/");
+        String actualPath = request.getUri().getPath().replaceFirst("^/api/","").replaceFirst("^/+", "");
+        String normalizedRoutePattern = routePattern.replaceFirst("^/+", "");
+
+        String[] routeParts = normalizedRoutePattern.split("/");
         String[] pathParts = actualPath.split("/");
 
         Map<String, String> pathParams = new HashMap<>();
-        for (int i = 0; i < Math.min(routeParts.length, pathParts.length); i++) {
+
+        if (routeParts.length != pathParts.length) {
+            throw new IllegalArgumentException("Path mismatch: expected " + routeParts.length + " parts, but got " + pathParts.length);
+        }
+
+        for (int i = 0; i < routeParts.length; i++) {
             if (routeParts[i].startsWith("{") && routeParts[i].endsWith("}")) {
                 String name = routeParts[i].substring(1, routeParts[i].length() - 1);
                 pathParams.put(name, pathParts[i]);
+            } else {
+                if (!routeParts[i].equals(pathParts[i])) {
+                    throw new IllegalArgumentException("Path mismatch at segment " + i + ": expected '" + routeParts[i] + "' but got '" + pathParts[i] + "'");
+                }
             }
         }
+
         return pathParams;
     }
 
@@ -186,6 +215,7 @@ public abstract class AzureBaseFunctionWrapper<I, O> {
      * @return the error response
      */
     private HttpResponseMessage createErrorResponse(HttpRequestMessage<String> request, Exception e) {
+        Logger.getLogger(AzureBaseFunctionWrapper.class.getName()).log(Level.SEVERE, "Error creating Response", e);
         return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error processing request: " + e.getMessage())
                 .build();

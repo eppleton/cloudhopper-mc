@@ -91,20 +91,20 @@ import com.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
                     javaFile = true
             ),
             @Template(
+                    phase = GenerationPhase.API,
+                    templateName = "output.ftl",
+                    description = "Generates the URLs to call our functions",
+                    outputFileExtension = "tf",
+                    outputSubDirectory = "",
+                    javaFile = false
+            ),
+            @Template(
                     phase = GenerationPhase.SCHEDULE,
                     templateName = "schedule.ftl",
                     description = "Generates a Function with @TimerTrigger",
                     outputFileExtension = "java",
                     outputSubDirectory = "",
                     javaFile = true
-            ),
-            @Template(
-                    phase = GenerationPhase.FINALIZE,
-                    templateName = "outputs.ftl",
-                    description = "Generates the URLs to call our functions",
-                    outputFileExtension = "tf",
-                    outputSubDirectory = "",
-                    javaFile = false
             ),
         }
 )
