@@ -29,6 +29,8 @@ import com.cloudhopper.mc.annotations.Schedule;
 import com.cloudhopper.mc.runtime.CloudRequestHandler;
 import com.cloudhopper.mc.runtime.HandlerContext;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,11 +38,12 @@ import java.util.Map;
  */
 public class ScheduledFunction implements CloudRequestHandler<Void, Void> {
 
+    
     @Function(name = "scheduled")
     @Schedule(cron = "* * * * *")
     @Override
     public Void handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        System.out.println("Method was called");
+        Logger.getLogger(ScheduledFunction.class.getName()).log(Level.INFO, "Method was called");
         return null;
     }
 

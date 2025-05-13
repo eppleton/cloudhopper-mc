@@ -32,6 +32,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.gax.paging.Page;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.IdTokenCredentials;
+import com.google.auth.oauth2.IdTokenProvider;
 import com.google.cloud.logging.*;
 
 import java.io.IOException;
@@ -81,19 +83,31 @@ public class TestContextGcp implements TestContext {
         }
     }
 
+    private static String fetchIdToken(String targetUrl) throws IOException {
+        IdTokenCredentials credentials = IdTokenCredentials.newBuilder()
+                .setIdTokenProvider((IdTokenProvider) GoogleCredentials.getApplicationDefault())
+                .setTargetAudience(targetUrl)
+                .build();
+
+        credentials.refresh();
+        return credentials.getAccessToken().getTokenValue();
+    }
+
     @Override
     public Object invokeFunctionDirect(String functionName, Object input) {
         usedFunctions.add(functionName);
         try {
-            String accessToken = getAccessToken();
-            String projectId = System.getenv("GCP_PROJECT_ID");
-            String region = System.getenv("GCP_REGION");
+            String outputKey = functionName + "_direct_url";
+            String functionUrl = TerraformUtil.getOutputString(terraformDir, outputKey);
 
-            String functionUrl = String.format(
-                    "https://%s-%s.cloudfunctions.net/%s",
-                    region, projectId, functionName
-            );
+            if (functionUrl == null || functionUrl.isEmpty()) {
+                throw new IllegalStateException("No function URL found in Terraform output for " + outputKey);
+            }
+
+            String idToken = fetchIdToken(functionUrl);
+
             System.out.println("Calling " + functionUrl);
+
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode payloadJson = mapper.createObjectNode();
             if (input != null) {
@@ -106,31 +120,33 @@ public class TestContextGcp implements TestContext {
             if (input == null) {
                 request = HttpRequest.newBuilder()
                         .uri(URI.create(functionUrl))
-                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + idToken)
                         .GET()
                         .build();
             } else {
-                String payload = mapper.writeValueAsString(
-                        mapper.createObjectNode().set("data", mapper.valueToTree(input))
-                );
+                String payload = mapper.writeValueAsString(payloadJson);
                 request = HttpRequest.newBuilder()
                         .uri(URI.create(functionUrl))
-                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + idToken)
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(payload))
                         .build();
             }
+
             HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(request, HttpResponse.BodyHandlers.ofString());
+
             System.out.println("Response " + response.body());
+
             JsonNode root = mapper.readTree(response.body());
             if (root.isObject() && root.has("result")) {
                 return mapper.treeToValue(root.get("result"), Object.class);
             } else if (root.isValueNode()) {
-                return mapper.treeToValue(root, Object.class);  // ✅ will convert IntNode to Integer, etc.
+                return mapper.treeToValue(root, Object.class);
             } else {
                 return root;
             }
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to invoke GCP function: " + functionName, e);
         }
@@ -140,7 +156,7 @@ public class TestContextGcp implements TestContext {
     public List<String> fetchLogs(String functionName) {
         try (Logging logging = LoggingOptions.getDefaultInstance().getService()) {
             String filter = String.format(
-                    "resource.type=\"cloud_function\" AND resource.labels.function_name=\"%s\"",
+                    "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"%s\"",
                     functionName
             );
 
@@ -148,7 +164,24 @@ public class TestContextGcp implements TestContext {
 
             List<String> logs = new ArrayList<>();
             for (LogEntry entry : entries.iterateAll()) {
-                logs.add(entry.getPayload().getData().toString());
+                if (entry.getPayload() != null) {
+                    switch (entry.getPayload().getType()) {
+                        case STRING:
+                            logs.add(entry.getPayload().getData().toString());
+                            break;
+                        case JSON:
+                            logs.add(entry.getPayload().getData().toString());
+                            break;
+                        case PROTO:
+                            logs.add("[ProtoPayload] " + entry.getPayload().toString());
+                            break;
+                        default:
+                            logs.add("[UnknownPayload] " + entry.getPayload().toString());
+                            break;
+                    }
+                } else {
+                    logs.add("[NoPayload] Empty log entry");
+                }
             }
             return logs;
         } catch (Exception e) {

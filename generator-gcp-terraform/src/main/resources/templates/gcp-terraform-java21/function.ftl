@@ -26,12 +26,18 @@ resource "google_cloudfunctions2_function" "${handlerInfo.functionId}" {
   }
 }
 
-# IAM entry for all users to invoke the function
-resource "google_cloudfunctions2_function_iam_member" "${handlerInfo.functionId}_invoker" {
+
+
+resource "google_cloud_run_service_iam_member" "${handlerInfo.functionId}_invoker" {
   project        = google_cloudfunctions2_function.${handlerInfo.functionId}.project
   location       = google_cloudfunctions2_function.${handlerInfo.functionId}.location
-  cloud_function = google_cloudfunctions2_function.${handlerInfo.functionId}.name
+  service        = google_cloudfunctions2_function.${handlerInfo.functionId}.service_config[0].service
 
-  role   = "roles/cloudfunctions.invoker"
-  member = "allUsers"
+  role   = "roles/run.invoker"
+  member = "serviceAccount:${"$"}{var.cloudscheduler_service_account_email}"
+}
+
+
+output "${handlerInfo.functionId}_direct_url" {
+  value = google_cloudfunctions2_function.${handlerInfo.functionId}.service_config[0].uri
 }
