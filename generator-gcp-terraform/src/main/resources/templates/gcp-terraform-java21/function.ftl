@@ -27,11 +27,10 @@ resource "google_cloudfunctions2_function" "${handlerInfo.functionId}" {
 }
 
 
-
-resource "google_cloud_run_service_iam_member" "${handlerInfo.functionId}_invoker" {
+resource "google_cloud_run_v2_service_iam_member" "${handlerInfo.functionId}_invoker" {
   project        = google_cloudfunctions2_function.${handlerInfo.functionId}.project
   location       = google_cloudfunctions2_function.${handlerInfo.functionId}.location
-  service        = google_cloudfunctions2_function.${handlerInfo.functionId}.service_config[0].service
+  name           = google_cloudfunctions2_function.${handlerInfo.functionId}.service_config[0].service
 
   role   = "roles/run.invoker"
   member = "serviceAccount:${"$"}{var.cloudscheduler_service_account_email}"
