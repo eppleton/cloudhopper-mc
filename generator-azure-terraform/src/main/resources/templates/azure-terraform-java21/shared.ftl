@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "function_rg" {
 }
 
 resource "azurerm_storage_account" "function_storage" {
-  name = "${r'${lower(replace(var.project_name, "-", ""))}${var.environment}'}"
+  name                     = "${r'${lower(replace(var.project_name, "-", ""))}${var.environment}'}"
   resource_group_name      = azurerm_resource_group.function_rg.name
   location                 = azurerm_resource_group.function_rg.location
   account_tier             = "Standard"
@@ -23,9 +23,9 @@ resource "azurerm_service_plan" "function_plan" {
 
 resource "azurerm_storage_container" "function_container" {
   name                  = "function-container"
-  storage_account_name  = azurerm_storage_account.function_storage.name
+  storage_account_id    = azurerm_storage_account.function_storage.id
   container_access_type = "private"
-  depends_on = [azurerm_storage_account.function_storage]
+  depends_on            = [azurerm_storage_account.function_storage]
 }
 
 # Shared JAR file for all functions
@@ -34,8 +34,8 @@ resource "azurerm_storage_blob" "function_code" {
   storage_account_name   = azurerm_storage_account.function_storage.name
   storage_container_name = azurerm_storage_container.function_container.name
   type                   = "Block"
-  source = "${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.zip"
-  depends_on = [azurerm_storage_container.function_container]
+  source                 = "${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.zip"
+  depends_on             = [azurerm_storage_container.function_container]
 }
 
 data "azurerm_storage_account_blob_container_sas" "function_zip_sas" {
@@ -71,12 +71,12 @@ resource "azurerm_linux_function_app" "shared_function_app" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME       = "java"
-    AzureWebJobsDisableHomepage    = "true"
-    WEBSITE_RUN_FROM_PACKAGE = "${"$"}{azurerm_storage_blob.function_code.url}?${"$"}{trim(data.azurerm_storage_account_blob_container_sas.function_zip_sas.sas, "?")}"
+    FUNCTIONS_WORKER_RUNTIME    = "java"
+    AzureWebJobsDisableHomepage = "true"
+    WEBSITE_RUN_FROM_PACKAGE    = "${"$"}{azurerm_storage_blob.function_code.url}?${"$"}{trim(data.azurerm_storage_account_blob_container_sas.function_zip_sas.sas, "?")}"
     
     # Enable Application Logging (Filesystem)
-    "AzureWebJobsDashboard"          = "true" # Not strictly required anymore, but harmless
+    "AzureWebJobsDashboard"           = "true" # Not strictly required anymore, but harmless
     "WEBSITE_ENABLE_APP_SERVICE_STORAGE" = "true"
 
     # Set the logging level
@@ -84,8 +84,9 @@ resource "azurerm_linux_function_app" "shared_function_app" {
     "FUNCTIONS_LOGGING_CONSOLE_LEVEL" = "Information"  # or "Verbose" for even more
 
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.function_app_insights.connection_string
-    APPLICATIONINSIGHTS_ROLE_NAME = "my-shared-function-app"
-  }  
+    APPLICATIONINSIGHTS_ROLE_NAME         = "my-shared-function-app"
+  }
+
   depends_on = [azurerm_storage_blob.function_code]
 }
 
@@ -121,4 +122,3 @@ output "function_plan_id" {
 output "shared_zip_url" {
   value = azurerm_storage_blob.function_code.url
 }
-

@@ -123,10 +123,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/deployment/${cloud.provider}</outputDirectory>
+                            <outputDirectory>${project.build.directory}/deployment/${generator.id}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources/deployment/${cloud.provider}</directory>
+                                    <directory>src/main/resources/deployment/${generator.id}</directory>
                                 </resource>
                             </resources>
                         </configuration>

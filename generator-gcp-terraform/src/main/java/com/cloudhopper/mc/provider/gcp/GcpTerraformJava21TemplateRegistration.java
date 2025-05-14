@@ -131,14 +131,6 @@ import com.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
                     outputSubDirectory = "",
                     javaFile = false
             ),
-//            @Template(
-//                    phase = GenerationPhase.FINALIZE,
-//                    templateName = "outputs.ftl",
-//                    description = "Generates outputs for Tests",
-//                    outputFileExtension = "tf",
-//                    outputSubDirectory = "",
-//                    javaFile = false
-//            )
         }
 )
 public class GcpTerraformJava21TemplateRegistration {
