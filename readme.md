@@ -4,14 +4,11 @@
 
 ## Why Cloudhopper?
 
-Managing cloud functions sounds simple — until you're buried under a mountain of deployment files, integration classes, and cloud-specific configs.  
-And every time you add a function, the pile gets bigger.
-
-Cloudhopper helps you escape that trap, so you can spend more time building, and less time plumbing.
+Managing cloud functions sounds simple — until you're buried under a mountain of deployment files, integration classes, and cloud-specific configs. And every time you add a function, the pile gets bigger. Cloudhopper helps you escape that trap, so you can spend more time building, and less time plumbing.
 
 ### 🛑 Stop copy-pasting deployment files
 
-Terraform, OpenAPI specs, integration classes... every project ends up with hundreds of tiny variations.  
+Terraform, OpenAPI specs, integration classes... every project ends up with hundreds of tiny variations and and it only takes one bad copy-paste to quietly burn your budget.  
 Cloudhopper generates all of it automatically based on your code — consistent, reliable, and boring in the best possible way.
 
 ### 🔄 Stop locking yourself into one cloud
