@@ -1,6 +1,6 @@
 # 🚀 Cloudhopper
 
-**You code, we take out the YAML.**  
+** 🗑️ You code, we take out the YAML.**  
 
 ## Why Cloudhopper?
 
