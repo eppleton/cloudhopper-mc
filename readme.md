@@ -1,6 +1,8 @@
-# <img src="./docs/static/img/logo.svg" alt="logo" width="48px" style="vertical-align: middle;" /> Cloudhopper - You code, we take out the YAML.
+# <img src="./docs/static/img/logo.svg" alt="logo" width="48px" style="vertical-align: ;" /> Cloudhopper for Java
 
-Managing cloud functions sounds simple — until you're buried under a mountain of deployment files, integration classes, and cloud-specific configs. And every time you add a function, the pile gets bigger. Cloudhopper helps you escape that trap, so you can ship faster, and spend less time plumbing.
+**You code, we take out the YAML**
+
+Managing serverless functions sounds simple — until you're buried under a mountain of deployment files, integration classes, and cloud-specific configs. And every time you add a function, the pile gets bigger. Cloudhopper helps you escape that trap, so you can ship faster, and spend less time plumbing.
 
 ### Stop copy-pasting deployment files
 
