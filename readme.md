@@ -9,7 +9,7 @@ Managing serverless functions sounds simple — until you're buried under a moun
 Terraform, OpenAPI specs, integration classes - it only takes one bad copy-paste to quietly burn your budget.  
 Cloudhopper generates all of it automatically based on your code — consistent, reliable, and boring in the best possible way.
 
-### Stop locking yourself into one cloud
+### Don't lock yourself into one cloud
 
 Cloud-specific deployments are a trap! 
 With Cloudhopper, your application stays platform-independent from day one.
