@@ -1,49 +1,45 @@
-# Cloudhopper
+# 🚀 Cloudhopper
 
-**Cloudhopper** is an open-source toolkit for building truly vendor-neutral serverless Java applications. By leveraging annotations, templates, and generated code, Cloudhopper makes it painless to switch between various cloud providers (or on-premises Kubernetes clusters) without tying your code to proprietary services.
+**You code, we take out the YAML.**  
 
-## Motivation
+## Why Cloudhopper?
 
-Many serverless frameworks and cloud ecosystems still impose hidden dependencies on specific platforms. Cloudhopper tackles this challenge by providing common abstractions (e.g., for persistence or messaging) directly at the code level. Differences in infrastructure are handled through configurable templates and generated deployment descriptors, allowing teams to avoid vendor lock-in.
+Managing cloud functions sounds simple — until you're buried under a mountain of deployment files, integration classes, and cloud-specific configs.  
+And every time you add a function, the pile gets bigger.
 
-## How It Works
+Cloudhopper helps you escape that trap, so you can spend more time building, and less time plumbing.
 
-1. **Annotation-Driven**
-   - Mark serverless functions in Java with custom annotations.
-   - An annotation processor then generates integration classes, deployment descriptors (e.g., Terraform, openTofu), and documentation (e.g., OpenAPI).
+### 🛑 Stop copy-pasting deployment files
 
-2. **Template-Based**
-   - Standard templates are available for popular platforms (e.g., AWS).
-   - Users can add or override templates to accommodate custom requirements.
+Terraform, OpenAPI specs, integration classes... every project ends up with hundreds of tiny variations.  
+Cloudhopper generates all of it automatically based on your code — consistent, reliable, and boring in the best possible way.
 
-3. **Build-Tool Integration**
-   - Compatible with Maven or Gradle.
-   - Configure the generator via your build settings to produce the required code for your target platform.
+### 🔄 Stop locking yourself into one cloud
 
-4. **Genuinely Vendor-Neutral**
-   - Use platform-specific artifacts only through generated descriptors, making provider switching effortless.
+Cloud-specific deployments are a trap.  
+With Cloudhopper, your application stays platform-independent from day one.
 
-## Features
+### 🧪 Try new cloud providers without rebuilding everything
 
-- **Automatic Generation** of deployment scripts and documentation.
-- **Extensibility** with your own code generators or templates.
-- **Transparent Integration** with established Java frameworks (e.g., Spring Boot).
-- **Seamless Platform Switching** (managed cloud, Kubernetes, or on-prem).
+Want to see if GCP or Azure would be faster, cheaper, or more reliable?  
+Cloudhopper makes it easy to deploy the same app across different clouds.
 
-## Installation
+### 🏢 Offer on-premise deployments without the drama
 
-1. **Include the Dependency**
-   - In your `pom.xml` (Maven) or `build.gradle` (Gradle), add the Cloudhopper dependency.
-2. **Enable Annotation Processing**
-   - Ensure annotation processing is activated in your project build settings.
-3. **Configuration**
-   - Specify which templates or deployment targets to use in your build plugin configuration.
+Your customers wants an on-premise installation because of their policies, security, or regulations?  
+Cloudhopper makes it easy to offer both cloud and on-prem options — from the same codebase.
 
-## Licensing
+## How it Works
 
-This project is licensed under the GNU General Public License, version 3 (GPLv3),
-with the Classpath Exception allowing linking this library with independent modules
-to produce an executable, without causing the resulting executable to be covered by the GPL.
+Just use our simple Java API and add a few annotations.  
+Cloudhopper takes care of:
+- Generating the provider specific integration classes
+- Generating infrastructure as code (terraform, saml, OpenAPI)
+- Handling cloud-specific quirks
+- Keeping your deployments repeatable, reliable, and boring
 
+No boilerplate. No endless YAML. No regrets.
 
+## Get Started
 
+👉 [Quickstart Guide](https://eppleton.github.io/cloudhopper-mc/)  
