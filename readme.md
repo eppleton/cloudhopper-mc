@@ -4,7 +4,7 @@
 
 ## Why Cloudhopper?
 
-Managing cloud functions sounds simple — until you're buried under a mountain of deployment files, integration classes, and cloud-specific configs. And every time you add a function, the pile gets bigger. Cloudhopper helps you escape that trap, so you can spend more time building, and less time plumbing.
+Managing cloud functions sounds simple — until you're buried under a mountain of deployment files, integration classes, and cloud-specific configs. And every time you add a function, the pile gets bigger. Cloudhopper helps you escape that trap, so you can ship faster, and spend less time plumbing.
 
 ### 🛑 Stop copy-pasting deployment files
 
