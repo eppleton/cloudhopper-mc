@@ -45,7 +45,7 @@ terraform version
 
 Depending on the active Maven profile, you’ll need CLI tools for the cloud provider (or project type) you’re targeting:
 
-### Spring Boot (no Terraform)
+#### Spring Boot (no Terraform)
 
 ~~~
 mvn clean install -Pspringboot
