@@ -1,28 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  #%L
-  Cloudhopper Core Archetype - a library from the "Cloudhopper" project.
-  
-  Eppleton IT Consulting designates this particular file as subject to the "Classpath"
-  exception as provided in the README.md file that accompanies this code.
-  %%
-  Copyright (C) 2024 - 2025 Eppleton IT Consulting
-  %%
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of the
-  License, or (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public
-  License along with this program.  If not, see
-  <http://www.gnu.org/licenses/gpl-3.0.html>.
-  #L%
-  -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -37,7 +13,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <cloudhopper.version>$archetypeVersion</cloudhopper.version>
   #if($includeTerraformProfile == 'true')
+    <!-- add the path to your terraform executable here -->
     <terraform.executable>terraform</terraform.executable>
     <path.extras></path.extras>
   #end
@@ -47,12 +25,12 @@
     <dependency>
       <groupId>com.cloudhopper.mc</groupId>
       <artifactId>deployment-config-api</artifactId>
-      <version>${project.version}</version>
+      <version>${cloudhopper.version}</version>
     </dependency>
     <dependency>
       <groupId>com.cloudhopper.mc</groupId>
       <artifactId>deployment-config-processor</artifactId>
-      <version>${project.version}</version>
+      <version>${cloudhopper.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

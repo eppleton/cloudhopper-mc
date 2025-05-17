@@ -119,8 +119,11 @@
                             <include>**/*.xml</include>
                         </includes>
                         <excludes>
+                        <!-- exclude the entire archetype-resources folder -->
+                            <exclude>**/archetype-resources/**</exclude>
                             <exclude>**/generated/**</exclude>
                         </excludes>
+                       
                     </configuration>
                     <executions>
                         <execution>
@@ -132,7 +135,7 @@
                         </execution>         
                     </executions>
                 </plugin>
-<!--                <plugin>
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>3.2.1</version>
@@ -196,7 +199,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
-<!--            <plugin>
+            <!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <executions>

@@ -46,10 +46,7 @@
                 Options: aws, gcp, azure
             </description>
         </requiredProperty>
-        <requiredProperty key="includeSampleFunctions">
-            <defaultValue>true</defaultValue>
-            <description>Generate HTTP &amp; scheduled function stubs?</description>
-        </requiredProperty>
+
         <requiredProperty key="includeTerraformProfile">
             <defaultValue>false</defaultValue>
             <description>Add a deploy-with-terraform Maven profile?</description>
@@ -68,6 +65,12 @@
             <directory>src/main/java</directory>
             <includes>
                 <include>**/*.java</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true" >
+            <directory>src/main/resources/deployment</directory>
+            <includes>
+                <include>**/*</include>
             </includes>
         </fileSet>
     </fileSets>
