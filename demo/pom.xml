@@ -20,12 +20,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
             <version>2.1.1</version>
@@ -71,9 +65,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                    <release>11</release>  
+                    <source>17</source>
+                    <target>17</target>
+                    <release>17</release>  
                     <encoding>UTF-8</encoding>
                     <generatedSourcesDirectory>${output.dir}</generatedSourcesDirectory>
                     <annotationProcessors>
@@ -153,7 +147,7 @@
     </build>
     <profiles>
         <profile>
-            <id>deploy</id>
+            <id>deploy-with-terraform</id>
             <activation>
                 <activeByDefault>false</activeByDefault> 
             </activation>
@@ -172,7 +166,7 @@
                                 </goals>
                                 <configuration>
                                     <executable>${terraform.executable}</executable>
-                                    <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
+                                    <workingDirectory>${project.build.directory}/deployment/${generator.id}</workingDirectory>
                                     <arguments>
                                         <argument>init</argument>
                                     </arguments>
@@ -190,7 +184,7 @@
                                 </goals>
                                 <configuration>
                                     <executable>${terraform.executable}</executable>
-                                    <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
+                                    <workingDirectory>${project.build.directory}/deployment/${generator.id}</workingDirectory>
                                     <arguments>
                                         <argument>plan</argument>
                                     </arguments>
@@ -208,7 +202,7 @@
                                 </goals>
                                 <configuration>
                                     <executable>${terraform.executable}</executable>
-                                    <workingDirectory>${project.build.directory}/deployment/${cloud.provider}</workingDirectory>
+                                    <workingDirectory>${project.build.directory}/deployment/${generator.id}</workingDirectory>
                                     <arguments>
                                         <argument>apply</argument>
                                         <argument>-auto-approve</argument>
@@ -230,12 +224,12 @@
         <profile>
             <id>springboot</id>
             <activation>
-                <activeByDefault>false</activeByDefault> 
+                <activeByDefault>true</activeByDefault> 
             </activation>
             <properties>
                 <cloud.provider>springboot</cloud.provider>
                 <generator.id>springboot-http</generator.id>
-                <output.dir>target/generated-sources/springboot</output.dir>
+                <output.dir>target/generated-sources/springboot-http</output.dir>
                 <jar.classifier>springboot</jar.classifier>
                 <main.class>com.cloudhopper.mc.demo.Application</main.class>
             </properties>
@@ -254,7 +248,7 @@
                                 </goals>
                                 <configuration>
                                     <sources>
-                                        <source>src/main/springboot</source>
+                                        <source>src/main/springboot-http</source>
                                     </sources>
                                 </configuration>
                             </execution>
@@ -294,7 +288,7 @@
             <properties>
                 <cloud.provider>gcp</cloud.provider>
                 <generator.id>gcp-terraform-java21</generator.id>
-                <output.dir>target/generated-sources/gcp</output.dir>
+                <output.dir>target/generated-sources/gcp-terraform-java21</output.dir>
                 <jar.classifier>gcp</jar.classifier>
             </properties>
             <dependencies>
@@ -333,28 +327,14 @@
         <profile>
             <id>aws</id>
             <activation>
-                <activeByDefault>true</activeByDefault> 
+                <activeByDefault>false</activeByDefault> 
             </activation>
             <properties>
                 <cloud.provider>aws</cloud.provider>
-                <output.dir>target/generated-sources/aws</output.dir>
+                <output.dir>target/generated-sources/aws-terraform-java21</output.dir>
                 <jar.classifier>aws</jar.classifier>
                 <generator.id>aws-terraform-java21</generator.id>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>io.swagger.core.v3</groupId>
-                        <artifactId>swagger-maven-plugin</artifactId>
-                        <version>2.2.22</version>
-                        <configuration>
-                            <resourcePackages >
-                                <package>com.cloudhopper.mc.demo.aws</package>
-                            </resourcePackages>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>        
                 <dependency>
                     <groupId>com.cloudhopper.mc</groupId>
@@ -371,7 +351,7 @@
             <properties>
                 <cloud.provider>azure</cloud.provider>
                 <generator.id>azure-terraform-java21</generator.id>
-                <output.dir>target/generated-sources/azure</output.dir>
+                <output.dir>target/generated-sources/azure-terraform-java21</output.dir>
                 <jar.classifier>azure</jar.classifier>
                 <azure.functions.maven.plugin.version>1.24.0</azure.functions.maven.plugin.version>
                 <azure.functions.java.library.version>2.2.0</azure.functions.java.library.version>

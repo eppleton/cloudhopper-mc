@@ -2,7 +2,7 @@
 
 This module demonstrates how to use Cloudhopper to generate deployment artifacts from annotated Java functions for multiple cloud providers.
  It supports AWS, GCP, and Azure via Maven profiles and includes examples for both HTTP-triggered and scheduled functions. 
-Please note that there are some properties in the pom.xml that need to be changed if you want to use the terraform tasks. Those are described in the secion on **Terraform Integration**.
+Please note that there are some properties in the pom.xml that need to be changed if you want to use the terraform tasks. Those are described in the section on **Terraform Integration**.
 
 ---
 ## 🔧 Prerequisites
@@ -43,9 +43,18 @@ terraform version
 
 ### ☁️ Cloud Provider CLIs
 
-Depending on the active Maven profile, you’ll need CLI tools for the cloud provider you’re targeting:
+Depending on the active Maven profile, you’ll need CLI tools for the cloud provider (or project type) you’re targeting:
 
-#### AWS (default)
+### Spring Boot (no Terraform)
+
+~~~
+mvn clean install -Pspringboot
+~~~
+
+This generates a simple springboot project.
+
+
+#### AWS 
 
 - Install the [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 - Authenticate via:
@@ -101,26 +110,28 @@ You can switch providers using:
 ~~~
 mvn clean install -Pgcp
 mvn clean install -Pazure
+mvn clean install -Pspringboot
 ~~~
 
 Generated resources will be placed in the following directories based on the active profile:
 
 | Profile | Cloud Provider | Generated Sources             | Deployment Output                    |
 |---------|----------------|-------------------------------|--------------------------------------|
-| `aws`   | AWS Lambda     | `target/generated-sources/aws`   | `target/deployment/aws`             |
-| `gcp`   | GCP Functions  | `target/generated-sources/gcp`   | `target/deployment/gcp`             |
-| `azure` | Azure Functions| `target/generated-sources/azure` | `target/deployment/azure`           |
+| `aws`   | AWS Lambda     | `target/generated-sources/aws-terraform-java21`   | `target/deployment/aws-terraform-java21`             |
+| `gcp`   | GCP Functions  | `target/generated-sources/gcp-terraform-java21`   | `target/deployment/gcp-terraform-java21`             |
+| `azure` | Azure Functions| `target/generated-sources/azure-terraform-java21` | `target/deployment/azure-terraform-java21`           |
+| `springboot` | None/local| `target/generated-sources/springboot-http` | `target/deployment/springboot-http`           |
 
 ---
 
 ## Structure and Generated Files
 
-### 📁 `target/generated-sources/{provider}`
+### 📁 `target/generated-sources/{generator.id}`
 
 Contains provider-specific **function handlers** that delegate to your annotated classes. Example (AWS):
 
 ~~~
-target/generated-sources/aws/com/cloudhopper/mc/demo/
+target/generated-sources/aws-terraform-java21/com/cloudhopper/mc/demo/
   ├── AwsLambdaApiFunctionHandler.java
   └── AwsLambdaScheduledFunctionHandler.java
 ~~~
@@ -129,18 +140,18 @@ These are compiled and included in the shaded JAR for deployment.
 
 ---
 
-### 📁 `target/deployment/{provider}`
+### 📁 `target/deployment/{generator.id}`
 
 Contains:
 
 - `main.tf` and related Terraform resources (`*.tf`)
 - Cloudhopper metadata (`handler-info.properties`)
-- Any user-defined `.tf` files copied from `src/main/resources/deployment/{provider}`
+- Any user-defined `.tf` files copied from `src/main/resources/deployment/{generator.id}`
 
 Example (AWS):
 
 ~~~
-target/deployment/aws/
+target/deployment/aws-terraform-java21/
   ├── api.tf
   ├── hello_world_2.tf
   ├── scheduledfunction.tf
@@ -153,9 +164,9 @@ These files are used by the Terraform CLI to deploy your function stack.
 
 ---
 
-### 📁 `src/main/resources/deployment/{provider}`
+### 📁 `src/main/resources/deployment/{generatorId}`
 
-Optional folder where you can place **manually created resources**. Its content is copied into the corresponding `target/deployment/{provider}` folder at build time.
+Optional folder where you can place **manually created resources**. Its content is copied into the corresponding `target/deployment/{generatorID}` folder at build time.
 
 Use this to:
 
@@ -177,10 +188,7 @@ public class ApiFunction implements CloudRequestHandler<Integer, String> {
         method = "GET",
         path = "/hello2/{id}",
         summary = "bla",
-        description = "dummy description",
-        parameters = {
-            @Parameter(in = ParameterIn.PATH, name = "version", description = "API Version", example = "2.0")
-        }
+        description = "dummy description"
     )
     @Override
     public String handleRequest(Integer input, HandlerContext context) {
@@ -238,9 +246,11 @@ Templates are organized by cloud provider in their respective generator modules:
 
 | Module | Location | Notes |
 |--------|----------|-------|
-| `generator-aws-terraform` | `src/main/resources/templates/aws/` | Terraform and AWS Lambda integration templates |
-| `generator-gcp-terraform` | `src/main/resources/templates/gcp/` | Templates for GCP Cloud Functions |
-| `generator-azure-terraform` | `src/main/resources/templates/azure/` | Templates for Azure Functions and resources |
+| `generator-aws-terraform` | `src/main/resources/templates/aws-terraform-java21/` | Terraform and AWS Lambda integration templates |
+| `generator-gcp-terraform` | `src/main/resources/templates/gcp-terraform-java21/` | Templates for GCP Cloud Functions |
+| `generator-azure-terraform` | `src/main/resources/templates/azure-terraform-java21/` | Templates for Azure Functions and resources |
+| `springboot-http`| `src/main/resources/templates/springboot-http/` | Templates for SpringBoot |
+
 
 Each folder contains files like:
 
@@ -261,7 +271,7 @@ Examples:
   → `GcpTerraformJava21TemplateRegistration`
 
 - `generator-aws-terraform`  
-  → `AwsTerraformOpenApiJava21TemplateRegistration`
+  → `AwsTerraformJava21TemplateRegistration`
 
 - `generator-azure-terraform`  
   → `AzureTerraformJava21TemplateRegistration`
@@ -282,7 +292,7 @@ The templates are rendered and written to:
   `target/generated-sources/{provider}`
 
 - Terraform config & metadata:  
-  `target/deployment/{provider}`
+  `target/deployment/{generator.id}`
 
 
 This allows you to inspect or customize any generated artifact before deploying.
@@ -309,8 +319,8 @@ After running the build, the following artifacts are created:
 
 ## Terraform Integration
 
-Terraform initialization and planning can be done automatically during the `verify` phase. 
-If you want to run terraform from the build, please uncomment these blocks from the pom.xml:
+Terraform initialization and planning can be done automatically using the 'deploy-with-terraform' profile. 
+It uses the exec-maven-plugin to run terraform:
 
 ```xml
 <plugin>
@@ -344,7 +354,7 @@ You will also need to adjust the value of AWS_PROFILE.
 Alternatively you can run Terraform manually in the output directory as well:
 
 ~~~
-cd target/deployment/aws
+cd target/deployment/aws-terraform-java21
 terraform apply
 ~~~
 
