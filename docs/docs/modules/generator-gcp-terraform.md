@@ -20,7 +20,7 @@ To use this generator in your own project, follow these steps:
 
 ```xml
 <dependency>
-  <groupId>com.cloudhopper.mc</groupId>
+  <groupId>eu.cloudhopper.mc</groupId>
   <artifactId>generator-gcp-terraform</artifactId>
   <version>${cloudhopper.version}</version>
 </dependency>
@@ -40,7 +40,7 @@ To use this generator in your own project, follow these steps:
     <encoding>UTF-8</encoding>
     <annotationProcessors>
       <annotationProcessor>
-        com.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor
+        eu.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor
       </annotationProcessor>
     </annotationProcessors>
     <compilerArgs>

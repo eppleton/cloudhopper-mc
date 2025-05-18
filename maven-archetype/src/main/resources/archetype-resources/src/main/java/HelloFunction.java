@@ -1,10 +1,10 @@
 package ${package};
 
 
-import com.cloudhopper.mc.annotations.ApiOperation;
-import com.cloudhopper.mc.annotations.Function;
-import com.cloudhopper.mc.runtime.CloudRequestHandler;
-import com.cloudhopper.mc.runtime.HandlerContext;
+import eu.cloudhopper.mc.annotations.ApiOperation;
+import eu.cloudhopper.mc.annotations.Function;
+import eu.cloudhopper.mc.runtime.CloudRequestHandler;
+import eu.cloudhopper.mc.runtime.HandlerContext;
 
 import java.util.Map;
 

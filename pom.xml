@@ -119,7 +119,7 @@
                             <include>**/*.xml</include>
                         </includes>
                         <excludes>
-                        <!-- exclude the entire archetype-resources folder -->
+                            <!-- exclude the entire archetype-resources folder -->
                             <exclude>**/archetype-resources/**</exclude>
                             <exclude>**/generated/**</exclude>
                         </excludes>
@@ -232,6 +232,9 @@
                                 <goals>
                                     <goal>javadoc</goal>
                                 </goals>
+                                <configuration>
+                                    <destDir>${project.build.directory}/apidocs</destDir>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
