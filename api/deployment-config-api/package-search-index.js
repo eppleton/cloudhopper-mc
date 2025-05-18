@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"Alle Packages","u":"allpackages-index.html"},{"l":"com.cloudhopper.mc.annotations"},{"l":"com.cloudhopper.mc.runtime"}];updateSearchResults();
+packageSearchIndex = [{"l":"Alle Packages","u":"allpackages-index.html"},{"l":"eu.cloudhopper.mc.annotations"},{"l":"eu.cloudhopper.mc.runtime"}];updateSearchResults();

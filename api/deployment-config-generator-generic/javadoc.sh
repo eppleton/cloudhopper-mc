@@ -1,1 +1,0 @@
-/Users/antonepple/.sdkman/candidates/java/21-graal/bin/javadoc @options @packages
