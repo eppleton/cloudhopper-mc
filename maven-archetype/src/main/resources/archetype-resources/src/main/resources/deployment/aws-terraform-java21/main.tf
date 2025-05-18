@@ -25,17 +25,6 @@ variable "aws_region" {
   default     = "eu-central-1"  # Change this to your preferred default region
 }
 
-#variable "aws_access_key" {
-#  description = "AWS access key"
-#  type        = string
-#  default     = ""  # Do not put actual credentials here
-#}
-#
-#variable "aws_secret_key" {
-#  description = "AWS secret key"
-#  type        = string
-#  default     = ""  # Do not put actual credentials here
-#}
 
 variable "aws_profile" {
   description = "AWS profile to use"
@@ -56,4 +45,3 @@ variable "environment" {
 }
 
 data "aws_caller_identity" "current" {}
-

@@ -13,9 +13,7 @@ terraform {
       version = "~> 2.0"
     }
   }
-
 }
-
 
 # Configure the Google Cloud provider
 provider "google" {
