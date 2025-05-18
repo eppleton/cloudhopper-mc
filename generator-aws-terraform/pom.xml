@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.cloudhopper.mc</groupId>
+        <groupId>eu.cloudhopper.mc</groupId>
         <artifactId>cloudhopper-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -25,8 +25,8 @@
                     <source>11</source>
                     <target>11</target>
                     <annotationProcessors>
-                        <annotationProcessor>com.cloudhopper.mc.generator.generic.TemplateRegistrationProcessor</annotationProcessor>
-                        <annotationProcessor>com.cloudhopper.mc.deployment.config.generator.GeneratorFeatureProcessor</annotationProcessor>
+                        <annotationProcessor>eu.cloudhopper.mc.generator.generic.TemplateRegistrationProcessor</annotationProcessor>
+                        <annotationProcessor>eu.cloudhopper.mc.deployment.config.generator.GeneratorFeatureProcessor</annotationProcessor>
                     </annotationProcessors>
                 </configuration>
             </plugin>
@@ -34,25 +34,25 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>deployment-config-generator-api</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>deployment-config-generator-generic</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>deployment-config-processor</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>provider-aws</artifactId>
             <version>${project.version}</version>
             <type>jar</type>

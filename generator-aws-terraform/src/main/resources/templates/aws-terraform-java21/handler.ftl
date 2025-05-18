@@ -4,10 +4,10 @@ import ${handlerInfo.inputTypeImport};
 import ${handlerInfo.outputTypeImport};
 import ${handlerInfo.handlerFullyQualifiedName};
 
-import com.cloudhopper.mc.provider.aws.AwsLambdaRequestHandler;
-import com.cloudhopper.mc.provider.aws.ApiGatewayV2ProxyRequestHandler;
-import com.cloudhopper.mc.provider.aws.ApiGatewayV2HttpEventHandler;
-import com.cloudhopper.mc.provider.aws.ApiGatewayEventRouter;
+import eu.cloudhopper.mc.provider.aws.AwsLambdaRequestHandler;
+import eu.cloudhopper.mc.provider.aws.ApiGatewayV2ProxyRequestHandler;
+import eu.cloudhopper.mc.provider.aws.ApiGatewayV2HttpEventHandler;
+import eu.cloudhopper.mc.provider.aws.ApiGatewayEventRouter;
 
 /**
  * Generated AWS Lambda handler class for ${handlerInfo.handlerClassName}.

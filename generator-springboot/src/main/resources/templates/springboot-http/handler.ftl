@@ -1,6 +1,6 @@
 package ${packageName};
 
-import com.cloudhopper.mc.provider.springboot.SpringBootRequestHandler;
+import eu.cloudhopper.mc.provider.springboot.SpringBootRequestHandler;
 import ${handlerInfo.handlerFullyQualifiedName};
 import ${handlerInfo.inputTypeImport};
 import ${handlerInfo.outputTypeImport};

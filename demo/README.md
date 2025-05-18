@@ -222,7 +222,7 @@ The annotation processor is registered via:
 
 ```xml
 <annotationProcessor>
-  com.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor
+  eu.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor
 </annotationProcessor>
 ```
 

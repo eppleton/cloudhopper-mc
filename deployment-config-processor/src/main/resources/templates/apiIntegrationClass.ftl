@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import com.cloudhopper.mc.deployment.config.api.CloudRequestHandler;
-import com.cloudhopper.mc.deployment.config.api.HandlerContext;
+import eu.cloudhopper.mc.deployment.config.api.CloudRequestHandler;
+import eu.cloudhopper.mc.deployment.config.api.HandlerContext;
 
 @Path("${path}")
 public class ${className} implements CloudRequestHandler<${inputType}, ${outputType}> {

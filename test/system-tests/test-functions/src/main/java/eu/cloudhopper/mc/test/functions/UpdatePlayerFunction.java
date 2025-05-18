@@ -1,0 +1,65 @@
+package eu.cloudhopper.mc.test.functions;
+
+/*-
+ * #%L
+ * test-functions - a library from the "Cloudhopper" project.
+ * 
+ * Eppleton IT Consulting designates this particular file as subject to the "Classpath"
+ * exception as provided in the README.md file that accompanies this code.
+ * %%
+ * Copyright (C) 2024 - 2025 Eppleton IT Consulting
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
+
+import eu.cloudhopper.mc.annotations.ApiOperation;
+import eu.cloudhopper.mc.annotations.Function;
+import eu.cloudhopper.mc.runtime.CloudRequestHandler;
+import eu.cloudhopper.mc.runtime.HandlerContext;
+import eu.cloudhopper.mc.test.domain.Player;
+
+import java.util.Map;
+
+public class UpdatePlayerFunction implements CloudRequestHandler<Player, Player> {
+
+    @ApiOperation(
+            summary = "Update an existing player",
+            description = "Updates an existing player's information in the ping pong tournament database.",
+            operationId = "updatePlayer",
+            path = "/player/{id}",
+            method = "PUT"
+    )
+    @Function(name = "updatePlayer")
+    @Override
+    public Player handleRequest(Player input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
+        if (input == null) {
+            throw new IllegalArgumentException("Player input must not be null");
+        }
+
+        String idStr = pathParams.get("id");
+        int id = idStr != null ? Integer.parseInt(idStr) : 0;
+
+        Player updatedPlayer = new Player(
+                id != 0 ? id : input.getId(), // If no id in path, fallback to input id
+                input.getName() != null ? input.getName() : "Unknown",
+                input.getRanking()
+        );
+
+        System.out.println("Updated player: " + updatedPlayer);
+        return updatedPlayer;
+    }
+}

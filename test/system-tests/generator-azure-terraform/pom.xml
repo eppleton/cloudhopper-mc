@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.cloudhopper.mc</groupId>
+        <groupId>eu.cloudhopper.mc</groupId>
         <artifactId>cloudhopper-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../../pom.xml</relativePath>
@@ -26,18 +26,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>deployment-config-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>deployment-config-processor</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>generator-azure-terraform</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -47,7 +47,7 @@
             <version>${azure.functions.java.library.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>test-domain</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -57,14 +57,14 @@
             <version>${com.google.code.gson.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>generator-bindings-azure-terraform</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>test-tck-core</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -87,7 +87,7 @@
                     <encoding>UTF-8</encoding>
                     <generatedSourcesDirectory>${output.dir}</generatedSourcesDirectory>
                     <annotationProcessors>
-                        <annotationProcessor>com.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor</annotationProcessor>
+                        <annotationProcessor>eu.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor</annotationProcessor>
                     </annotationProcessors>
                     <compilerArgs>
                         <arg>-Acloudprovider=${cloud.provider}</arg>

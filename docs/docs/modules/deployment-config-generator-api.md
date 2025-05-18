@@ -70,9 +70,9 @@ public class AwsTemplateRegistration implements TemplateRegistration {
 
 | Package                                      | Description                                  |
 |---------------------------------------------|----------------------------------------------|
-| `com.cloudhopper.mc.generator.api`          | Support types and enums                      |
-| `com.cloudhopper.mc.generator.api.spi`      | SPI interface to be implemented by generators|
-| `com.cloudhopper.mc.generator.api.annotations` | Metadata annotations for declaring generator features |
+| `eu.cloudhopper.mc.generator.api`          | Support types and enums                      |
+| `eu.cloudhopper.mc.generator.api.spi`      | SPI interface to be implemented by generators|
+| `eu.cloudhopper.mc.generator.api.annotations` | Metadata annotations for declaring generator features |
 
 ---
 

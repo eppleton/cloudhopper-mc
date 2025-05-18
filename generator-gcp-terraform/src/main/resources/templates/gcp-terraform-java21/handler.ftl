@@ -4,7 +4,7 @@ import ${handlerInfo.inputTypeImport};
 import ${handlerInfo.outputTypeImport};
 import ${handlerInfo.handlerFullyQualifiedName};
 
-import com.cloudhopper.mc.provider.gcp.GcpCloudFunctionRequestHandler;
+import eu.cloudhopper.mc.provider.gcp.GcpCloudFunctionRequestHandler;
 import com.google.cloud.functions.HttpFunction;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;

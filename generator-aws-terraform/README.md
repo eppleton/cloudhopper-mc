@@ -20,7 +20,7 @@ To enable this generator in your own project, you need to:
 
 ```xml
 <dependency>
-  <groupId>com.cloudhopper.mc</groupId>
+  <groupId>eu.cloudhopper.mc</groupId>
   <artifactId>generator-aws-terraform</artifactId>
   <version>${cloudhopper.version}</version>
 </dependency>
@@ -40,7 +40,7 @@ To enable this generator in your own project, you need to:
     <encoding>UTF-8</encoding>
     <annotationProcessors>
       <annotationProcessor>
-        com.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor
+        eu.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor
       </annotationProcessor>
     </annotationProcessors>
     <compilerArgs>
