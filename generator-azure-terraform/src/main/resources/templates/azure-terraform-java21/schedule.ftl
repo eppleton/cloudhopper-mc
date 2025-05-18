@@ -2,7 +2,7 @@ package ${handlerInfo.handlerPackage};
 
 import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
-import com.cloudhopper.mc.provider.azure.AzureBaseFunctionWrapper;
+import eu.cloudhopper.mc.provider.azure.AzureBaseFunctionWrapper;
 import ${handlerInfo.inputTypeImport};
 import ${handlerInfo.outputTypeImport};
 import ${handlerInfo.handlerFullyQualifiedName};

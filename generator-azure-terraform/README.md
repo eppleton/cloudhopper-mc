@@ -24,7 +24,7 @@ To use this generator in your own project, configure the following:
 
 ```xml
 <dependency>
-  <groupId>com.cloudhopper.mc</groupId>
+  <groupId>eu.cloudhopper.mc</groupId>
   <artifactId>generator-azure-terraform</artifactId>
   <version>${cloudhopper.version}</version>
 </dependency>
@@ -44,7 +44,7 @@ To use this generator in your own project, configure the following:
     <encoding>UTF-8</encoding>
     <annotationProcessors>
       <annotationProcessor>
-        com.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor
+        eu.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor
       </annotationProcessor>
     </annotationProcessors>
     <compilerArgs>

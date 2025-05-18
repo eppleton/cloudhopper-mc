@@ -22,8 +22,8 @@ This module is **used by developers**, **referenced by integrators**, and **cons
 
 | Package                             | Description                                                  |
 |-------------------------------------|--------------------------------------------------------------|
-| `com.cloudhopper.mc.annotations`    | Core annotations like `@Function`, `@Schedule`, `@ApiOperation` |
-| `com.cloudhopper.mc.runtime`        | Runtime interfaces such as `CloudRequestHandler`, `HandlerContext` |
+| `eu.cloudhopper.mc.annotations`    | Core annotations like `@Function`, `@Schedule`, `@ApiOperation` |
+| `eu.cloudhopper.mc.runtime`        | Runtime interfaces such as `CloudRequestHandler`, `HandlerContext` |
 
 ---
 

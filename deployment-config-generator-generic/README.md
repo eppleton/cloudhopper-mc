@@ -99,7 +99,7 @@ The generator will call your templates in the correct order based on these phase
 
 ## ⚙️ Annotations
 
-Provided in the package `com.cloudhopper.mc.generator.generic.annotations`:
+Provided in the package `eu.cloudhopper.mc.generator.generic.annotations`:
 
 - `@TemplateRegistration` — top-level annotation to register a generator and its templates
 - `@Template` — describes a single template file (name, output format, phase)

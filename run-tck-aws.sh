@@ -31,6 +31,6 @@ docker run --rm \
     echo '▶ Running TCK...'
     cd /workspace/test/system-tests/generator-aws-terraform/
     mvn exec:java \
-      -Dexec.mainClass=com.cloudhopper.mc.test.system.tests.generator.aws.terraform.TckLauncher \
+      -Dexec.mainClass=eu.cloudhopper.mc.test.system.tests.generator.aws.terraform.TckLauncher \
       -Dexec.classpathScope=test
   "

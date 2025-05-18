@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.cloudhopper.mc</groupId>
+        <groupId>eu.cloudhopper.mc</groupId>
         <artifactId>cloudhopper-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -14,7 +14,7 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>deployment-config-processor</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -26,7 +26,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.cloudhopper.mc</groupId>
+            <groupId>eu.cloudhopper.mc</groupId>
             <artifactId>deployment-config-api</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
@@ -71,7 +71,7 @@
                     <encoding>UTF-8</encoding>
                     <generatedSourcesDirectory>${output.dir}</generatedSourcesDirectory>
                     <annotationProcessors>
-                        <annotationProcessor>com.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor</annotationProcessor>
+                        <annotationProcessor>eu.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor</annotationProcessor>
                     </annotationProcessors>
                     <compilerArgs>
                         <arg>-Acloudprovider=${cloud.provider}</arg>
@@ -231,7 +231,7 @@
                 <generator.id>springboot-http</generator.id>
                 <output.dir>target/generated-sources/springboot-http</output.dir>
                 <jar.classifier>springboot</jar.classifier>
-                <main.class>com.cloudhopper.mc.demo.Application</main.class>
+                <main.class>eu.cloudhopper.mc.demo.Application</main.class>
             </properties>
             <build>
                 <plugins>
@@ -258,17 +258,17 @@
             </build>
             <dependencies>
                 <dependency>
-                    <groupId>com.cloudhopper.mc</groupId>
+                    <groupId>eu.cloudhopper.mc</groupId>
                     <artifactId>generator-springboot</artifactId>
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
-                    <groupId>com.cloudhopper.mc</groupId>
+                    <groupId>eu.cloudhopper.mc</groupId>
                     <artifactId>provider-springboot</artifactId>
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
-                    <groupId>com.cloudhopper.mc</groupId>
+                    <groupId>eu.cloudhopper.mc</groupId>
                     <artifactId>provider-http</artifactId>
                     <version>${project.version}</version>
                 </dependency>
@@ -293,7 +293,7 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>com.cloudhopper.mc</groupId>
+                    <groupId>eu.cloudhopper.mc</groupId>
                     <artifactId>generator-gcp-terraform</artifactId>
                     <version>${project.version}</version>
                 </dependency>
@@ -337,7 +337,7 @@
             </properties>
             <dependencies>        
                 <dependency>
-                    <groupId>com.cloudhopper.mc</groupId>
+                    <groupId>eu.cloudhopper.mc</groupId>
                     <artifactId>generator-aws-terraform</artifactId>
                     <version>${project.version}</version>
                 </dependency>
@@ -359,7 +359,7 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>com.cloudhopper.mc</groupId>
+                    <groupId>eu.cloudhopper.mc</groupId>
                     <artifactId>generator-azure-terraform</artifactId>
                     <version>${project.version}</version>
                 </dependency>
