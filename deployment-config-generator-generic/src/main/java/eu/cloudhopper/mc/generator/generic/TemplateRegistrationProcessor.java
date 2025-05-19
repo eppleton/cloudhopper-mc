@@ -24,8 +24,6 @@ package eu.cloudhopper.mc.generator.generic;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
-
 import eu.cloudhopper.mc.generator.generic.annotations.Template;
 import eu.cloudhopper.mc.generator.generic.annotations.TemplateRegistration;
 import eu.cloudhopper.mc.generator.generic.internal.GeneratorConfig;
@@ -53,13 +51,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 /**
- * Annotation processor that handles {@link eu.cloudhopper.mc.generator.generic.annotations.TemplateRegistration}
- * and {@link eu.cloudhopper.mc.generator.generic.annotations.Template} declarations.
+ * Annotation processor that handles
+ * {@link eu.cloudhopper.mc.generator.generic.annotations.TemplateRegistration}
+ * and {@link eu.cloudhopper.mc.generator.generic.annotations.Template}
+ * declarations.
  * <p>
- * This processor is automatically invoked during compilation when using {@link com.google.auto.service.AutoService}.
+ * This processor is automatically invoked during compilation when using
+ * {@link com.google.auto.service.AutoService}.
  * <p>
- * <strong>This is an internal component and should not be used directly by application developers.</strong>
+ * <strong>This is an internal component and should not be used directly by
+ * application developers.</strong>
  */
 @AutoService(javax.annotation.processing.Processor.class)
 @SupportedAnnotationTypes("eu.cloudhopper.mc.generator.generic.annotations.TemplateRegistration")
@@ -82,12 +85,32 @@ public class TemplateRegistrationProcessor extends AbstractProcessor {
             if (registration == null) {
                 continue;
             }
-            
+
             String generatorId = registration.generatorId();
             Template[] templates = registration.templates();
             Map<String, List<TemplateDescriptor>> phaseMap = new HashMap<>();
-            
+
             for (Template template : templates) {
+                String resourcePath = "templates/" + generatorId + "/" + template.templateName();
+                boolean exists = true;
+                try {
+                    processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", resourcePath);
+                } catch (IOException e) {
+                    try {
+                        processingEnv.getFiler().getResource(StandardLocation.SOURCE_PATH, "", resourcePath);
+                    } catch (IOException ex) {
+                        processingEnv.getMessager().printMessage(
+                                Diagnostic.Kind.ERROR,
+                                "Template file not found: " + resourcePath,
+                                element
+                        );
+                        exists = false;
+                    }
+                }
+                if (!exists) {
+                    continue;
+                }
+
                 String phaseKey = template.phase().name().toLowerCase();
                 TemplateDescriptor descriptor = new TemplateDescriptor(
                         template.templateName(),
@@ -96,10 +119,10 @@ public class TemplateRegistrationProcessor extends AbstractProcessor {
                         template.outputSubDirectory(),
                         template.javaFile()
                 );
-                
+
                 phaseMap.computeIfAbsent(phaseKey, k -> new ArrayList<>()).add(descriptor);
             }
-            
+
             GeneratorConfig config = new GeneratorConfig();
             config.setGeneratorId(generatorId);
             config.setPhases(phaseMap);
@@ -115,7 +138,7 @@ public class TemplateRegistrationProcessor extends AbstractProcessor {
                 );
                 continue;
             }
-            
+
             Filer filer = processingEnv.getFiler();
             String resourceFile = "META-INF/cloudhopper/" + generatorId + "-templates.json";
             try {
@@ -133,6 +156,6 @@ public class TemplateRegistrationProcessor extends AbstractProcessor {
                 );
             }
         }
-        return true; // Keine weiteren Prozessoren sollen diese Annotationen verarbeiten.
+        return true;
     }
 }

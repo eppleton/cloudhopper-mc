@@ -11,7 +11,6 @@
     <packaging>jar</packaging>
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
-        <cloud.provider>aws</cloud.provider>
         <output.dir>target/generated-sources/aws</output.dir>
         <jar.classifier>aws</jar.classifier>
         <generator.id>aws-terraform-java21</generator.id>
@@ -102,7 +101,6 @@
                         <annotationProcessor>eu.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor</annotationProcessor>
                     </annotationProcessors>
                     <compilerArgs>
-                        <arg>-Acloudprovider=${cloud.provider}</arg>
                         <arg>-AgeneratorId=${generator.id}</arg>
                         <arg>-AconfigOutputDir=${project.build.directory}/deployment/${generator.id}</arg>
                         <arg>-AartifactId=${project.artifactId}</arg>

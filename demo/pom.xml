@@ -74,7 +74,6 @@
                         <annotationProcessor>eu.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor</annotationProcessor>
                     </annotationProcessors>
                     <compilerArgs>
-                        <arg>-Acloudprovider=${cloud.provider}</arg>
                         <arg>-AgeneratorId=${generator.id}</arg>
                         <arg>-AconfigOutputDir=${project.build.directory}/deployment/${generator.id}</arg>
                         <arg>-AartifactId=${project.artifactId}</arg>
@@ -227,7 +226,6 @@
                 <activeByDefault>true</activeByDefault> 
             </activation>
             <properties>
-                <cloud.provider>springboot</cloud.provider>
                 <generator.id>springboot-http</generator.id>
                 <output.dir>target/generated-sources/springboot-http</output.dir>
                 <jar.classifier>springboot</jar.classifier>
@@ -286,7 +284,6 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <cloud.provider>gcp</cloud.provider>
                 <generator.id>gcp-terraform-java21</generator.id>
                 <output.dir>target/generated-sources/gcp-terraform-java21</output.dir>
                 <jar.classifier>gcp</jar.classifier>
@@ -330,7 +327,6 @@
                 <activeByDefault>false</activeByDefault> 
             </activation>
             <properties>
-                <cloud.provider>aws</cloud.provider>
                 <output.dir>target/generated-sources/aws-terraform-java21</output.dir>
                 <jar.classifier>aws</jar.classifier>
                 <generator.id>aws-terraform-java21</generator.id>
@@ -349,7 +345,6 @@
                 <activeByDefault>false</activeByDefault> 
             </activation>
             <properties>
-                <cloud.provider>azure</cloud.provider>
                 <generator.id>azure-terraform-java21</generator.id>
                 <output.dir>target/generated-sources/azure-terraform-java21</output.dir>
                 <jar.classifier>azure</jar.classifier>
@@ -362,11 +357,6 @@
                     <groupId>eu.cloudhopper.mc</groupId>
                     <artifactId>generator-azure-terraform</artifactId>
                     <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.microsoft.azure.functions</groupId>
-                    <artifactId>azure-functions-java-library</artifactId>
-                    <version>${azure.functions.java.library.version}</version>
                 </dependency>
             </dependencies>
             <build>

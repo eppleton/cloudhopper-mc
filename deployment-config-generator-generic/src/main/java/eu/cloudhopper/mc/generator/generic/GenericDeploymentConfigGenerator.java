@@ -154,7 +154,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     }
 
     @Override
-    public void finalizeConfig(String providerName, String configOutputDir) throws ConfigGenerationException {
+    public void finalizeConfig(String generatorId, String configOutputDir) throws ConfigGenerationException {
 
         Properties properties = loadProperties(configOutputDir);
         Map<String, Object> dataModel = new HashMap<>();
@@ -174,9 +174,9 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
 
         try {
             runPhase(processingEnv, GenerationPhase.FINALIZE, dataModel, null, configOutputDir, "api");
-            copyDocumentationResources(providerName, configOutputDir);
+            copyDocumentationResources(generatorId, configOutputDir);
         } catch (ConfigGenerationException e) {
-            throw new ConfigGenerationException("Failed to finalize config for provider: " + providerName, e);
+            throw new ConfigGenerationException("Failed to finalize config for generator: " + generatorId, e);
         }
     }
 
@@ -308,8 +308,8 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         saveProperties(properties, configOutputDir);
     }
 
-    protected void copyDocumentationResources(String providerName, String outputDir) {
-        String basePath = getTemplateDirectory(providerName) + "/doc/";
+    protected void copyDocumentationResources(String generatorId, String outputDir) {
+        String basePath = getTemplateDirectory(generatorId) + "/doc/";
         try (InputStream indexStream = this.getClass().getResourceAsStream(basePath + "doc.index")) {
             if (indexStream == null) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,

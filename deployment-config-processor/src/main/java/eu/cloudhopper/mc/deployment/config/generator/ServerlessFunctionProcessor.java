@@ -76,7 +76,7 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
         System.err.println("Processing eu.cloudhopper.mc.Function");
         if (roundEnv.processingOver()) {
             try {
-                deploymentGenerator.finalizeConfig(cloudProvider, configOutputDir);
+                deploymentGenerator.finalizeConfig(generatorId, configOutputDir);
             } catch (ConfigGenerationException e) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
@@ -125,14 +125,14 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
                     );
 
                     try {
-                        deploymentGenerator.generateServerlessFunctionConfiguration(cloudProvider, configOutputDir, handlerInfo, processingEnv);
+                        deploymentGenerator.generateServerlessFunctionConfiguration(generatorId, configOutputDir, handlerInfo, processingEnv);
 
                         if (apiOperation != null) {
-                            deploymentGenerator.generateApiResourceAndIntegration(cloudProvider, configOutputDir, handlerInfo, apiOperation, processingEnv);
+                            deploymentGenerator.generateApiResourceAndIntegration(generatorId, configOutputDir, handlerInfo, apiOperation, processingEnv);
                         }
 
                         if (schedule != null) {
-                            deploymentGenerator.generateScheduledTrigger(cloudProvider, configOutputDir, handlerInfo, schedule, processingEnv);
+                            deploymentGenerator.generateScheduledTrigger(generatorId, configOutputDir, handlerInfo, schedule, processingEnv);
                         }
                         featureValidator.validate(methodElement);
                     } catch (ConfigGenerationException e) {

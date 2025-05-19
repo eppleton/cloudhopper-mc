@@ -63,13 +63,13 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
 
     protected List<DeploymentConfigGenerator> generators;
     protected DeploymentConfigGenerator deploymentGenerator;
-    protected String cloudProvider;
     protected String configOutputDir = "target/generated-config";
     protected String artifactId;
     protected String classifier;
     protected String version;
     protected String targetDir;
-    GeneratorFeatureInfo generatorFeatureInfo;
+    protected GeneratorFeatureInfo generatorFeatureInfo;
+    protected String generatorId;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -82,8 +82,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
         for (DeploymentConfigGenerator generator : loader) {
             generators.add(generator);
         }
-
-        cloudProvider = processingEnv.getOptions().getOrDefault("cloudprovider", "aws");
+        generatorId = processingEnv.getOptions().getOrDefault("generatorId", "").trim();
         configOutputDir = processingEnv.getOptions().getOrDefault("configOutputDir", "target/generated-config");
         artifactId = processingEnv.getOptions().getOrDefault("artifactId", "default-artifactId");
         classifier = processingEnv.getOptions().getOrDefault("classifier", "default-classifier");
@@ -100,14 +99,14 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
     protected DeploymentConfigGenerator getDeploymentGenerator() {
         DeploymentConfigGenerator deploymentGenerator = null;
         for (DeploymentConfigGenerator generator : generators) {
-            if (generator.supportsGenerator(cloudProvider)) {
+            if (generator.supportsGenerator(generatorId)) {
                 deploymentGenerator = generator;
                 break;
             }
         }
         // If no registered generator is found, try the GenericDeploymentConfigGenerator
         if (deploymentGenerator == null) {
-            System.err.println("No custom generator found for " + cloudProvider);
+            System.err.println("No custom generator found for " + generatorId);
             GenericDeploymentConfigGenerator genericDeploymentConfigGenerator = new GenericDeploymentConfigGenerator(processingEnv);
 //            if (genericDeploymentConfigGenerator.supportsGenerator(cloudProvider)) {
 //                System.err.println("GenericDeploymentConfigGenerator supports " + cloudProvider);
