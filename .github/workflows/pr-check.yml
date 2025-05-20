@@ -48,7 +48,7 @@ jobs:
         image: cloudhopper-tck-aws:latest
         options: |
           -v ${PWD}:/workspace
-          -v ~/.m2:/root/.m2
+          -v ${HOME}/.m2:/root/.m2
           -w /workspace
           -e AWS_ACCESS_KEY_ID
           -e AWS_SECRET_ACCESS_KEY
