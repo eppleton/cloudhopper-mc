@@ -19,17 +19,14 @@ fi
 
 echo "🚀 Running containerized TCK for AWS"
 docker run --rm \
+  -v "$PWD":/workspace \
   -v "$HOME/.m2":/root/.m2 \
   -w /workspace \
   -e AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY \
-  -e AWS_SESSION_TOKEN \
   -e AWS_REGION \
   cloudhopper-tck-aws bash -c "
     echo '🔍 Recompiling only system tests...'
-    pwd
-    ls -la /
-    ls -la /workspace
     mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-aws-terraform &&
     echo '▶ Running TCK...'
     cd /workspace/test/system-tests/generator-aws-terraform/
