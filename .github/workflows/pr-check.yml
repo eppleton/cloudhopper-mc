@@ -59,14 +59,14 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-        run: ./run-tck-aws.sh
+        run: ./run-tck-aws.sh --rebuild
 
       - name: Run TCK for GCP
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
           echo $GOOGLE_APPLICATION_CREDENTIALS > ./credentials.json
-          ./run-tck-gcp.sh
+          ./run-tck-gcp.sh --rebuild
 
       - name: Run TCK for Azure
-        run: ./run-tck-azure.sh
+        run: ./run-tck-azure.sh --rebuild
