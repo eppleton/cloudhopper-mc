@@ -34,9 +34,8 @@ jobs:
 
     - name: Debug
       run: |
-        echo $PWD
-        echo ${{ github.workspace }}
-        echo $HOME
+        echo ls -la ${{ github.workspace }}
+        echo ls -la /home/runner
 
     - name: Build Docker image
       uses: docker/build-push-action@v6.17.0
@@ -54,7 +53,7 @@ jobs:
         image: cloudhopper-tck-aws:latest
         options: |
           -v ${{ github.workspace }}:/workspace
-          -v $HOME/.m2:/root/.m2
+          -v /home/runner/.m2:/root/.m2
           -w /workspace
           -e AWS_ACCESS_KEY_ID
           -e AWS_SECRET_ACCESS_KEY
