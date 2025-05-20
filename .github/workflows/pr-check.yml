@@ -30,12 +30,14 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: Build with Maven
-      run: mvn clean verify
+      run: |
+        mvn clean verify
+        mvn clean install
 
     - name: Debug
       run: |
-        echo ls -la ${{ github.workspace }}
-        echo ls -la /home/runner
+        ls -la ${{ github.workspace }}
+        ls -la /home/runner
 
     - name: Build Docker image
       uses: docker/build-push-action@v6.17.0
