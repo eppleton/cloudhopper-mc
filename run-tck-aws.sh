@@ -27,6 +27,9 @@ docker run --rm \
   -e AWS_REGION \
   cloudhopper-tck-aws bash -c "
     echo '🔍 Recompiling only system tests...'
+    pwd
+    ls -la /
+    ls -la /workspace
     mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-aws-terraform &&
     echo '▶ Running TCK...'
     cd /workspace/test/system-tests/generator-aws-terraform/
