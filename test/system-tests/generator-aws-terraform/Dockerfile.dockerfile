@@ -9,7 +9,10 @@ RUN apt-get update && apt-get install -y wget unzip gnupg software-properties-co
     apt-get update && apt-get install -y terraform awscli
 
 RUN git clone https://github.com/eppleton/cloudhopper-mc.git /workspace/
+RUN ls -la /workspace
 
 WORKDIR /workspace
+RUN ls -la /workspace
 
 RUN mvn clean install
+RUN ls -la /workspace
