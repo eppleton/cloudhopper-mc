@@ -11,3 +11,5 @@ RUN apt-get update && apt-get install -y wget unzip gnupg software-properties-co
 RUN git clone https://github.com/eppleton/cloudhopper-mc.git /workspace/
 
 WORKDIR /workspace
+
+RUN mvn clean install
