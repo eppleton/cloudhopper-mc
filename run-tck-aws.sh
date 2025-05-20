@@ -19,7 +19,6 @@ fi
 
 echo "🚀 Running containerized TCK for AWS"
 docker run --rm \
-  -v "$PWD":/workspace \
   -v "$HOME/.m2":/root/.m2 \
   -w /workspace \
   -e AWS_ACCESS_KEY_ID \
