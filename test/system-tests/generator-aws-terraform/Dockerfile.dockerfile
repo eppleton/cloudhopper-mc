@@ -8,6 +8,6 @@ RUN apt-get update && apt-get install -y wget unzip gnupg software-properties-co
     echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" > /etc/apt/sources.list.d/hashicorp.list && \
     apt-get update && apt-get install -y terraform awscli
 
-RUN git clone git@github.com:eppleton/cloudhopper-mc.git /workspace/
+RUN git clone https://github.com/eppleton/cloudhopper-mc.git /workspace/
 
 WORKDIR /workspace
