@@ -39,7 +39,7 @@ jobs:
         ls -la ${{ github.workspace }}
         ls -la /home/runner
 
-    - name: Build Docker image
+    - name: Build TCK image for AWS
       uses: docker/build-push-action@v6.17.0
       with:
         file: test/system-tests/generator-aws-terraform/Dockerfile.dockerfile
@@ -68,13 +68,15 @@ jobs:
           mvn exec:java \
             -Dexec.mainClass=eu.cloudhopper.mc.test.system.tests.generator.aws.terraform.TckLauncher \
             -Dexec.classpathScope=test
-          
-    - name: Run TCK for GCP
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-      run: |
-        echo $GOOGLE_APPLICATION_CREDENTIALS > ./credentials.json
-        ./run-tck-gcp.sh --rebuild
 
-    - name: Run TCK for Azure
-      run: ./run-tck-azure.sh --rebuild
+    - name: Build TCK image for GCP
+      uses: docker/build-push-action@v6.17.0
+      with:
+        file: test/system-tests/generator-gcp-terraform/Dockerfile.dockerfile
+        tags: cloudhopper-tck-gcp
+
+    - name: Build TCK image for Azure
+      uses: docker/build-push-action@v6.17.0
+      with:
+        file: test/system-tests/generator-azure-terraform/Dockerfile.dockerfile
+        tags: cloudhopper-tck-azure
