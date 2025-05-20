@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Check out code
       uses: actions/checkout@v4
 
     - name: Set up Java
@@ -31,3 +31,34 @@ jobs:
 
     - name: Build with Maven
       run: mvn clean verify
+
+  run-tck:
+    name: Run TCK
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:latest
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged --shm-size=2g
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Install Docker
+        run: |
+          apt-get update
+          apt-get install -y docker.io
+          docker version
+          docker info
+
+      - name: Run TCK for AWS
+        run: ./run-tck-aws.sh
+
+      - name: Run TCK for Azure
+        run: ./run-tck-azure.sh
+
+      - name: Run TCK for GCP
+        run: ./run-tck-gcp.sh
