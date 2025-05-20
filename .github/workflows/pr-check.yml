@@ -32,6 +32,12 @@ jobs:
     - name: Build with Maven
       run: mvn clean verify
 
+    - name: Debug
+      run: |
+        echo $PWD
+        echo ${{ github.workspace }}
+        echo $HOME
+
     - name: Build Docker image
       uses: docker/build-push-action@v6.17.0
       with:
