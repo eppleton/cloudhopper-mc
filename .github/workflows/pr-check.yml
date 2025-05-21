@@ -29,15 +29,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    - name: Build with Maven
-      run: |
-        mvn clean verify
-        mvn clean install
+    - name: Verify with Maven
+      run: mvn clean verify
 
-    - name: Debug
-      run: |
-        ls -la ${{ github.workspace }}
-        ls -la /home/runner
+    - name: Build with Maven
+      run: mvn clean install
 
     - name: Build TCK image for AWS
       uses: docker/build-push-action@v6.17.0
@@ -74,6 +70,31 @@ jobs:
       with:
         file: test/system-tests/generator-gcp-terraform/Dockerfile.dockerfile
         tags: cloudhopper-tck-gcp
+
+    - name: Set up GCP credentials
+      run: echo ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} > /home/runner/gcp-key.json
+
+    - name: Run TCK for GCP
+      uses: addnab/docker-run-action@v3
+      with:
+        image: cloudhopper-tck-aws:latest
+        options: |
+          -v ${{ github.workspace }}:/workspace
+          -v /home/runner/.m2:/root/.m2
+          -v /home/runner/gcp-key.json:/root/gcp-key.json
+          -w /workspace
+          -e GOOGLE_APPLICATION_CREDENTIALS=/root/gcp-key.json
+          -e GOOGLE_CLOUD_PROJECT=$GCP_PROJECT_ID
+          -e GCP_PROJECT_ID=$GCP_PROJECT_ID
+          -e GCP_REGION=$GCP_REGION
+        run: |
+          echo '🔍 Recompiling only system tests...'
+          mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-gcp-terraform &&
+          echo '▶ Running TCK...'
+          cd /workspace/test/system-tests/generator-gcp-terraform/
+          mvn exec:java \
+            -Dexec.mainClass=eu.cloudhopper.mc.test.system.tests.generator.gcp.terraform.TckLauncher \
+            -Dexec.classpathScope=test
 
     - name: Build TCK image for Azure
       uses: docker/build-push-action@v6.17.0
