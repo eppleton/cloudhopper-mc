@@ -59,6 +59,7 @@ jobs:
           -e GOOGLE_CLOUD_PROJECT=cloudhopper-tck
           -e GCP_PROJECT_ID=cloudhopper-tck
           -e GCP_REGION=us-central1
+          -e TF_VAR_cloudscheduler_service_account_email=${{ secrets.CLOUDSCHEDULER_SERVICE_ACCOUNT_EMAIL }}
         run: |
           echo '🔍 Recompiling only system tests...'
           mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-gcp-terraform &&
@@ -66,6 +67,33 @@ jobs:
           cd /workspace/test/system-tests/generator-gcp-terraform/
           mvn exec:java \
             -Dexec.mainClass=eu.cloudhopper.mc.test.system.tests.generator.gcp.terraform.TckLauncher \
+            -Dexec.classpathScope=test
+
+    - name: Build TCK image for Azure
+      uses: docker/build-push-action@v6.17.0
+      with:
+        file: test/system-tests/generator-azure-terraform/Dockerfile.dockerfile
+        tags: cloudhopper-tck-azure
+
+    - name: Run TCK for Azure
+      uses: addnab/docker-run-action@v3
+      with:
+        image: cloudhopper-tck-azure:latest
+        options: |
+          -v ${{ github.workspace }}:/workspace
+          -v /home/runner/.m2:/root/.m2
+          -w /workspace
+          -e ARM_SUBSCRIPTION_ID
+          -e ARM_CLIENT_ID
+          -e ARM_CLIENT_SECRET
+          -e ARM_TENANT_ID
+        run: |
+          echo '🔍 Recompiling only system tests...'
+          mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-azure-terraform &&
+          echo '▶ Running TCK...'
+          cd /workspace/test/system-tests/generator-azure-terraform/
+          mvn exec:java \
+            -Dexec.mainClass=eu.cloudhopper.mc.test.system.tests.generator.azure.terraform.TckLauncher \
             -Dexec.classpathScope=test
 
     - name: Build TCK image for AWS
@@ -97,9 +125,3 @@ jobs:
           mvn exec:java \
             -Dexec.mainClass=eu.cloudhopper.mc.test.system.tests.generator.aws.terraform.TckLauncher \
             -Dexec.classpathScope=test
-
-    - name: Build TCK image for Azure
-      uses: docker/build-push-action@v6.17.0
-      with:
-        file: test/system-tests/generator-azure-terraform/Dockerfile.dockerfile
-        tags: cloudhopper-tck-azure
