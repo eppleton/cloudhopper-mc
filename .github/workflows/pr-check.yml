@@ -35,6 +35,12 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
+    - name: Build TCK image for Azure
+      uses: docker/build-push-action@v6.17.0
+      with:
+        file: test/system-tests/generator-azure-terraform/Dockerfile.dockerfile
+        tags: cloudhopper-tck-azure
+
     - name: Run TCK for Azure
       uses: addnab/docker-run-action@v3
       env:
@@ -94,12 +100,6 @@ jobs:
           mvn exec:java \
             -Dexec.mainClass=eu.cloudhopper.mc.test.system.tests.generator.gcp.terraform.TckLauncher \
             -Dexec.classpathScope=test
-
-    - name: Build TCK image for Azure
-      uses: docker/build-push-action@v6.17.0
-      with:
-        file: test/system-tests/generator-azure-terraform/Dockerfile.dockerfile
-        tags: cloudhopper-tck-azure
 
     - name: Build TCK image for AWS
       uses: docker/build-push-action@v6.17.0
