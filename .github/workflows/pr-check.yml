@@ -77,7 +77,7 @@ jobs:
     - name: Run TCK for GCP
       uses: addnab/docker-run-action@v3
       with:
-        image: cloudhopper-tck-aws:latest
+        image: cloudhopper-tck-gcp:latest
         options: |
           -v ${{ github.workspace }}:/workspace
           -v /home/runner/.m2:/root/.m2
