@@ -85,8 +85,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <projectsDirectory>src/test/projects</projectsDirectory>
-                    <cloneProjectsTo>target/archetype-tests</cloneProjectsTo>
+                    <projectsDirectory>${project.basedir}/src/test/projects</projectsDirectory>
+                    <cloneProjectsTo>${project.basedir}/target/archetype-tests</cloneProjectsTo>
                     <cloneAllFiles>true</cloneAllFiles>
                     <preBuildHookScript>verify-setup.groovy</preBuildHookScript>
                     <postBuildHookScript>verify-cleanup.groovy</postBuildHookScript>
