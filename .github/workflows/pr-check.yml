@@ -33,7 +33,9 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: Run archetype tests
-      run: mvn -B clean verify --file archetypes/cloudhopper-maven-archetype-core/pom.xml
+      working-directory: maven-archetype
+      run: mvn -B clean verify
+      
   build-and-validate:
     name: Build and Validate
     runs-on: ubuntu-latest
