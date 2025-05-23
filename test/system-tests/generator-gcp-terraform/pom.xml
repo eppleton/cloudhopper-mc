@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
-        <generator.id>gcp-terraform-java21</generator.id>
+        <generator.id>gcp-terraform</generator.id>
         <output.dir>target/generated-sources/gcp</output.dir>
         <jar.classifier>gcp</jar.classifier>
     </properties>

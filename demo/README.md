@@ -117,9 +117,9 @@ Generated resources will be placed in the following directories based on the act
 
 | Profile | Cloud Provider | Generated Sources             | Deployment Output                    |
 |---------|----------------|-------------------------------|--------------------------------------|
-| `aws`   | AWS Lambda     | `target/generated-sources/aws-terraform-java21`   | `target/deployment/aws-terraform-java21`             |
-| `gcp`   | GCP Functions  | `target/generated-sources/gcp-terraform-java21`   | `target/deployment/gcp-terraform-java21`             |
-| `azure` | Azure Functions| `target/generated-sources/azure-terraform-java21` | `target/deployment/azure-terraform-java21`           |
+| `aws`   | AWS Lambda     | `target/generated-sources/aws-terraform`   | `target/deployment/aws-terraform`             |
+| `gcp`   | GCP Functions  | `target/generated-sources/gcp-terraform`   | `target/deployment/gcp-terraform`             |
+| `azure` | Azure Functions| `target/generated-sources/azure-terraform` | `target/deployment/azure-terraform`           |
 | `springboot` | None/local| `target/generated-sources/springboot-http` | `target/deployment/springboot-http`           |
 
 ---
@@ -131,7 +131,7 @@ Generated resources will be placed in the following directories based on the act
 Contains provider-specific **function handlers** that delegate to your annotated classes. Example (AWS):
 
 ~~~
-target/generated-sources/aws-terraform-java21/com/cloudhopper/mc/demo/
+target/generated-sources/aws-terraform/com/cloudhopper/mc/demo/
   ├── AwsLambdaApiFunctionHandler.java
   └── AwsLambdaScheduledFunctionHandler.java
 ~~~
@@ -151,7 +151,7 @@ Contains:
 Example (AWS):
 
 ~~~
-target/deployment/aws-terraform-java21/
+target/deployment/aws-terraform/
   ├── api.tf
   ├── hello_world_2.tf
   ├── scheduledfunction.tf
@@ -246,9 +246,9 @@ Templates are organized by cloud provider in their respective generator modules:
 
 | Module | Location | Notes |
 |--------|----------|-------|
-| `generator-aws-terraform` | `src/main/resources/templates/aws-terraform-java21/` | Terraform and AWS Lambda integration templates |
-| `generator-gcp-terraform` | `src/main/resources/templates/gcp-terraform-java21/` | Templates for GCP Cloud Functions |
-| `generator-azure-terraform` | `src/main/resources/templates/azure-terraform-java21/` | Templates for Azure Functions and resources |
+| `generator-aws-terraform` | `src/main/resources/templates/aws-terraform/` | Terraform and AWS Lambda integration templates |
+| `generator-gcp-terraform` | `src/main/resources/templates/gcp-terraform/` | Templates for GCP Cloud Functions |
+| `generator-azure-terraform` | `src/main/resources/templates/azure-terraform/` | Templates for Azure Functions and resources |
 | `springboot-http`| `src/main/resources/templates/springboot-http/` | Templates for SpringBoot |
 
 
@@ -354,7 +354,7 @@ You will also need to adjust the value of AWS_PROFILE.
 Alternatively you can run Terraform manually in the output directory as well:
 
 ~~~
-cd target/deployment/aws-terraform-java21
+cd target/deployment/aws-terraform
 terraform apply
 ~~~
 

@@ -47,7 +47,7 @@ This module is intended for:
 
 ~~~java
 @GeneratorFeatures(
-    generatorId = "aws-terraform-java21",
+    generatorId = "aws-terraform",
     supportedFeatures = {
         @GeneratorFeature(
             supportedAnnotation = Function.class,

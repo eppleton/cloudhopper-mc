@@ -48,7 +48,7 @@ import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 public class TestContextAws implements TestContext {
 
     private final CloudWatchLogsClient logsClient = CloudWatchLogsClient.create();
-    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "aws-terraform-java21");
+    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "aws-terraform");
     private final Set<String> usedFunctions = new HashSet<>();
 
     @Override

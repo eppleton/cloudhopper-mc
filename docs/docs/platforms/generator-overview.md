@@ -18,7 +18,7 @@ Cloudhopper supports serverless deployment to multiple cloud providers through p
 | **Runtime Adapter**              | `AwsLambdaRequestHandler`              | `AzureBaseFunctionWrapper`               | `GcpCloudFunctionRequestHandler`           |
 | **Java Templates**               | `handler.ftl`, `apiIntegrationClass.ftl` | `handler.ftl`, `function.ftl`, `schedule.ftl` | `handler.ftl`                          |
 | **Terraform Templates**         | `function.ftl`, `api.ftl`, `integration.ftl`, `schedule.ftl`, `shared.ftl` | `shared.ftl` only                   | `function.ftl`, `api.ftl`, `apiIntegration.ftl`, `schedule.ftl`, `shared.ftl` |
-| **Generator ID**                | `aws-terraform-java21`                | `azure-terraform-java21`                | `gcp-terraform-java21`                    |
+| **Generator ID**                | `aws-terraform`                | `azure-terraform`                | `gcp-terraform`                    |
 | **Primary Use Case**            | API endpoints via Lambda + Gateway     | HTTP-triggered and scheduled Functions   | Cloud Functions + optional Gateway         |
 
 ---
@@ -35,21 +35,21 @@ To activate a generator, you need:
 
 ```xml
 <arg>-Acloudprovider=aws</arg>
-<arg>-AgeneratorId=aws-terraform-java21</arg>
+<arg>-AgeneratorId=aws-terraform</arg>
 ```
 
 ### Azure Example
 
 ```xml
 <arg>-Acloudprovider=azure</arg>
-<arg>-AgeneratorId=azure-terraform-java21</arg>
+<arg>-AgeneratorId=azure-terraform</arg>
 ```
 
 ### GCP Example
 
 ```xml
 <arg>-Acloudprovider=gcp</arg>
-<arg>-AgeneratorId=gcp-terraform-java21</arg>
+<arg>-AgeneratorId=gcp-terraform</arg>
 ```
 
 ---

@@ -85,7 +85,7 @@ import javax.tools.Diagnostic;
  *
  * <pre>{@code
  * @TemplateRegistration(
- *     generatorId = "aws-terraform-java21",
+ *     generatorId = "aws-terraform",
  *     templates = {
  *         @Template(
  *             phase = GenerationPhase.FUNCTION,

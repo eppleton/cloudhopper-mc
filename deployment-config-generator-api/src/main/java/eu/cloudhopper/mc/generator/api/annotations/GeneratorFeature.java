@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
  * <h2>Example</h2>
  * <pre>{@code
  * @GeneratorFeatures(
- *     generatorId = "aws-terraform-java21",
+ *     generatorId = "aws-terraform",
  *     supportedFeatures = {
  *         @GeneratorFeature(
  *             supportedAnnotation = Function.class,

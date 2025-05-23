@@ -34,6 +34,6 @@ import eu.cloudhopper.mc.test.tck.core.CompatibilityTestRunner;
  */
 public class TckLauncher {
     public static void main(String[] args) throws Exception {
-        CompatibilityTestRunner.runWith("gcp-terraform-java21", new TestContextGcp());
+        CompatibilityTestRunner.runWith("gcp-terraform", new TestContextGcp());
     }
 }

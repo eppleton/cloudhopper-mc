@@ -54,7 +54,6 @@
             <annotationProcessor>eu.cloudhopper.mc.deployment.config.generator.ServerlessFunctionProcessor</annotationProcessor>
           </annotationProcessors>
           <compilerArgs>
-            <arg>-Acloudprovider=\${cloud.provider}</arg>
             <arg>-AgeneratorId=\${generator.id}</arg>
             <arg>-AconfigOutputDir=\${project.build.directory}/deployment/\${generator.id}</arg>
             <arg>-AartifactId=\${project.artifactId}</arg>
@@ -69,19 +68,20 @@
   </build>
 
   <profiles>
-    #foreach(\$provider in \$cloudProviders.split(','))
+    #foreach(\$generator in \$generatorIds.split(','))
     <profile>
-      <id>\${provider}</id>
+      <id>\${generator}</id>
       <properties>
-        <cloud.provider>\${provider}</cloud.provider>
-        <generator.id>\${provider}-terraform-java21</generator.id>
-        <output.dir>target/generated-sources/\${provider}-terraform-java21</output.dir>
-        <jar.classifier>\${provider}</jar.classifier>
+        <cloud.provider>\${generator}</cloud.provider>
+        <generator.id>\${generator}
+        </generator.id>
+        <output.dir>target/generated-sources/\${generator}</output.dir>
+        <jar.classifier>\${generator}</jar.classifier>
       </properties>
       <dependencies>
         <dependency>
           <groupId>eu.cloudhopper.mc</groupId>
-          <artifactId>generator-\${provider}-terraform</artifactId>
+          <artifactId>generator-\${generator}</artifactId>
           <version>\${cloudhopper.version}</version>
         </dependency>
       </dependencies>

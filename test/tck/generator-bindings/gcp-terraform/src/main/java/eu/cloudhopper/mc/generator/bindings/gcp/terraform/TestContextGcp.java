@@ -46,7 +46,7 @@ import java.util.*;
 
 public class TestContextGcp implements TestContext {
 
-    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "gcp-terraform-java21");
+    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "gcp-terraform");
     private final Set<String> usedFunctions = new HashSet<>();
 
     @Override

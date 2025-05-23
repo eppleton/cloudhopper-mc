@@ -45,7 +45,7 @@ To use this generator in your own project, follow these steps:
     </annotationProcessors>
     <compilerArgs>
       <arg>-Acloudprovider=gcp</arg>
-      <arg>-AgeneratorId=gcp-terraform-java21</arg>
+      <arg>-AgeneratorId=gcp-terraform</arg>
       <arg>-AconfigOutputDir=${project.build.directory}/deployment/gcp</arg>
       <arg>-AtargetDir=${project.build.directory}</arg>
       <arg>-AartifactId=${project.artifactId}</arg>
@@ -87,7 +87,7 @@ This generator registers itself using:
 
 ```java
 @TemplateRegistration(
-    generatorId = "gcp-terraform-java21",
+    generatorId = "gcp-terraform",
     templates = {
         @Template(name = "handler", phase = GenerationPhase.SOURCES),
         @Template(name = "function", phase = GenerationPhase.DEPLOYMENT),

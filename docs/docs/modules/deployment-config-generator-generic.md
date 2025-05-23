@@ -28,7 +28,7 @@ To use this generator, create a class annotated with `@TemplateRegistration` and
   
 ~~~java
 @TemplateRegistration(
-    generatorId = "aws-terraform-java21",
+    generatorId = "aws-terraform",
     templates = {
         @Template(
             phase = GenerationPhase.FUNCTION,
@@ -51,7 +51,7 @@ public class AwsTerraformJava21TemplateRegistration { }
 
 This tells Cloudhopper to:
 - Use the generic generator
-- Load templates from `/templates/aws-terraform-java21/`
+- Load templates from `/templates/aws-terraform/`
 - Render those templates into the specified subdirectories
 
 ---
@@ -69,7 +69,7 @@ Example:
 
   
 ~~~
-src/main/resources/templates/aws-terraform-java21/
+src/main/resources/templates/aws-terraform/
 ├── function.ftl
 ├── shared.ftl
 ├── doc/

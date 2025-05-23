@@ -45,7 +45,7 @@ To enable this generator in your own project, you need to:
     </annotationProcessors>
     <compilerArgs>
       <arg>-Acloudprovider=aws</arg>
-      <arg>-AgeneratorId=aws-terraform-java21</arg>
+      <arg>-AgeneratorId=aws-terraform</arg>
       <arg>-AconfigOutputDir=${project.build.directory}/deployment/aws</arg>
       <arg>-AtargetDir=${project.build.directory}</arg>
       <arg>-AartifactId=${project.artifactId}</arg>
@@ -86,7 +86,7 @@ The generator is registered via:
 
 ```java
 @TemplateRegistration(
-    generatorId = "aws-terraform-java21",
+    generatorId = "aws-terraform",
     templates = {
         @Template(name = "handler", phase = GenerationPhase.SOURCES),
         @Template(name = "apiIntegrationClass", phase = GenerationPhase.SOURCES),

@@ -284,9 +284,9 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <generator.id>gcp-terraform-java21</generator.id>
-                <output.dir>target/generated-sources/gcp-terraform-java21</output.dir>
-                <jar.classifier>gcp</jar.classifier>
+                <generator.id>gcp-terraform</generator.id>
+                <output.dir>target/generated-sources/gcp-terraform</output.dir>
+                <jar.classifier>gcp-terraform</jar.classifier>
             </properties>
             <dependencies>
                 <dependency>
@@ -327,9 +327,9 @@
                 <activeByDefault>false</activeByDefault> 
             </activation>
             <properties>
-                <output.dir>target/generated-sources/aws-terraform-java21</output.dir>
+                <output.dir>target/generated-sources/aws-terraform</output.dir>
                 <jar.classifier>aws</jar.classifier>
-                <generator.id>aws-terraform-java21</generator.id>
+                <generator.id>aws-terraform</generator.id>
             </properties>
             <dependencies>        
                 <dependency>
@@ -345,8 +345,8 @@
                 <activeByDefault>false</activeByDefault> 
             </activation>
             <properties>
-                <generator.id>azure-terraform-java21</generator.id>
-                <output.dir>target/generated-sources/azure-terraform-java21</output.dir>
+                <generator.id>azure-terraform</generator.id>
+                <output.dir>target/generated-sources/azure-terraform</output.dir>
                 <jar.classifier>azure</jar.classifier>
                 <azure.functions.maven.plugin.version>1.24.0</azure.functions.maven.plugin.version>
                 <azure.functions.java.library.version>2.2.0</azure.functions.java.library.version>
