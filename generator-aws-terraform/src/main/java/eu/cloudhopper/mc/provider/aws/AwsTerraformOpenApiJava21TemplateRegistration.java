@@ -35,7 +35,7 @@ import eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature;
 import eu.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
 
 @GeneratorFeatures(
-        generatorId = "aws-terraform-java21",
+        generatorId = "aws-terraform",
         supportedFeatures = {
             @GeneratorFeature(
                     supportedAnnotation = Function.class,
@@ -66,7 +66,7 @@ import eu.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
         }
 )
 @TemplateRegistration(
-        generatorId = "aws-terraform-java21",
+        generatorId = "aws-terraform",
         templates = {
             @Template(
                     phase = GenerationPhase.SHARED,

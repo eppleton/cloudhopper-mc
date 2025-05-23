@@ -17,7 +17,7 @@
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
         <azure.functions.maven.plugin.version>1.24.0</azure.functions.maven.plugin.version>
         <azure.functions.java.library.version>2.2.0</azure.functions.java.library.version>
-        <generator.id>azure-terraform-java21</generator.id>
+        <generator.id>azure-terraform</generator.id>
         <output.dir>target/generated-sources/azure</output.dir>
         <jar.classifier>azure</jar.classifier>
         <appName>azure-20250506</appName>

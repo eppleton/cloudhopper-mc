@@ -13,7 +13,7 @@
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
         <output.dir>target/generated-sources/aws</output.dir>
         <jar.classifier>aws</jar.classifier>
-        <generator.id>aws-terraform-java21</generator.id>
+        <generator.id>aws-terraform</generator.id>
     </properties>
     <dependencies>        
         <dependency>

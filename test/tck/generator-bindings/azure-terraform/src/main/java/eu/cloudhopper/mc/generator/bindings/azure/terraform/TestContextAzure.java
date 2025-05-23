@@ -42,7 +42,7 @@ import java.util.*;
 
 public class TestContextAzure implements TestContext {
 
-    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "azure-terraform-java21");
+    private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "azure-terraform");
     private final Set<String> usedFunctions = new HashSet<>();
     private final String azureFunctionBaseUrl;
 

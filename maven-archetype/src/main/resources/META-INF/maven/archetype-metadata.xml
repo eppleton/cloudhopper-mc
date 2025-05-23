@@ -37,11 +37,11 @@
             <defaultValue>1.0-SNAPSHOT</defaultValue>
             <description>Your project’s version</description>
         </requiredProperty>
-        <requiredProperty key="cloudProviders">
-            <defaultValue>aws</defaultValue>
+        <requiredProperty key="generatorIds">
+            <defaultValue>aws-terraform</defaultValue>
             <description>
                 Comma-separated list of target clouds.  
-                Options: aws, gcp, azure
+                Options: aws-terraform, gcp-terraform, azure-terraform
             </description>
         </requiredProperty>
         <requiredProperty key="includeTerraformProfile">

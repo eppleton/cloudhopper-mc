@@ -1,5 +1,5 @@
 {
-  "generatorId": "azure-terraform-java21",
+  "generatorId": "azure-terraform",
   "phases": {
     "shared": [
       {

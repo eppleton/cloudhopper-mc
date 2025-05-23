@@ -56,7 +56,7 @@ public interface DeploymentConfigGenerator {
     /**
      * Checks whether this generator supports the given provider or target ID.
      *
-     * @param provider the name of the target generator (e.g. "aws-terraform-java21")
+     * @param provider the name of the target generator (e.g. "aws-terraform")
      * @return true if this generator can handle the specified provider
      */
     boolean supportsGenerator(String provider);
@@ -108,7 +108,7 @@ public interface DeploymentConfigGenerator {
      * <p>
      * This may include writing shared files (e.g. backend definitions, resource groups, etc.)
      *
-     * @param providerName the name of the generator (e.g. "aws-terraform-java21")
+     * @param providerName the name of the generator (e.g. "aws-terraform")
      * @param configOutputDir the output directory for shared files
      * @throws ConfigGenerationException if generation fails
      */

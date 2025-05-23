@@ -1,5 +1,5 @@
 {
-    "generatorId": "gcp-terraform-java21",
+    "generatorId": "gcp-terraform",
     "phases": {
         "shared": [
             {

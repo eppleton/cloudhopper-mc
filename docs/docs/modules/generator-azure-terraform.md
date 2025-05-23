@@ -49,7 +49,7 @@ To use this generator in your own project, configure the following:
     </annotationProcessors>
     <compilerArgs>
       <arg>-Acloudprovider=azure</arg>
-      <arg>-AgeneratorId=azure-terraform-java21</arg>
+      <arg>-AgeneratorId=azure-terraform</arg>
       <arg>-AconfigOutputDir=${project.build.directory}/deployment/azure</arg>
       <arg>-AtargetDir=${project.build.directory}</arg>
       <arg>-AartifactId=${project.artifactId}</arg>
@@ -151,7 +151,7 @@ src/main/resources/templates/azure/
 
 ```java
 @TemplateRegistration(
-  generatorId = "azure-terraform-java21",
+  generatorId = "azure-terraform",
   templates = {
     @Template(name = "function", phase = GenerationPhase.SOURCES),
     @Template(name = "schedule", phase = GenerationPhase.SOURCES),

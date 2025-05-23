@@ -34,7 +34,7 @@ import java.io.Reader;
 
 public class FilerTemplateLoader implements TemplateLoader {
     private final Filer filer;
-    private final String basePath;  // e.g. "cloudhopper-templates/aws-terraform-java21"
+    private final String basePath;  // e.g. "cloudhopper-templates/aws-terraform"
 
     public FilerTemplateLoader(Filer filer, String basePath) {
         this.filer   = filer;
