@@ -221,7 +221,7 @@
             </build>
         </profile>
         <profile>
-            <id>springboot</id>
+            <id>springboot-http</id>
             <activation>
                 <activeByDefault>true</activeByDefault> 
             </activation>
@@ -279,7 +279,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>gcp</id>
+            <id>gcp-terraform</id>
             <activation>      
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -322,7 +322,7 @@
             </build>
         </profile>
         <profile>
-            <id>aws</id>
+            <id>aws-terraform</id>
             <activation>
                 <activeByDefault>false</activeByDefault> 
             </activation>
@@ -340,7 +340,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>azure</id>
+            <id>azure-terraform</id>
             <activation>
                 <activeByDefault>false</activeByDefault> 
             </activation>
