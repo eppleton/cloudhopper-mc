@@ -41,7 +41,7 @@
             <defaultValue>aws-terraform</defaultValue>
             <description>
                 Comma-separated list of target clouds.  
-                Options: aws-terraform, gcp-terraform, azure-terraform
+                Options: aws-terraform, gcp-terraform, azure-terraform, springboot-http
             </description>
         </requiredProperty>
         <requiredProperty key="includeTerraformProfile">
