@@ -4,7 +4,7 @@ const sidebars = {
         {
             type: 'category',
             label: 'Getting started',
-            collapsed: true,
+            collapsed: false,
             items: [
                 'modules/maven-archetype',
                 'modules/demo',
@@ -13,7 +13,7 @@ const sidebars = {
         {
             type: 'category',
             label: 'Runtime API',
-            collapsed: false,
+            collapsed: true,
             items: [
                 'modules/deployment-config-api',
                 {
@@ -52,14 +52,14 @@ const sidebars = {
         {
             type: 'category',
             label: 'Platform Integration',
-            collapsed: false,
+            collapsed: true,
             items: [
                 'platforms/generator-overview', // comparison doc
 
                 {
                     type: 'category',
                     label: 'AWS',
-                    collapsed: false,
+                    collapsed: true,
                     items: [
                         'modules/generator-aws-terraform',
                         'modules/provider-aws',
@@ -73,7 +73,7 @@ const sidebars = {
                 {
                     type: 'category',
                     label: 'Azure',
-                    collapsed: false,
+                    collapsed: true,
                     items: [
                         'modules/generator-azure-terraform',
                         'modules/provider-azure',
@@ -87,7 +87,7 @@ const sidebars = {
                 {
                     type: 'category',
                     label: 'GCP',
-                    collapsed: false,
+                    collapsed: true,
                     items: [
                         'modules/generator-gcp-terraform',
                         'modules/provider-gcp',

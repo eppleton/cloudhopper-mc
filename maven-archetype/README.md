@@ -14,13 +14,16 @@ This archetype generates a minimal Cloudhopper-based function project that can b
 
 ### 📦 Interactive (with prompts)
 
+```sh
     mvn archetype:generate \
       -DarchetypeGroupId=eu.cloudhopper.mc \
       -DarchetypeArtifactId=cloudhopper-maven-archetype-core \
       -DarchetypeVersion=1.0-SNAPSHOT
+```
 
 ### ⚙️ Non-interactive (fully scripted)
 
+```sh
     mvn archetype:generate \
       -DarchetypeGroupId=eu.cloudhopper.mc \
       -DarchetypeArtifactId=cloudhopper-maven-archetype-core \
@@ -34,7 +37,7 @@ This archetype generates a minimal Cloudhopper-based function project that can b
       -B
 
 > `-B` enables batch mode (non-interactive)
-
+```
 ---
 
 ## 🧩 Supported Generators
@@ -59,12 +62,12 @@ If `includeTerraformProfile=true`, the generated project will include a `deploy-
 - `terraform apply` / `destroy`
 
 Customize the Terraform executable path and environment using project properties:
-
+```xml
     <properties>
       <terraform.executable>terraform</terraform.executable>
       <path.extras>/usr/local/bin</path.extras>
     </properties>
-
+```
 ---
 
 ## 📋 Project Layout
@@ -82,10 +85,10 @@ The generated project includes:
 ## 🧪 Development & Testing
 
 To verify the archetype locally:
-
+```sh
     mvn clean install -pl maven-archetype
     mvn verify -pl maven-archetype
-
+```
 > Integration tests are defined in `src/test/projects/` and executed using the Maven Archetype Plugin (`archetype:integration-test`).
 
 
