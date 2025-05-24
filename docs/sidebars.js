@@ -3,6 +3,15 @@ const sidebars = {
     documentationSidebar: [
         {
             type: 'category',
+            label: 'Getting started',
+            collapsed: true,
+            items: [
+                'modules/maven-archetype',
+                'modules/demo',
+            ],
+        },
+        {
+            type: 'category',
             label: 'Runtime API',
             collapsed: false,
             items: [
@@ -38,14 +47,6 @@ const sidebars = {
                     label: 'Java API',
                     href: 'pathname:///api/deployment-config-generator-generic/index.html',
                 },
-            ],
-        },
-        {
-            type: 'category',
-            label: 'The Demo Project',
-            collapsed: true,
-            items: [
-                'modules/demo',
             ],
         },
         {
