@@ -9,20 +9,22 @@ jobs:
   archetype-test:
     name: Test Archetype with Terraform
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-
+      
     - name: Set up Java
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '21'
-
+        
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v3
-
+      with:
+        terraform_version: latest  # or specify a version like "1.6.0"
+        
     - name: Cache Maven packages
       uses: actions/cache@v4
       with:
@@ -31,10 +33,25 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-
-    - name: Run archetype tests
+          
+    # Install parent dependencies first if needed
+    - name: Install parent dependencies
+      run: mvn -B clean install -DskipTests
+      
+    - name: Run archetype integration tests
       working-directory: maven-archetype
-      run: mvn -B clean verify
+      run: mvn -B clean integration-test
+      
+    # Optional: Upload test results and generated projects for debugging
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: archetype-test-results
+        path: |
+          maven-archetype/target/test-classes/projects/*/project/
+          maven-archetype/target/surefire-reports/
+        retention-days: 5
       
   build-and-validate:
     name: Build and Validate
@@ -58,9 +75,6 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-
-    - name: Verify with Maven
-      run: mvn clean verify
 
     - name: Build with Maven
       run: mvn clean install

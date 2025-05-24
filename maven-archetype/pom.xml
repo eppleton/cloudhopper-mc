@@ -71,27 +71,13 @@
                 <configuration>
                     <filterDescriptors>true</filterDescriptors>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-invoker-plugin</artifactId>
-                <version>3.2.2</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>install</goal>
-                            <goal>run</goal>
+                            <goal>integration-test</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <projectsDirectory>${project.basedir}/src/test/projects</projectsDirectory>
-                    <cloneProjectsTo>${project.basedir}/target/archetype-tests</cloneProjectsTo>
-                    <cloneAllFiles>true</cloneAllFiles>
-                    <preBuildHookScript>verify-setup.groovy</preBuildHookScript>
-                    <postBuildHookScript>verify-cleanup.groovy</postBuildHookScript>
-                    <debug>true</debug>
-                </configuration>
             </plugin>
         </plugins>
     </build>
