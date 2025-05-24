@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.7.0">
 <title data-rh="true">⚙️ Azure Terraform Generator | Cloudhopper mc</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://eppleton.github.io/cloudhopper-mc/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://eppleton.github.io/cloudhopper-mc/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://eppleton.github.io/cloudhopper-mc/docs/modules/generator-azure-terraform"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="⚙️ Azure Terraform Generator | Cloudhopper mc"><meta data-rh="true" name="description" content="This module provides a Cloudhopper generator that enables the deployment of annotated Java functions as Azure Functions using Terraform and Java handler code generation."><meta data-rh="true" property="og:description" content="This module provides a Cloudhopper generator that enables the deployment of annotated Java functions as Azure Functions using Terraform and Java handler code generation."><link data-rh="true" rel="icon" href="/cloudhopper-mc/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://eppleton.github.io/cloudhopper-mc/docs/modules/generator-azure-terraform"><link data-rh="true" rel="alternate" href="https://eppleton.github.io/cloudhopper-mc/docs/modules/generator-azure-terraform" hreflang="en"><link data-rh="true" rel="alternate" href="https://eppleton.github.io/cloudhopper-mc/docs/modules/generator-azure-terraform" hreflang="x-default"><link rel="stylesheet" href="/cloudhopper-mc/assets/css/styles.38da314a.css">
-<script src="/cloudhopper-mc/assets/js/runtime~main.68cfabb6.js" defer="defer"></script>
+<script src="/cloudhopper-mc/assets/js/runtime~main.1f62123b.js" defer="defer"></script>
 <script src="/cloudhopper-mc/assets/js/main.87181eb9.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -13,9 +13,9 @@
 <p>Azure is unique in that Cloudhopper generates most of the glue code as Java classes. Only shared Terraform infrastructure (like the Function App and Storage Account) is generated as <code>.tf</code> files.</p>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="-documentation-notice">📢 Documentation Notice:<a href="#-documentation-notice" class="hash-link" aria-label="Direct link to 📢 Documentation Notice:" title="Direct link to 📢 Documentation Notice:">​</a></h2>
-<p>All Cloudhopper functions on Azure are exposed via HTTP under the /api/functionIdroute unless otherwise specified with an @ApiOperation(path=&quot;...&quot;) annotation.</p>
+<p>All Cloudhopper functions on Azure are exposed via HTTP under the /api/functionIdroute unless otherwise specified with an @HttpTrigger(path=&quot;...&quot;) annotation.</p>
 <ul>
-<li>Functions without an @ApiOperation will default to their @Function(functionId) name as the HTTP route.</li>
+<li>Functions without an @HttpTrigger will default to their @Function(functionId) name as the HTTP route.</li>
 <li>Direct invocation via SDK (like AWS Lambda invoke()) is not supported on Azure — Azure Functions require trigger bindings.</li>
 </ul>
 <p>Therefore, every Cloudhopper function in Azure is accessible via an HTTP call to its assigned route.</p>
