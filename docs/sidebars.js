@@ -3,8 +3,16 @@ const sidebars = {
     documentationSidebar: [
         {
             type: 'category',
-            label: 'Getting started',
+            label: 'Introduction',
             collapsed: false,
+            items: [
+                'intro',
+            ]
+        },
+        {
+            type: 'category',
+            label: 'Getting started',
+            collapsed: true,
             items: [
                 'modules/maven-archetype',
                 'modules/demo',

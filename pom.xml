@@ -315,9 +315,12 @@
                                     <target>
                                         <mkdir dir="docs/docs/modules"/>
                                         <copy todir="docs/docs/modules" overwrite="true">
+                                           
                                             <fileset dir="." includes="*/README.md"/>
                                             <mapper type="glob" from="*/README.md" to="*.md"/>
                                         </copy>
+                                        <copy file="README.md" tofile="docs/docs/intro.md" overwrite="true" failonerror="false"/>
+
                                     </target>
                                 </configuration>
                                 <goals>

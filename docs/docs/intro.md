@@ -1,47 +1,42 @@
----
-sidebar_position: 1
----
+# Cloudhopper for Java
 
-# Cloudhopper
+**You code, we take out the YAML**
 
-**Cloudhopper** is an open-source toolkit for building truly vendor-neutral serverless Java applications. By leveraging annotations, templates, and generated code, Cloudhopper makes it painless to switch between various cloud providers (or in the future maybe on-premises Kubernetes clusters) without tying your code to proprietary services.
+Managing serverless functions sounds simple — until you're buried under a mountain of deployment files, integration classes,
+ and cloud-specific configs. And every time you add a function, the pile gets bigger.
+ Cloudhopper helps you escape that trap by generating the boilerplate from configurable templates, so you can ship faster and spend less time plumbing.
 
-## Motivation
+### Stop copy-pasting deployment files
 
-Many serverless frameworks and cloud ecosystems still impose hidden dependencies on specific platforms. Cloudhopper tackles this challenge by providing common abstractions (e.g., for persistence or messaging) directly at the code level. Differences in infrastructure are handled through configurable templates and generated deployment descriptors, allowing teams to avoid vendor lock-in.
+Terraform, OpenAPI specs, integration classes - it only takes one bad copy-paste to quietly burn your budget.  
+Cloudhopper generates all of it automatically based on your code — consistent, reliable, and boring in the best possible way.
 
-## How It Works
+### Don't lock yourself into one cloud
 
-1. **Annotation-Driven**
-   - Mark serverless functions in Java with custom annotations.
-   - An annotation processor then generates integration classes, deployment descriptors (e.g., Terraform, openTofu), and documentation (e.g., OpenAPI).
+Cloud-specific deployments are a trap! 
+With Cloudhopper, your application stays platform-independent from day one.
 
-2. **Template-Based**
-   - Standard templates are available for popular platforms (e.g., AWS).
-   - Users can add or override templates to accommodate custom requirements.
+### Try new cloud providers without rebuilding everything
 
-3. **Build-Tool Integration**
-   - Compatible with Maven or Gradle.
-   - Configure the generator via your build settings to produce the required code for your target platform.
+Want to see if GCP or Azure would be faster, cheaper, or more reliable?  
+Cloudhopper makes it easy to deploy the same app across different clouds.
 
-4. **Genuinely Vendor-Neutral**
-   - Use platform-specific artifacts only through generated descriptors, making provider switching effortless.
+### On-premise deployments without the drama
 
-## Features
+Your customers wants an on-premise installation because of their policies, security, or regulations?  
+Cloudhopper makes it easy to offer both cloud and on-prem options — from the same codebase.
 
-- **Automatic Generation** of deployment scripts and documentation.
-- **Extensibility** with your own code generators or templates.
-- **Seamless Platform Switching** 
+## How it Works
 
-## Installation
+Just use our simple Java API and add a few annotations.  
+Cloudhopper takes care of:
+- Generating the provider specific integration classes
+- Generating infrastructure as code (terraform, saml, OpenAPI)
+- Handling cloud-specific quirks
+- Keeping your deployments repeatable, reliable, and boring
 
-1. **Include the Dependency**
-   - In your `pom.xml` (Maven) or `build.gradle` (Gradle), add the Cloudhopper dependency.
-2. **Enable Annotation Processing**
-   - Ensure annotation processing is activated in your project build settings.
-3. **Configuration**
-   - Specify which templates or deployment targets to use in your build plugin configuration.
+No boilerplate. No endless YAML. No regrets.
 
+## Get Started
 
-
-
+👉 [Quickstart Guide](https://eppleton.github.io/cloudhopper-mc/)  
