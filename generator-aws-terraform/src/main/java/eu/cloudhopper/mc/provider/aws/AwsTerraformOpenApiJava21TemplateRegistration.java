@@ -24,15 +24,15 @@ package eu.cloudhopper.mc.provider.aws;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import eu.cloudhopper.mc.annotations.ApiOperation;
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.annotations.Schedule;
-import eu.cloudhopper.mc.annotations.Schedule.ScheduleAttribute;
+import eu.cloudhopper.mc.annotations.ScheduledTrigger.ScheduleAttribute;
 import eu.cloudhopper.mc.generator.generic.annotations.Template;
 import eu.cloudhopper.mc.generator.generic.annotations.TemplateRegistration;
 import eu.cloudhopper.mc.generator.api.GenerationPhase;
 import eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature;
 import eu.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.ScheduledTrigger;
 
 @GeneratorFeatures(
         generatorId = "aws-terraform",
@@ -48,19 +48,19 @@ import eu.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
                     }
             ),
             @GeneratorFeature(
-                    supportedAnnotation = Schedule.class,
+                    supportedAnnotation = ScheduledTrigger.class,
                     supportedAttributes = {
                         ScheduleAttribute.CRON
                     }
             ),
             @GeneratorFeature(
-                    supportedAnnotation = ApiOperation.class,
+                    supportedAnnotation = HttpTrigger.class,
                     supportedAttributes = {
-                        ApiOperation.ApiOperationAttribute.SUMMARY,
-                        ApiOperation.ApiOperationAttribute.DESCRIPTION,
-                        ApiOperation.ApiOperationAttribute.OPERATION_ID,
-                        ApiOperation.ApiOperationAttribute.PATH,
-                        ApiOperation.ApiOperationAttribute.METHOD,
+                        HttpTrigger.HttpTriggerAttribute.SUMMARY,
+                        HttpTrigger.HttpTriggerAttribute.DESCRIPTION,
+                        HttpTrigger.HttpTriggerAttribute.OPERATION_ID,
+                        HttpTrigger.HttpTriggerAttribute.PATH,
+                        HttpTrigger.HttpTriggerAttribute.METHOD,
                     }
             )
         }

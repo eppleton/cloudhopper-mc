@@ -26,16 +26,13 @@ package eu.cloudhopper.mc.test.functions;
  */
 
 
-import eu.cloudhopper.mc.annotations.ApiOperation;
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
-import eu.cloudhopper.mc.runtime.HandlerContext;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.PathParam;
 
-import java.util.Map;
+public class DeletePlayerFunction {
 
-public class DeletePlayerFunction implements CloudRequestHandler<Void, String> {
-
-    @ApiOperation(
+    @HttpTrigger(
             summary = "Delete a player by ID",
             description = "Deletes a player from the ping pong tournament database.",
             operationId = "deletePlayer",
@@ -43,9 +40,8 @@ public class DeletePlayerFunction implements CloudRequestHandler<Void, String> {
             method = "DELETE"
     )
     @Function(name = "deletePlayer")
-    @Override
-    public String handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        String idStr = pathParams.get("id");
+    public String deletePlayer(@PathParam("id") String idStr) {
+    
         int id = idStr != null ? Integer.parseInt(idStr) : 0;          
         System.out.println("Deleted player with ID: " + id);
         return "Player with ID " + id + " deleted";

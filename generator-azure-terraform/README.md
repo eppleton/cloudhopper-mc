@@ -8,8 +8,8 @@ Azure is unique in that Cloudhopper generates most of the glue code as Java clas
 
 ## 📢 Documentation Notice:
 
-All Cloudhopper functions on Azure are exposed via HTTP under the /api/functionIdroute unless otherwise specified with an @ApiOperation(path="...") annotation.
-- Functions without an @ApiOperation will default to their @Function(functionId) name as the HTTP route.
+All Cloudhopper functions on Azure are exposed via HTTP under the /api/functionIdroute unless otherwise specified with an @HttpTrigger(path="...") annotation.
+- Functions without an @HttpTrigger will default to their @Function(functionId) name as the HTTP route.
 - Direct invocation via SDK (like AWS Lambda invoke()) is not supported on Azure — Azure Functions require trigger bindings.
 
 Therefore, every Cloudhopper function in Azure is accessible via an HTTP call to its assigned route.

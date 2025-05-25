@@ -26,19 +26,17 @@ package eu.cloudhopper.mc.test.functions;
  */
 
 
-import eu.cloudhopper.mc.annotations.ApiOperation;
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
-import eu.cloudhopper.mc.runtime.HandlerContext;
 import eu.cloudhopper.mc.test.domain.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.QueryParam;
 
-public class SearchPlayersFunction implements CloudRequestHandler<Void, List<Player>> {
+public class SearchPlayersFunction  {
 
-    @ApiOperation(
+    @HttpTrigger(
             summary = "Search players by ranking",
             description = "Returns a list of players with ranking between minRanking and maxRanking.",
             operationId = "searchPlayers",
@@ -46,10 +44,7 @@ public class SearchPlayersFunction implements CloudRequestHandler<Void, List<Pla
             method = "GET"
     )
     @Function(name = "searchPlayers")
-    @Override
-    public List<Player> handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        int minRanking = Integer.parseInt(queryParams.getOrDefault("minRanking", "1"));
-        int maxRanking = Integer.parseInt(queryParams.getOrDefault("maxRanking", "100"));
+    public List<Player> searchPlayers(@QueryParam Integer minRanking, @QueryParam Integer maxRanking) {
 
         List<Player> players = new ArrayList<>();
         for (int i = minRanking; i <= maxRanking; i += 10) {

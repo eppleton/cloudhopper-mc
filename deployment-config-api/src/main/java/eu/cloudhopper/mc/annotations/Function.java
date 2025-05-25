@@ -37,16 +37,6 @@ import java.lang.annotation.Target;
  * function's name and optional trigger configuration.
  *
  * Example usage:
- * <pre>
- * {@code
- * @Function(name = "hello-world")
- * public class HelloFunction implements CloudRequestHandler<String, String> {
- *     public String handleRequest(String input, HandlerContext context) {
- *         return "Hello, " + input;
- *     }
- * }
- * }
- * </pre>
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)

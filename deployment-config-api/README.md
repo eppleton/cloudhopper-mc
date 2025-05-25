@@ -22,7 +22,7 @@ This module is **used by developers**, **referenced by integrators**, and **cons
 
 | Package                             | Description                                                  |
 |-------------------------------------|--------------------------------------------------------------|
-| `eu.cloudhopper.mc.annotations`    | Core annotations like `@Function`, `@Schedule`, `@ApiOperation` |
+| `eu.cloudhopper.mc.annotations`    | Core annotations like `@Function`, `@ScheduledTrigger`, `@HttpTrigger` |
 | `eu.cloudhopper.mc.runtime`        | Runtime interfaces such as `CloudRequestHandler`, `HandlerContext` |
 
 ---
@@ -41,18 +41,18 @@ public class HelloFunction implements CloudRequestHandler<String, String> {
 }
 ~~~
 
-### `@Schedule`
+### `@ScheduledTrigger`
 Optional trigger to invoke a function on a regular schedule.
 
 ~~~java
-@Schedule(cron = "0 0 * * *")
+@ScheduledTrigger(cron = "0 0 * * *")
 ~~~
 
-### `@ApiOperation`
+### `@HttpTrigger`
 Declares HTTP API metadata used to configure gateway routes.
 
 ~~~java
-@ApiOperation(method = "GET", path = "/hello", summary = "Say hello")
+@HttpTrigger(method = "GET", path = "/hello", summary = "Say hello")
 ~~~
 
 ---

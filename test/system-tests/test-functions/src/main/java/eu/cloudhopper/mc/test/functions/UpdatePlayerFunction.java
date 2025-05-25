@@ -26,17 +26,18 @@ package eu.cloudhopper.mc.test.functions;
  */
 
 
-import eu.cloudhopper.mc.annotations.ApiOperation;
 import eu.cloudhopper.mc.annotations.Function;
 import eu.cloudhopper.mc.runtime.CloudRequestHandler;
 import eu.cloudhopper.mc.runtime.HandlerContext;
 import eu.cloudhopper.mc.test.domain.Player;
 
 import java.util.Map;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.PathParam;
 
-public class UpdatePlayerFunction implements CloudRequestHandler<Player, Player> {
+public class UpdatePlayerFunction  {
 
-    @ApiOperation(
+    @HttpTrigger(
             summary = "Update an existing player",
             description = "Updates an existing player's information in the ping pong tournament database.",
             operationId = "updatePlayer",
@@ -44,14 +45,10 @@ public class UpdatePlayerFunction implements CloudRequestHandler<Player, Player>
             method = "PUT"
     )
     @Function(name = "updatePlayer")
-    @Override
-    public Player handleRequest(Player input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        if (input == null) {
-            throw new IllegalArgumentException("Player input must not be null");
+    public Player handleRequest(Player input, @PathParam Integer id) {
+        if (input == null || id == null) {
+            throw new IllegalArgumentException("Player input and id must not be null");
         }
-
-        String idStr = pathParams.get("id");
-        int id = idStr != null ? Integer.parseInt(idStr) : 0;
 
         Player updatedPlayer = new Player(
                 id != 0 ? id : input.getId(), // If no id in path, fallback to input id

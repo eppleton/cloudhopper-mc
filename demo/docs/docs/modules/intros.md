@@ -183,7 +183,7 @@ Use this to:
 public class ApiFunction implements CloudRequestHandler<Integer, String> {
 
     @Function(name = "hello_world_2")
-    @ApiOperation(
+    @HttpTrigger(
         operationId = "helloworld2",
         method = "GET",
         path = "/hello2/{id}",

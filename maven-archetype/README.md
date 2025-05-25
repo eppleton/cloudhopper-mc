@@ -53,6 +53,29 @@ You can specify one or more `generatorIds` (comma-separated) to activate support
 
 ---
 
+## 🏗️ Build the project
+
+For each of the generatorIds specified, a profile is created in the pom that can be used to build the project and generate
+for the specified platform and generate the boilerplate needed for deployment.
+
+```bash
+# build with generator aws-terraform
+mvn clean install -Paws-terraform
+# build with generator gcp-terraform
+mvn clean install -Pgcp-terraform
+# build with generator azure-terraform
+mvn clean install -Pazure-terraform
+# build with generator springboot-http
+mvn clean install -Pspringboot-http
+```
+
+The annotation processor generates integration classes. The deployment files, (for aws, gcp and azure),
+will be generated into a directory in target/deployment/<generatorId>. You can import those files along with 
+the generated function JAR in your own terraform project, or use terraform directly from the generated directory.
+
+
+You need to provide additional variables for the deployment. Please check the generator documentation for details. 
+
 ## 🧪 Terraform Support
 
 If `includeTerraformProfile=true`, the generated project will include a `deploy-with-terraform` Maven profile that executes:
@@ -70,6 +93,14 @@ Customize the Terraform executable path and environment using project properties
 ```
 ---
 
+The maven profile is configured to always run terraform init. A second command can be passed via a parameter:
+
+  ```bash
+  mvn verify -Pdeploy-with-terraform -Dterraform.command=plan
+  mvn verify -Pdeploy-with-terraform -Dterraform.command=apply
+  mvn verify -Pdeploy-with-terraform -Dterraform.command=delete
+  ```
+
 ## 📋 Project Layout
 
 The generated project includes:
@@ -79,16 +110,4 @@ The generated project includes:
 - Provider-specific profiles (via `generatorIds`)
 - Optional Spring Boot HTTP support
 - Maven plugin configuration for annotation processing and packaging
-
----
-
-## 🧪 Development & Testing
-
-To verify the archetype locally:
-```sh
-    mvn clean install -pl maven-archetype
-    mvn verify -pl maven-archetype
-```
-> Integration tests are defined in `src/test/projects/` and executed using the Maven Archetype Plugin (`archetype:integration-test`).
-
 

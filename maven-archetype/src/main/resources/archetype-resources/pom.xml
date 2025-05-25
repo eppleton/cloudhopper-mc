@@ -17,6 +17,7 @@
 #if($includeTerraformProfile == 'true')
         <!-- add the path to your terraform executable here -->
         <terraform.executable>terraform</terraform.executable>
+        <terraform.command>plan</terraform.command>
         <path.extras></path.extras>
 #end
     </properties>
@@ -202,7 +203,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>terraform-plan</id>
+                                <id>terraform-command</id>
                                 <phase>verify</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -211,7 +212,7 @@
                                     <executable>${terraform.executable}</executable>
                                     <workingDirectory>${project.build.directory}/deployment/${generator.id}</workingDirectory>
                                     <arguments>
-                                        <argument></argument>
+                                        <argument>\${terraform.command}</argument>
                                     </arguments>
                                     <environmentVariables>
                                         <PATH>${path.extras}:${env.PATH}</PATH>

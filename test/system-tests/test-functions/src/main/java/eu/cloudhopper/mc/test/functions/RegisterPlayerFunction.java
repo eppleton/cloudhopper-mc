@@ -26,17 +26,17 @@ package eu.cloudhopper.mc.test.functions;
  */
 
 
-import eu.cloudhopper.mc.annotations.ApiOperation;
 import eu.cloudhopper.mc.annotations.Function;
 import eu.cloudhopper.mc.runtime.CloudRequestHandler;
 import eu.cloudhopper.mc.runtime.HandlerContext;
 import eu.cloudhopper.mc.test.domain.Player;
 
 import java.util.Map;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
 
-public class RegisterPlayerFunction implements CloudRequestHandler<Player, Player> {
+public class RegisterPlayerFunction {
 
-    @ApiOperation(
+    @HttpTrigger(
             summary = "Register a new player",
             description = "Creates a new player in the ping pong tournament database.",
             operationId = "registerPlayer",
@@ -44,14 +44,11 @@ public class RegisterPlayerFunction implements CloudRequestHandler<Player, Playe
             method = "POST"
     )
     @Function(name = "registerPlayer")
-    @Override
-    public Player handleRequest(Player input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
+    public Player register(Player input) {
         if (input == null) {
             throw new IllegalArgumentException("Player input must not be null");
         }
 
-        // Normally, you'd save the player to a database here.
-        // For now, just simulate successful registration:
         Player registeredPlayer = new Player(
                 input.getId() != 0 ? input.getId() : 123, // Simulate ID assignment if not set
                 input.getName(),

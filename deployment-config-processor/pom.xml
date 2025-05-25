@@ -14,7 +14,7 @@
     </properties>
 
     <dependencies>
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>${swagger.version}</version>
@@ -40,6 +40,25 @@
             <artifactId>auto-service</artifactId>
             <version>1.0.1</version> 
             <scope>provided</scope> 
+        </dependency>
+        <dependency>
+            <groupId>com.palantir.javapoet</groupId>
+            <artifactId>javapoet</artifactId>
+            <version>0.7.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.12.2</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.google.testing.compile</groupId>
+            <artifactId>compile-testing</artifactId>
+            <version>0.18</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <name>deployment-config-processor</name>

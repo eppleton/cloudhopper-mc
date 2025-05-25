@@ -183,7 +183,7 @@ Use this to:
 public class ApiFunction implements CloudRequestHandler<Integer, String> {
 
     @Function(name = "hello_world_2")
-    @ApiOperation(
+    @HttpTrigger(
         operationId = "helloworld2",
         method = "GET",
         path = "/hello2/{id}",
@@ -203,7 +203,7 @@ public class ApiFunction implements CloudRequestHandler<Integer, String> {
 public class ScheduledFunction implements CloudRequestHandler<Integer, String> {
 
     @Function(name = "ScheduledFunction")
-    @Schedule(cron = "0 2 * * *")
+    @ScheduledTrigger(cron = "0 2 * * *")
     @Override
     public String handleRequest(Integer input, HandlerContext context) {
         return "Hello";
@@ -228,7 +228,7 @@ The annotation processor is registered via:
 
 This processor is triggered automatically by the Maven Compiler Plugin during the `compile` phase. It reads:
 
-- Java annotations such as `@Function`, `@Schedule`
+- Java annotations such as `@Function`, `@ScheduledTrigger`
 - Compile-time parameters (e.g. `cloudprovider`, `generatorId`, `targetDir`)
 - Project metadata (e.g. artifact ID, version)
 

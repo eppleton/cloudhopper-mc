@@ -25,15 +25,12 @@ package eu.cloudhopper.mc.test.functions;
  * #L%
  */
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
 import eu.cloudhopper.mc.runtime.HandlerContext;
-import java.util.Map;
 
-public class ReportMemoryFunction implements CloudRequestHandler<Void, String>{
+public class ReportMemoryFunction {
     
     @Function(name = "memory",memory = 256)
-    @Override
-    public String handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
+    public String getMemory(HandlerContext context) {
         return ""+context.getMemoryLimitInMB();
     }
 

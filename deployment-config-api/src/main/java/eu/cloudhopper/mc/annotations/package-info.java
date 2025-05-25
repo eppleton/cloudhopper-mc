@@ -21,8 +21,8 @@
  * their functions should be deployed and integrated with external platforms.
  * <ul>
  *   <li>{@link eu.cloudhopper.mc.annotations.Function} - marks a class as a deployable function</li>
- *   <li>{@link eu.cloudhopper.mc.annotations.Schedule} - defines time-based triggers</li>
- *   <li>{@link eu.cloudhopper.mc.annotations.ApiOperation} - adds HTTP metadata for API gateway integration</li>
+ *   <li>{@link eu.cloudhopper.mc.annotations.ScheduledTrigger} - defines time-based triggers</li>
+ *   <li>{@link eu.cloudhopper.mc.annotations.HttpTrigger} - adds HTTP metadata for API gateway integration</li>
  * </ul>
  */
 package eu.cloudhopper.mc.annotations;

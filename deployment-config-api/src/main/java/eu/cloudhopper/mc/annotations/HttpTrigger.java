@@ -41,27 +41,24 @@ import java.lang.annotation.Target;
  * (e.g., API Gateway routing in AWS, or HTTP trigger configuration in GCP).
  * <h2>Example</h2>
  * <pre>{@code
- * @Function(name = "hello")
- * @ApiOperation(
- *     method = "GET",
- *     path = "/hello/{name}",
- *     summary = "Says hello",
- *     description = "Returns a greeting using the given name",
- *     operationId = "sayHello",
- *     parameters = {
- *         @Parameter(name = "name", in = ParameterIn.PATH, description = "Name to greet")
- *     }
- * )
- * public class HelloFunction implements CloudRequestHandler<Void, String> {
- *     public String handleRequest(Void input, HandlerContext context) {
- *         return "Hello!";
- *     }
- * }
- * }</pre>
+ @Function(name = "hello")
+ @HttpTrigger(
+     method = "GET",
+     path = "/hello/{name}",
+     summary = "Says hello",
+     description = "Returns a greeting using the given name",
+     operationId = "sayHello",
+ )
+ public class HelloFunction implements CloudRequestHandler<Void, String> {
+     public String handleRequest(Void input, HandlerContext context) {
+         return "Hello!";
+     }
+ }
+ }</pre>
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface ApiOperation {
+public @interface HttpTrigger {
 
     /**
      * A short summary of the operation.
@@ -108,7 +105,7 @@ public @interface ApiOperation {
      * Intended for use by generator implementors to declare support for individual attributes
      * in {see: eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
      */
-    class ApiOperationAttribute {
+    class HttpTriggerAttribute {
         public static final String SUMMARY = "summary";
         public static final String DESCRIPTION = "description";
         public static final String OPERATION_ID = "operationId";

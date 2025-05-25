@@ -37,19 +37,19 @@ import java.lang.annotation.Target;
  *
  * <h2>Example</h2>
  * <pre>{@code
- * @Function(name = "dailyTask")
- * @Schedule(cron = "0 0 * * *")
- * public class DailyJob implements CloudRequestHandler<Void, Void> {
- *     public Void handleRequest(Void input, HandlerContext context) {
- *         // do something daily
- *         return null;
- *     }
- * }
- * }</pre>
+ @Function(name = "dailyTask")
+ @ScheduledTrigger(cron = "0 0 * * *")
+ public class DailyJob implements CloudRequestHandler<Void, Void> {
+     public Void handleRequest(Void input, HandlerContext context) {
+         // do something daily
+         return null;
+     }
+ }
+ }</pre>
  */
 @Retention(SOURCE)
 @Target(ElementType.METHOD)
-public @interface Schedule {
+public @interface ScheduledTrigger {
 
     /**
      * A cron expression defining the schedule at which the function should run.
@@ -69,20 +69,18 @@ public @interface Schedule {
     
     
     /**
-     * Constants representing the attribute names of {@link Function}.
-     *
-     * These are intended for use by generator implementors when declaring which
-     * attributes their generator supports in {see: eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
+     * Constants representing the attribute names of {@link Function}.These are intended for use by generator implementors when declaring which
+ attributes their generator supports in {see: eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
      *
      * Example usage:
-     * <pre>{@code
-     * @GeneratorFeature(
-     *     supportedAnnotation = Schedule.class,
-     *     supportedAttributes = {
-     *         ScheduleAttribute.CRON,
-     *     }
-     * )
-     * }</pre>
+ <pre>{@code
+ @GeneratorFeature(
+     supportedAnnotation = ScheduledTrigger.class,
+     supportedAttributes = {
+         ScheduleAttribute.CRON,
+     }
+ )
+ }</pre>
      *
      * This class is not relevant for application developers and may be ignored
      * in function code.

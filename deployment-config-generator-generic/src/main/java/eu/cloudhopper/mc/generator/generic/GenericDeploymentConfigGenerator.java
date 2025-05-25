@@ -24,8 +24,6 @@ package eu.cloudhopper.mc.generator.generic;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import eu.cloudhopper.mc.annotations.ApiOperation;
-import eu.cloudhopper.mc.annotations.Schedule;
 import eu.cloudhopper.mc.generator.api.ConfigGenerationException;
 import eu.cloudhopper.mc.generator.api.GenerationPhase;
 import eu.cloudhopper.mc.generator.api.HandlerInfo;
@@ -59,6 +57,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.Diagnostic;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.ScheduledTrigger;
 
 /**
  * A default implementation of {@link DeploymentConfigGenerator} that uses
@@ -147,9 +147,9 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     }
 
     @Override
-    public void generateApiResourceAndIntegration(String generatorId, String outputDir, HandlerInfo handlerInfo, ApiOperation apiOperation, ProcessingEnvironment env) throws ConfigGenerationException {
-        Map<String, Object> dataModel = getApiIntegrationDataModelForTemplateRendering(handlerInfo, apiOperation);
-        saveHandlerInfo(handlerInfo, apiOperation, outputDir);
+    public void generateApiResourceAndIntegration(String generatorId, String outputDir, HandlerInfo handlerInfo, HttpTrigger httpTrigger, ProcessingEnvironment env) throws ConfigGenerationException {
+        Map<String, Object> dataModel = getApiIntegrationDataModelForTemplateRendering(handlerInfo, httpTrigger);
+        saveHandlerInfo(handlerInfo, httpTrigger, outputDir);
         runPhase(processingEnv, GenerationPhase.API, dataModel, handlerInfo, outputDir, handlerInfo.getFunctionId().toLowerCase() + "_api");
     }
 
@@ -190,7 +190,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
     }
 
     @Override
-    public void generateScheduledTrigger(String generatorID, String configOutputDir, HandlerInfo handlerInfo, Schedule schedule, ProcessingEnvironment processingEnv) {
+    public void generateScheduledTrigger(String generatorID, String configOutputDir, HandlerInfo handlerInfo, ScheduledTrigger schedule, ProcessingEnvironment processingEnv) {
 
         Map<String, Object> dataModel = createBaseDataModel(handlerInfo);
         dataModel.put("scheduleExpression", schedule.cron());
@@ -245,7 +245,7 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         return dataModel;
     }
 
-    protected Map<String, Object> getApiIntegrationDataModelForTemplateRendering(HandlerInfo handlerInfo, ApiOperation apiOp) {
+    protected Map<String, Object> getApiIntegrationDataModelForTemplateRendering(HandlerInfo handlerInfo, HttpTrigger apiOp) {
         Map<String, Object> dataModel = createBaseDataModel(handlerInfo);
         dataModel.put("packageName", handlerInfo.getHandlerPackage());
         dataModel.put("className", handlerInfo.getHandlerClassName() + "Api");
@@ -298,13 +298,13 @@ public class GenericDeploymentConfigGenerator implements DeploymentConfigGenerat
         }
     }
 
-    private void saveHandlerInfo(HandlerInfo handlerInfo, ApiOperation apiOperation, String configOutputDir) {
+    private void saveHandlerInfo(HandlerInfo handlerInfo, HttpTrigger httpTrigger, String configOutputDir) {
         Properties properties = loadProperties(configOutputDir);
         properties.setProperty(handlerInfo.getHandlerClassName() + "_Arn", handlerInfo.getFunctionId().toLowerCase());
         properties.setProperty(handlerInfo.getHandlerClassName() + "_functionId", handlerInfo.getFunctionId());
-        properties.setProperty(handlerInfo.getHandlerClassName() + "_path", apiOperation.path());
-        properties.setProperty(handlerInfo.getHandlerClassName() + "_method", apiOperation.method().toUpperCase());
-        properties.setProperty(handlerInfo.getHandlerClassName() + "_operationId", apiOperation.operationId());
+        properties.setProperty(handlerInfo.getHandlerClassName() + "_path", httpTrigger.path());
+        properties.setProperty(handlerInfo.getHandlerClassName() + "_method", httpTrigger.method().toUpperCase());
+        properties.setProperty(handlerInfo.getHandlerClassName() + "_operationId", httpTrigger.operationId());
         saveProperties(properties, configOutputDir);
     }
 
