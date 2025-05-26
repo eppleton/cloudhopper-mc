@@ -25,18 +25,14 @@ package eu.cloudhopper.mc.deployment.config.generator;
  * #L%
  */
 // Annotation Processor
-import eu.cloudhopper.mc.annotations.ApiOperation;
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.annotations.Schedule;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
 import eu.cloudhopper.mc.generator.api.ConfigGenerationException;
 import eu.cloudhopper.mc.generator.api.HandlerInfo;
 import com.google.auto.service.AutoService;
+import eu.cloudhopper.mc.annotations.HeaderParam;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -44,13 +40,27 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.PathParam;
+import eu.cloudhopper.mc.annotations.QueryParam;
+import eu.cloudhopper.mc.annotations.ScheduledTrigger;
+import eu.cloudhopper.mc.deployment.config.generator.HandlerGenerator.MethodHandlerInfo;
+import eu.cloudhopper.mc.deployment.config.generator.HandlerGenerator.ParamInfo;
+import eu.cloudhopper.mc.deployment.config.generator.HandlerGenerator.ParamInfo.ParamType;
+import static eu.cloudhopper.mc.deployment.config.generator.HandlerGenerator.ParamInfo.ParamType.BODY;
+import static eu.cloudhopper.mc.deployment.config.generator.HandlerGenerator.ParamInfo.ParamType.CONTEXT;
+import static eu.cloudhopper.mc.deployment.config.generator.HandlerGenerator.ParamInfo.ParamType.HEADER;
+import static eu.cloudhopper.mc.deployment.config.generator.HandlerGenerator.ParamInfo.ParamType.QUERY;
+import java.util.HashSet;
+import javax.annotation.processing.Messager;
+import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic;
+import static javax.tools.Diagnostic.Kind.ERROR;
 
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("eu.cloudhopper.mc.annotations.Function")
@@ -59,109 +69,161 @@ public class ServerlessFunctionProcessor extends BaseDeploymentInfoProcessor {
 
     private Types typeUtils;
     private Elements elementUtils;
+    private TypeMirror contextType;
 
     @Override
-    public synchronized void init(ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
-        this.typeUtils = processingEnv.getTypeUtils();
-        this.elementUtils = processingEnv.getElementUtils();
+    public synchronized void init(ProcessingEnvironment env) {
+        super.init(env);
+        this.typeUtils = env.getTypeUtils();
+        this.elementUtils = env.getElementUtils();
+        this.contextType = elementUtils
+                .getTypeElement("eu.cloudhopper.mc.runtime.HandlerContext")
+                .asType();
     }
 
     @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    public boolean process(Set<? extends TypeElement> annoTypes, RoundEnvironment round) {
         if (deploymentGenerator == null) {
             return true;
         }
-        AnnotationFeatureValidator featureValidator = new AnnotationFeatureValidator(processingEnv, generatorFeatureInfo);
-        System.err.println("Processing eu.cloudhopper.mc.Function");
-        if (roundEnv.processingOver()) {
+        for (Element e : round.getElementsAnnotatedWith(Function.class)) {
+
+            ExecutableElement m = (ExecutableElement) e;
+            TypeElement cls = (TypeElement) m.getEnclosingElement();
+            Function fn = m.getAnnotation(Function.class);
+            HttpTrigger http = m.getAnnotation(HttpTrigger.class);
+            ScheduledTrigger sched = m.getAnnotation(ScheduledTrigger.class);
+
+            List<ParamInfo> params = new ArrayList<>();
+            for (VariableElement p : m.getParameters()) {
+                TypeMirror tm = p.asType();
+                String name = p.getSimpleName().toString();
+                if (typeUtils.isSameType(tm, contextType)) {
+                    params.add(new ParamInfo(CONTEXT, null, tm.toString(), name));
+                } else if (p.getAnnotation(PathParam.class) != null) {
+                    PathParam ann = p.getAnnotation(PathParam.class);
+
+                    String pathParamName = ann.value().isBlank()
+                            ? p.getSimpleName().toString()
+                            : ann.value();
+                    params.add(new ParamInfo(ParamType.PATH, pathParamName, p.asType().toString(), p.getSimpleName().toString()));
+
+                } else if (p.getAnnotation(QueryParam.class) != null) {
+                    QueryParam queryParamAnnotation = p.getAnnotation(QueryParam.class);
+                    String queryParamName = queryParamAnnotation.value().isBlank()
+                            ? p.getSimpleName().toString()
+                            : queryParamAnnotation.value();
+                    params.add(new ParamInfo(QUERY,
+                            queryParamName,
+                            tm.toString(), name));
+                } else if (p.getAnnotation(HeaderParam.class) != null) {
+                    params.add(new ParamInfo(HEADER,
+                            p.getAnnotation(HeaderParam.class).value(),
+                            tm.toString(), name));
+                } else {
+                    params.add(new ParamInfo(BODY, null, tm.toString(), name));
+                }
+            }
+
+            if (!validateParams(m, params)) {
+                continue;
+            }
+            String pkg = elementUtils.getPackageOf(cls).getQualifiedName().toString();
+            String handlerCN = cls.getSimpleName() + "_" + m.getSimpleName() + "_Handler";
+            String serviceFQ = cls.getQualifiedName().toString();
+            String bodyType = params.stream()
+                    .filter(pi -> pi.getType() == BODY)
+                    .map(ParamInfo::getTypeName)
+                    .findFirst().orElse("java.lang.Void");
+            String returnType = m.getReturnType().toString();
+
+            MethodHandlerInfo info = new MethodHandlerInfo(
+                    pkg, handlerCN, serviceFQ,
+                    m.getSimpleName().toString(),
+                    bodyType, returnType, params
+            );
+            try {
+                HandlerGenerator.generateHandler(info, processingEnv.getFiler());
+            } catch (Exception ex) {
+                processingEnv.getMessager().printMessage(ERROR,
+                        "Failed to generate adapter: " + ex.getMessage(), m);
+                continue;
+            }
+            String adapterSimpleName = info.getHandlerClassName();
+            String adapterFQN = info.getPackageName() + "." + adapterSimpleName;
+            if ("void".equals(returnType)) {
+                returnType = "java.lang.Void";
+            }
+
+            HandlerInfo hinfo = new HandlerInfo(
+                    fn.name(), fn.memory(), fn.timeout(), fn.minInstances(), fn.extensions(),
+                    adapterSimpleName,
+                    adapterFQN, pkg,
+                    m.getSimpleName().toString(),
+                    bodyType, returnType,
+                    artifactId, version, classifier, targetDir
+            );
+            try {
+                deploymentGenerator.generateServerlessFunctionConfiguration(
+                        generatorId, configOutputDir, hinfo, processingEnv);
+                if (http != null) {
+                    deploymentGenerator.generateApiResourceAndIntegration(
+                            generatorId, configOutputDir, hinfo, http, processingEnv);
+                }
+                if (sched != null) {
+                    deploymentGenerator.generateScheduledTrigger(
+                            generatorId, configOutputDir, hinfo, sched, processingEnv);
+                }
+            } catch (ConfigGenerationException cex) {
+                processingEnv.getMessager().printMessage(ERROR,
+                        cex.getMessage(), m);
+            }
+        }
+
+        if (round.processingOver()) {
             try {
                 deploymentGenerator.finalizeConfig(generatorId, configOutputDir);
             } catch (ConfigGenerationException e) {
-                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-                MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
+                processingEnv.getMessager().printMessage(ERROR, e.getMessage());
             }
-        } else {
-            for (Element element : roundEnv.getElementsAnnotatedWith(Function.class)) {
-                if (element.getKind() == ElementKind.METHOD) {
-                    ExecutableElement methodElement = (ExecutableElement) element;
-                    TypeElement classElement = (TypeElement) methodElement.getEnclosingElement();
+        }
 
-                    if (!implementsInterface(classElement, CloudRequestHandler.class.getName())) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                                "Class " + classElement.getQualifiedName() + " must implement " + CloudRequestHandler.class.getName(),
-                                classElement);
-                        return true;
-                    }
+        return true;
+    }
 
-                    // Extract core annotation
-                    Function functionAnnotation = methodElement.getAnnotation(Function.class);
-                    ApiOperation apiOperation = methodElement.getAnnotation(ApiOperation.class);
-                    Schedule schedule = methodElement.getAnnotation(Schedule.class);
+    private boolean validateParams(ExecutableElement method,
+            List<ParamInfo> params) {
+        Messager messager = processingEnv.getMessager();
 
-                    String methodName = methodElement.getSimpleName().toString();
-                    String handlerFQN = classElement.getQualifiedName().toString();
-                    String packageName = handlerFQN.substring(0, handlerFQN.lastIndexOf('.'));
-                    String handlerSimpleName = classElement.getSimpleName().toString();
-                    TypeMirror inputType = methodElement.getParameters().isEmpty() ? null : methodElement.getParameters().get(0).asType();
-                    TypeMirror outputType = methodElement.getReturnType();
-                    System.err.println("Resolved output type: " + getFqn(outputType));
-                    final HandlerInfo handlerInfo = new HandlerInfo(
-                            functionAnnotation.name(),
-                            functionAnnotation.memory(),
-                            functionAnnotation.timeout(),
-                            functionAnnotation.minInstances(),
-                            functionAnnotation.extensions(),
-                            handlerSimpleName,
-                            handlerFQN,
-                            packageName,
-                            methodName,
-                            getFqn(inputType),
-                            getFqn(outputType),
-                            artifactId,
-                            version,
-                            classifier,
-                            targetDir
-                    );
+        // Count body params
+        long bodyCount = params.stream()
+                .filter(p -> p.getType() == ParamInfo.ParamType.BODY)
+                .count();
+        if (bodyCount > 1) {
+            messager.printMessage(
+                    Diagnostic.Kind.ERROR,
+                    "Method " + method.getSimpleName()
+                    + " has more than one un-annotated body parameter; only one is allowed.",
+                    method);
+            return false;
+        }
 
-                    try {
-                        deploymentGenerator.generateServerlessFunctionConfiguration(generatorId, configOutputDir, handlerInfo, processingEnv);
-
-                        if (apiOperation != null) {
-                            deploymentGenerator.generateApiResourceAndIntegration(generatorId, configOutputDir, handlerInfo, apiOperation, processingEnv);
-                        }
-
-                        if (schedule != null) {
-                            deploymentGenerator.generateScheduledTrigger(generatorId, configOutputDir, handlerInfo, schedule, processingEnv);
-                        }
-                        featureValidator.validate(methodElement);
-                    } catch (ConfigGenerationException e) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-                        MessagerUtil.printExceptionStackTrace(processingEnv.getMessager(), e);
-                    }
+        // Check for duplicate keys in PATH/QUERY/HEADER
+        Set<String> seen = new HashSet<>();
+        for (ParamInfo p : params) {
+            if (p.getType() == ParamInfo.ParamType.PATH
+                    || p.getType() == ParamInfo.ParamType.QUERY
+                    || p.getType() == ParamInfo.ParamType.HEADER) {
+                if (!seen.add(p.getName())) {
+                    messager.printMessage(
+                            Diagnostic.Kind.ERROR,
+                            "Duplicate parameter name '" + p.getName()
+                            + "' in method " + method.getSimpleName(),
+                            method);
+                    return false;
                 }
             }
         }
         return true;
     }
-
-    private String getFqn(TypeMirror typeMirror) {
-        if (typeMirror == null) {
-            return "java.lang.Void"; // or just "Void"
-        }
-        return typeMirror.toString(); // <-- Include generics as-is!
-    }
-
-    private String[] extractPathParams(String path) {
-        List<String> pathParamsList = new ArrayList<>();
-        Pattern pattern = Pattern.compile("\\{([^}]+)}");
-        Matcher matcher = pattern.matcher(path);
-
-        while (matcher.find()) {
-            pathParamsList.add(matcher.group(1));
-        }
-
-        return pathParamsList.toArray(new String[0]);
-    }
-
 }

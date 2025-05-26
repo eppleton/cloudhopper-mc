@@ -24,17 +24,18 @@ package eu.cloudhopper.mc.demo;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import eu.cloudhopper.mc.annotations.ApiOperation;
 import eu.cloudhopper.mc.annotations.Extension;
 import eu.cloudhopper.mc.annotations.ExtensionKeys;
 import eu.cloudhopper.mc.annotations.Function;
 import eu.cloudhopper.mc.runtime.CloudRequestHandler;
 import eu.cloudhopper.mc.runtime.HandlerContext;
 import java.util.Map;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.RequestBody;
 
-public class ApiFunction implements CloudRequestHandler<Integer, String> {
+public class ApiFunction {
 
-    @ApiOperation(
+    @HttpTrigger(
             description = "dummy description",
             operationId = "helloworld2",
             method = "POST",
@@ -49,8 +50,7 @@ public class ApiFunction implements CloudRequestHandler<Integer, String> {
                         value = ExtensionKeys.Aws.Architecture.Values.ARM64
                 )
             })
-    @Override
-    public String handleRequest(Integer input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
+    public String handleRequest(@RequestBody Integer input) {
         return "Hallo " + input;
     }
 

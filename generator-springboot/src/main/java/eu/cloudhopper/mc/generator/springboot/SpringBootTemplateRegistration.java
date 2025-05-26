@@ -25,8 +25,7 @@ package eu.cloudhopper.mc.generator.springboot;
  * #L%
  */
 
-import eu.cloudhopper.mc.annotations.ApiOperation;
-import eu.cloudhopper.mc.annotations.ApiOperation.ApiOperationAttribute;
+import eu.cloudhopper.mc.annotations.HttpTrigger.HttpTriggerAttribute;
 import eu.cloudhopper.mc.annotations.Function;
 import eu.cloudhopper.mc.annotations.Function.FunctionAttribute;
 import eu.cloudhopper.mc.generator.api.GenerationPhase;
@@ -34,6 +33,7 @@ import eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature;
 import eu.cloudhopper.mc.generator.api.annotations.GeneratorFeatures;
 import eu.cloudhopper.mc.generator.generic.annotations.Template;
 import eu.cloudhopper.mc.generator.generic.annotations.TemplateRegistration;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
 
 @GeneratorFeatures(
     generatorId = "springboot-http",
@@ -45,13 +45,13 @@ import eu.cloudhopper.mc.generator.generic.annotations.TemplateRegistration;
             }
         ),
         @GeneratorFeature(
-            supportedAnnotation = ApiOperation.class,
+            supportedAnnotation = HttpTrigger.class,
             supportedAttributes = {
-                ApiOperationAttribute.SUMMARY,
-                ApiOperationAttribute.DESCRIPTION,
-                ApiOperationAttribute.OPERATION_ID,
-                ApiOperationAttribute.PATH,
-                ApiOperationAttribute.METHOD,
+                HttpTriggerAttribute.SUMMARY,
+                HttpTriggerAttribute.DESCRIPTION,
+                HttpTriggerAttribute.OPERATION_ID,
+                HttpTriggerAttribute.PATH,
+                HttpTriggerAttribute.METHOD,
             }
         )
     }

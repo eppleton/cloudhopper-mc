@@ -25,26 +25,24 @@ package eu.cloudhopper.mc.test.functions;
  * #L%
  */
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.annotations.Schedule;
 import eu.cloudhopper.mc.runtime.CloudRequestHandler;
 import eu.cloudhopper.mc.runtime.HandlerContext;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import eu.cloudhopper.mc.annotations.ScheduledTrigger;
 
 /**
  *
  * @author antonepple
  */
-public class ScheduledFunction implements CloudRequestHandler<Void, Void> {
+public class ScheduledFunction {
 
     
     @Function(name = "scheduled")
-    @Schedule(cron = "* * * * *")
-    @Override
-    public Void handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
+    @ScheduledTrigger(cron = "* * * * *")
+    public void runScheduled() {
         Logger.getLogger(ScheduledFunction.class.getName()).log(Level.INFO, "Method was called");
-        return null;
     }
 
 }

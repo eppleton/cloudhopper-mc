@@ -25,11 +25,11 @@ package eu.cloudhopper.mc.generator.api.spi;
  * #L%
  */
 
-import eu.cloudhopper.mc.annotations.ApiOperation;
-import eu.cloudhopper.mc.annotations.Schedule;
 import eu.cloudhopper.mc.generator.api.ConfigGenerationException;
 import eu.cloudhopper.mc.generator.api.HandlerInfo;
 import javax.annotation.processing.ProcessingEnvironment;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.ScheduledTrigger;
 /**
  * Service Provider Interface (SPI) for custom deployment configuration generators.
  * <p>
@@ -78,22 +78,22 @@ public interface DeploymentConfigGenerator {
     /**
      * Generates API resource definitions and integration logic (e.g., API Gateway routes).
      * <p>
-     * Called if the function is annotated with {@link eu.cloudhopper.mc.annotations.ApiOperation}.
+     * Called if the function is annotated with {@link eu.cloudhopper.mc.annotations.HttpTrigger}.
      *
      * @param generatorId the generator ID
      * @param outputDir the output directory for generated files
      * @param handlerInfo metadata about the function
-     * @param apiOperation API metadata annotation
+     * @param httpTrigger API metadata annotation
      * @param env the annotation processing environment
      * @throws ConfigGenerationException if generation fails
      */
-    void generateApiResourceAndIntegration(String generatorId, String outputDir, HandlerInfo handlerInfo, ApiOperation apiOperation, ProcessingEnvironment env)
+    void generateApiResourceAndIntegration(String generatorId, String outputDir, HandlerInfo handlerInfo, HttpTrigger httpTrigger, ProcessingEnvironment env)
         throws ConfigGenerationException;
 
     /**
      * Generates configuration for scheduled triggers.
      * <p>
-     * Called if the function is annotated with {@link eu.cloudhopper.mc.annotations.Schedule}.
+     * Called if the function is annotated with {@link eu.cloudhopper.mc.annotations.ScheduledTrigger}.
      *
      * @param generatorID the generator ID
      * @param configOutputDir output directory for the config
@@ -101,7 +101,7 @@ public interface DeploymentConfigGenerator {
      * @param schedule the schedule annotation
      * @param processingEnv annotation processing context
      */
-    void generateScheduledTrigger(String generatorID, String configOutputDir, HandlerInfo handlerInfo, Schedule schedule, ProcessingEnvironment processingEnv);
+    void generateScheduledTrigger(String generatorID, String configOutputDir, HandlerInfo handlerInfo, ScheduledTrigger schedule, ProcessingEnvironment processingEnv);
 
     /**
      * Performs any final configuration generation steps after all handlers are processed.

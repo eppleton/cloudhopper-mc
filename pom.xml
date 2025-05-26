@@ -55,6 +55,7 @@
     <modules>
         <module>deployment-config-api</module>
         <module>deployment-config-processor</module>
+        <module>deployment-config-processor-test-support</module>
         <module>deployment-config-generator-api</module>
         <module>deployment-config-generator-generic</module>
         <module>generator-gcp-terraform</module>

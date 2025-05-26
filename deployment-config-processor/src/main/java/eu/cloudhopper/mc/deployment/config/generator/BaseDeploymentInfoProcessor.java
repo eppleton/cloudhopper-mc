@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2024 antonepple
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package eu.cloudhopper.mc.deployment.config.generator;
 
 /*-
@@ -49,6 +33,7 @@ import java.util.ServiceLoader;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -77,10 +62,12 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
         messager.printMessage(Diagnostic.Kind.NOTE, "Initializing BaseDeploymentInfoProcessor");
 
         super.init(processingEnv);
+        
         ServiceLoader<DeploymentConfigGenerator> loader = ServiceLoader.load(DeploymentConfigGenerator.class, ServerlessFunctionProcessor.class.getClassLoader());
         generators = new ArrayList<>();
         for (DeploymentConfigGenerator generator : loader) {
             generators.add(generator);
+            System.err.println("Found generator "+ generator);
         }
         generatorId = processingEnv.getOptions().getOrDefault("generatorId", "").trim();
         configOutputDir = processingEnv.getOptions().getOrDefault("configOutputDir", "target/generated-config");
@@ -90,7 +77,7 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
         targetDir = processingEnv.getOptions().getOrDefault("targetDir", "./target");
 
         if ("default-artifactId".equals(artifactId) || "default-classifier".equals(classifier) || "default-version".equals(version)) {
-            messager.printMessage(Diagnostic.Kind.WARNING, "One or more required compiler arguments (artifactId, classifier, version) are using default values. Please ensure these are provided.");
+            messager.printMessage(Diagnostic.Kind.NOTE, "One or more required compiler arguments (artifactId, classifier, version) are using default values. Please ensure these are provided.");
         }
         deploymentGenerator = getDeploymentGenerator();
         generatorFeatureInfo = GeneratorFeatureInfo.Loader.loadFeaturesFor(deploymentGenerator.getGeneratorID());
@@ -153,6 +140,11 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
     protected String getPackageName(TypeElement classElement) {
         String qualifiedName = classElement.getQualifiedName().toString();
         return qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
+    }
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latest();
     }
 
 }

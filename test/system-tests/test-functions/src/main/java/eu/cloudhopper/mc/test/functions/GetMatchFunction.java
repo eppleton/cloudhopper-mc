@@ -24,19 +24,15 @@ package eu.cloudhopper.mc.test.functions;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
-
-import eu.cloudhopper.mc.annotations.ApiOperation;
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
-import eu.cloudhopper.mc.runtime.HandlerContext;
 import eu.cloudhopper.mc.test.domain.Match;
 
-import java.util.Map;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.PathParam;
 
-public class GetMatchFunction implements CloudRequestHandler<Void, Match> {
+public class GetMatchFunction {
 
-    @ApiOperation(
+    @HttpTrigger(
             summary = "Fetch a match by tournament and match ID",
             description = "Returns a match in a tournament based on provided tournamentId and matchId.",
             operationId = "getMatch",
@@ -44,14 +40,9 @@ public class GetMatchFunction implements CloudRequestHandler<Void, Match> {
             method = "GET"
     )
     @Function(name = "getMatch")
-    @Override
-    public Match handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        String tournamentIdStr = pathParams.get("tournamentId");
-        String matchIdStr = pathParams.get("matchId");
-
-        int tournamentId = tournamentIdStr != null ? Integer.parseInt(tournamentIdStr) : 0;
-        int matchId = matchIdStr != null ? Integer.parseInt(matchIdStr) : 0;
-        System.err.println("tournamentIdStr "+tournamentIdStr);
+    public Match getMatch(@PathParam Integer tournamentId, @PathParam Integer matchId) {
+ 
+        System.err.println("tournamentId " + tournamentId);
         return new Match(tournamentId, matchId, "PlayerA", "PlayerB", "Scheduled");
     }
 }

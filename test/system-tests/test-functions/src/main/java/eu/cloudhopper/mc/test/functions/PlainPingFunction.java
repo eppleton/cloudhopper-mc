@@ -25,15 +25,11 @@ package eu.cloudhopper.mc.test.functions;
  * #L%
  */
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
-import eu.cloudhopper.mc.runtime.HandlerContext;
-import java.util.Map;
 
-public class PlainPingFunction implements CloudRequestHandler<Void, String>{
+public class PlainPingFunction{
     
     @Function(name = "plainping")
-    @Override
-    public String handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
+    public String ping() {
         return "pong";
     }
 

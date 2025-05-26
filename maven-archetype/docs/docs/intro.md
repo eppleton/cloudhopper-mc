@@ -80,15 +80,3 @@ The generated project includes:
 - Optional Spring Boot HTTP support
 - Maven plugin configuration for annotation processing and packaging
 
----
-
-## 🧪 Development & Testing
-
-To verify the archetype locally:
-```sh
-    mvn clean install -pl maven-archetype
-    mvn verify -pl maven-archetype
-```
-> Integration tests are defined in `src/test/projects/` and executed using the Maven Archetype Plugin (`archetype:integration-test`).
-
-

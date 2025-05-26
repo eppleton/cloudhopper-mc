@@ -24,12 +24,12 @@ package eu.cloudhopper.mc.test.tck.core;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import eu.cloudhopper.mc.annotations.Schedule;
 import eu.cloudhopper.mc.test.tck.api.FeatureAwareTest;
 import eu.cloudhopper.mc.test.tck.api.RequiredFeature;
 import eu.cloudhopper.mc.test.tck.api.TestContext;
 import java.util.List;
 import org.junit.Assert;
+import eu.cloudhopper.mc.annotations.ScheduledTrigger;
 
 public class ScheduledFunctionCompatibilityTest implements FeatureAwareTest {
     
@@ -49,8 +49,7 @@ public class ScheduledFunctionCompatibilityTest implements FeatureAwareTest {
     
     @Override
     public List<RequiredFeature> requiredFeatures() {
-        return List.of(
-                new RequiredFeature(Schedule.class.getName(), List.of(Schedule.ScheduleAttribute.CRON)));
+        return List.of(new RequiredFeature(ScheduledTrigger.class.getName(), List.of(ScheduledTrigger.ScheduleAttribute.CRON)));
         
     }
 }

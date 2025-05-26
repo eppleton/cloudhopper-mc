@@ -24,17 +24,15 @@ package eu.cloudhopper.mc.test.functions;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import eu.cloudhopper.mc.annotations.ApiOperation;
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
-import eu.cloudhopper.mc.runtime.HandlerContext;
 import eu.cloudhopper.mc.test.domain.Player;
 
-import java.util.Map;
+import eu.cloudhopper.mc.annotations.HttpTrigger;
+import eu.cloudhopper.mc.annotations.PathParam;
 
-public class GetPlayerFunction implements CloudRequestHandler<Void, Player> {
+public class GetPlayerFunction  {
 
-    @ApiOperation(
+    @HttpTrigger(
             summary = "Fetch player by ID",
             description = "Returns a player from the ping pong tournament database by ID.",
             operationId = "getPlayer",
@@ -42,10 +40,7 @@ public class GetPlayerFunction implements CloudRequestHandler<Void, Player> {
             method = "GET"
     )
     @Function(name = "getPlayer")
-    @Override
-    public Player handleRequest(Void input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        String idStr = pathParams.get("id");
-        int id = idStr != null ? Integer.parseInt(idStr) : 1;
+    public Player getPlayer(@PathParam Integer id) {
 
         // For now, just return a dummy player
         return new Player(id, "Player" + id, 42);

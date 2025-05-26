@@ -26,23 +26,22 @@ package eu.cloudhopper.mc.demo;
  */
 
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.annotations.Schedule;
 import eu.cloudhopper.mc.runtime.CloudRequestHandler;
 import eu.cloudhopper.mc.runtime.HandlerContext;
 import java.util.Map;
+import eu.cloudhopper.mc.annotations.ScheduledTrigger;
 
 /**
  *
  * @author antonepple
  */
 
-public class ScheduledFunction implements CloudRequestHandler<Integer, String>{
+public class ScheduledFunction {
 
     @Function(name = "ScheduledFunction")
-    @Schedule(cron = "0 0 * * *")
-    @Override
-    public String handleRequest(Integer input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context) {
-        return "Hello";
+    @ScheduledTrigger(cron = "0 0 * * *")
+    public void handleRequest() {
+        System.out.println("scheduled action is performed");
     }
     
 }
