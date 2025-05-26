@@ -46,7 +46,7 @@ public class GeneratorConfigLoader {
         if (expectedId.isEmpty()) {
             System.err.println("No generatorId specified");
 
-            messager.printMessage(Diagnostic.Kind.ERROR, "Missing required compiler arg: -AgeneratorId=<id>");
+            messager.printMessage(Diagnostic.Kind.WARNING, "Missing required compiler arg: -AgeneratorId=<id>");
             return null;
         }
         System.err.println("Required generatorId "+expectedId);

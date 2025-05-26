@@ -62,10 +62,12 @@ public abstract class BaseDeploymentInfoProcessor extends AbstractProcessor {
         messager.printMessage(Diagnostic.Kind.NOTE, "Initializing BaseDeploymentInfoProcessor");
 
         super.init(processingEnv);
+        
         ServiceLoader<DeploymentConfigGenerator> loader = ServiceLoader.load(DeploymentConfigGenerator.class, ServerlessFunctionProcessor.class.getClassLoader());
         generators = new ArrayList<>();
         for (DeploymentConfigGenerator generator : loader) {
             generators.add(generator);
+            System.err.println("Found generator "+ generator);
         }
         generatorId = processingEnv.getOptions().getOrDefault("generatorId", "").trim();
         configOutputDir = processingEnv.getOptions().getOrDefault("configOutputDir", "target/generated-config");

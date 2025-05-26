@@ -1,4 +1,4 @@
-package eu.cloudhopper.mc.deployment.config.generator;
+package eu.cloudhopper.mc.deployment.config.processor.test.support;
     
 /*-
  * #%L
@@ -27,6 +27,7 @@ package eu.cloudhopper.mc.deployment.config.generator;
 // src/test/java/eu/cloudhopper/mc/deployment/config/generator/TestNoOpGenerator.java
 
 
+import com.google.auto.service.AutoService;
 import eu.cloudhopper.mc.generator.api.spi.DeploymentConfigGenerator;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -34,6 +35,7 @@ import eu.cloudhopper.mc.annotations.HttpTrigger;
 import eu.cloudhopper.mc.annotations.ScheduledTrigger;
 import eu.cloudhopper.mc.generator.api.HandlerInfo;
 
+@AutoService(DeploymentConfigGenerator.class)
 public class TestNoOpGenerator implements DeploymentConfigGenerator {
     @Override
     public String getGeneratorID() {
