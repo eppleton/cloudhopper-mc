@@ -126,16 +126,15 @@ jobs:
         gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-    - name: Configure GPG for GitHub Actions
+    - name: Configure GPG for GitHub Actions  
       run: |
         echo "use-agent" >> ~/.gnupg/gpg.conf
         echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+        echo "batch" >> ~/.gnupg/gpg.conf
+        echo "no-tty" >> ~/.gnupg/gpg.conf
         echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-        echo "RELOADAGENT" | gpg-connect-agent
-
-    - name: Set GPG environment for Central Plugin
-      run: |
-        echo "GPG_TTY=" >> $GITHUB_ENV
+        echo "max-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
+        gpg-connect-agent reloadagent /bye || true
 
     - name: Configure Git
       run: |
@@ -152,12 +151,13 @@ jobs:
         CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
         CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        GPG_TTY: ""
       run: |
-        export GPG_TTY=""
+        unset GPG_TTY
         mvn clean deploy -Prelease-core \
-          -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}" \
-          -Dgpg.pinentry-mode=loopback
+          -Dgpg.batch=true \
+          -Dgpg.no-tty=true \
+          -Dgpg.pinentry-mode=loopback \
+          -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
 
     - name: Create and push release tag for core
       run: |
