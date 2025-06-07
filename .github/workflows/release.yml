@@ -93,6 +93,7 @@ jobs:
     - name: Run full test suite
       run: mvn clean install verify
 
+
   release-core:
     name: Release Core Libraries
     runs-on: ubuntu-latest
@@ -150,14 +151,12 @@ jobs:
       env:
         CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
         CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       run: |
         unset GPG_TTY
         mvn clean deploy -Prelease-core \
           -Dgpg.batch=true \
           -Dgpg.no-tty=true \
-          -Dgpg.pinentry-mode=loopback \
-          -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
+          -Dgpg.pinentry-mode=loopback
 
     - name: Create and push release tag for core
       run: |
