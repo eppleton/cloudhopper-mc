@@ -34,8 +34,8 @@ Defines a deployable cloud function.
 
 ~~~java
 @Function(name = "hello")
-public class HelloFunction implements CloudRequestHandler<String, String> {
-    public String handleRequest(String input, HandlerContext context) {
+public class HelloFunction  {
+    public String handleRequest(String input) {
         return "Hello, " + input;
     }
 }

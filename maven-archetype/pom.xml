@@ -39,7 +39,6 @@
             </resource>
         </resources>
 
-        <!-- 1b) Configure the Resources Plugin to honor an escape marker -->
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -47,7 +46,6 @@
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.3.1</version>
                     <configuration>
-                        <!-- use backslash to escape any ${…} you don’t want filtered now -->
                         <escapeString>\</escapeString>
                     </configuration>
                 </plugin>

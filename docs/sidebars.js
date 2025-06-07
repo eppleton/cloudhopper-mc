@@ -2,112 +2,78 @@
 const sidebars = {
     documentationSidebar: [
         {
-            type: 'category',
-            label: 'Introduction',
-            collapsed: false,
-            items: [
-                'intro',
-            ]
+            type: 'doc',
+            id: 'intro',
+            label: 'Overview',
         },
         {
             type: 'category',
-            label: 'Getting started',
-            collapsed: true,
+            label: 'Getting Started',
+            collapsed: false,
             items: [
+                'guides/quickstart',
                 'modules/maven-archetype',
-                'modules/demo',
+                {
+                    type: 'category',
+                    label: 'Provider Setup',
+                    collapsed: true,
+                    items: [
+                        'setup/aws-prerequisites',
+//                        'setup/gcp-prerequisites',
+//                        'setup/azure-prerequisites',
+                    ],
+                }
             ],
         },
         {
             type: 'category',
-            label: 'Runtime API',
+            label: 'Core Concepts',
             collapsed: true,
             items: [
                 'modules/deployment-config-api',
-                {
-                    type: 'link',
-                    label: 'Java API',
-                    href: 'pathname:///api/deployment-config-api/index.html',
-                },
-            ],
-        },
-        {
-            type: 'category',
-            label: 'Generator API',
-            collapsed: true,
-            items: [
                 'modules/deployment-config-generator-api',
-                {
-                    type: 'link',
-                    label: 'Java API',
-                    href: 'pathname:///api/deployment-config-generator-api/index.html',
-                },
-            ],
-        },
-        {
-            type: 'category',
-            label: 'Template based Generic generator',
-            collapsed: true,
-            items: [
                 'modules/deployment-config-generator-generic',
-                {
-                    type: 'link',
-                    label: 'Java API',
-                    href: 'pathname:///api/deployment-config-generator-generic/index.html',
-                },
+                        // planned: 'concepts/how-annotations-work',
+                        // planned: 'concepts/templating-engine',
             ],
         },
         {
             type: 'category',
-            label: 'Platform Integration',
+            label: 'Cloud Providers',
             collapsed: true,
             items: [
-                'platforms/generator-overview', // comparison doc
-
+                'platforms/generator-overview',
                 {
                     type: 'category',
                     label: 'AWS',
-                    collapsed: true,
                     items: [
                         'modules/generator-aws-terraform',
                         'modules/provider-aws',
-                        {
-                            type: 'link',
-                            label: 'Java API',
-                            href: 'pathname:///api/provider-aws/index.html',
-                        },
                     ],
                 },
                 {
                     type: 'category',
                     label: 'Azure',
-                    collapsed: true,
                     items: [
                         'modules/generator-azure-terraform',
                         'modules/provider-azure',
-                        {
-                            type: 'link',
-                            label: 'Java API',
-                            href: 'pathname:///api/provider-azure/index.html',
-                        },
                     ],
                 },
                 {
                     type: 'category',
                     label: 'GCP',
-                    collapsed: true,
                     items: [
                         'modules/generator-gcp-terraform',
                         'modules/provider-gcp',
-                        {
-                            type: 'link',
-                            label: 'Java API',
-                            href: 'pathname:///api/provider-gcp/index.html',
-                        },
                     ],
                 },
             ],
-        }
+        },
+        {
+            type: 'doc',
+            id: 'roadmap',
+            label: 'Roadmap',
+        },
     ],
 };
 
