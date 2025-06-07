@@ -187,8 +187,8 @@ jobs:
             - SpringBoot integration
 
             🔗 **Available on Maven Central**: https://central.sonatype.com/search?q=eu.cloudhopper.mc
-        draft: false
-        prerelease: false
+          draft: false
+          prerelease: false
       
   wait-for-core:
     name: Wait for Core Libraries
