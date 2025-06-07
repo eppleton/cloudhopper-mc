@@ -91,12 +91,7 @@ jobs:
           ${{ runner.os }}-maven-
           
     - name: Run full test suite
-      run: mvn clean verify
-      
-    - name: Test archetype if releasing archetype
-      if: needs.validate-inputs.outputs.should_release_archetype == 'true'
-      working-directory: maven-archetype
-      run: mvn -B clean integration-test
+      run: mvn clean install verify
 
   release-core:
     name: Release Core Libraries
