@@ -126,6 +126,17 @@ jobs:
         gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
+    - name: Configure GPG for GitHub Actions
+      run: |
+        echo "use-agent" >> ~/.gnupg/gpg.conf
+        echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+        echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+        echo "RELOADAGENT" | gpg-connect-agent
+
+    - name: Set GPG environment for Central Plugin
+      run: |
+        echo "GPG_TTY=" >> $GITHUB_ENV
+
     - name: Configure Git
       run: |
         git config --global user.name "GitHub Actions"
@@ -141,9 +152,12 @@ jobs:
         CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
         CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        GPG_TTY: ""
       run: |
+        export GPG_TTY=""
         mvn clean deploy -Prelease-core \
-          -Dauto-publish=${{ github.event.inputs.auto_publish }}
+          -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}" \
+          -Dgpg.pinentry-mode=loopback
 
     - name: Create and push release tag for core
       run: |
