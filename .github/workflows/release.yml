@@ -126,15 +126,6 @@ jobs:
         gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-    - name: Configure GPG for non-interactive use
-      run: |
-        export GPG_TTY=$(tty)
-        echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
-        echo "use-agent" >> ~/.gnupg/gpg.conf
-        echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-        echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-        gpg-connect-agent reloadagent /bye
-
     - name: Configure Git
       run: |
         git config --global user.name "GitHub Actions"
