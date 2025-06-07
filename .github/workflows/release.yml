@@ -131,11 +131,12 @@ jobs:
       run: |
         echo "use-agent" >> ~/.gnupg/gpg.conf
         echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-        echo "batch" >> ~/.gnupg/gpg.conf
-        echo "no-tty" >> ~/.gnupg/gpg.conf
+
         echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
         echo "max-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
-        gpg-connect-agent reloadagent /bye || true
+
+        gpgconf --kill gpg-agent || true
+        gpgconf --launch gpg-agent
 
     - name: Configure Git
       run: |
@@ -155,7 +156,7 @@ jobs:
         unset GPG_TTY
         mvn clean deploy -Prelease-core \
           -Dgpg.batch=true \
-          -Dgpg.no-tty=true \
+          -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}" \
           -Dgpg.pinentry-mode=loopback
 
     - name: Create and push release tag for core
