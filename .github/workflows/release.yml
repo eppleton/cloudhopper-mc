@@ -42,7 +42,7 @@ jobs:
           echo "Next version: ${{ github.event.inputs.next_version }}"
           
           # Validate version format
-          if [[ ! "${{ github.event.inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ ! "${{ github.event.inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+(\.[0-9]+)?)?$; then
             echo "❌ Version must be in format x.y.z"
             exit 1
           fi
