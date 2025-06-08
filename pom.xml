@@ -54,37 +54,6 @@
         <tag>release-${releaseVersion}</tag>
     </scm>
     
-    <modules>
-        <module>deployment-config-api</module>
-        <module>deployment-config-processor</module>
-        <module>deployment-config-processor-test-support</module>
-        <module>deployment-config-generator-api</module>
-        <module>deployment-config-generator-generic</module>
-        <module>generator-gcp-terraform</module>
-        <module>generator-azure-terraform</module>
-        <module>generator-aws-terraform</module>
-        <module>generator-springboot</module>
-        <module>provider-aws</module>
-        <module>provider-azure</module>
-        <module>provider-gcp</module>
-        <module>provider-http</module>
-        <module>provider-springboot</module>
-        <module>test/tck/api</module>
-        <module>test/system-tests/test-functions</module>
-        <module>demo</module>
-        <module>test/system-tests/generator-aws-terraform</module>
-        <module>test/system-tests/generator-azure-terraform</module>
-        <module>test/system-tests/generator-gcp-terraform</module>
-        <module>test/system-tests/generator-springboot</module>
-        <module>test/test-support</module>
-        <module>test/tck/core/test-tck-core</module>
-        <module>test/system-tests/test-domain</module>
-        <module>test/tck/generator-bindings/aws-terraform</module>
-        <module>test/tck/generator-bindings/gcp-terraform</module>
-        <module>test/tck/generator-bindings/azure-terraform</module>
-        <module>maven-archetype</module>
-    </modules>
-    
     <build>
         <pluginManagement>
             <plugins>
@@ -181,6 +150,43 @@
     </build>
     
     <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            
+            <modules>
+                <module>deployment-config-api</module>
+                <module>deployment-config-processor</module>
+                <module>deployment-config-processor-test-support</module>
+                <module>deployment-config-generator-api</module>
+                <module>deployment-config-generator-generic</module>
+                <module>generator-gcp-terraform</module>
+                <module>generator-azure-terraform</module>
+                <module>generator-aws-terraform</module>
+                <module>generator-springboot</module>
+                <module>provider-aws</module>
+                <module>provider-azure</module>
+                <module>provider-gcp</module>
+                <module>provider-http</module>
+                <module>provider-springboot</module>
+                <module>test/tck/api</module>
+                <module>test/system-tests/test-functions</module>
+                <module>demo</module>
+                <module>test/system-tests/generator-aws-terraform</module>
+                <module>test/system-tests/generator-azure-terraform</module>
+                <module>test/system-tests/generator-gcp-terraform</module>
+                <module>test/system-tests/generator-springboot</module>
+                <module>test/test-support</module>
+                <module>test/tck/core/test-tck-core</module>
+                <module>test/system-tests/test-domain</module>
+                <module>test/tck/generator-bindings/aws-terraform</module>
+                <module>test/tck/generator-bindings/gcp-terraform</module>
+                <module>test/tck/generator-bindings/azure-terraform</module>
+                <module>maven-archetype</module>
+            </modules>
+        </profile>
         <profile>
             <id>generate-docs</id>
             <build>
@@ -311,6 +317,8 @@
                         <version>1.1.0</version>
                         <executions>
                             <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
