@@ -156,11 +156,11 @@ jobs:
         run: |
           mvn clean deploy -Prelease-core \
             -DskipTests \
-            -Ds4u.sign.keyFile=private.key \
+            -Ds4u.sign.keyFile=$(pwd)/private.key \
             -Ds4u.sign.keyPassword="${GPG_PASSPHRASE}" \
             -Ds4u.sign.asc=true \
             -Dauto-publish=${{ github.event.inputs.auto_publish }}
-
+            
       - name: Create and push release tag for core
         run: |
           git add .
@@ -306,11 +306,11 @@ jobs:
       run: |
         mvn clean deploy -Prelease-archetype \
           -DskipTests \
-          -Ds4u.sign.keyFile=private.key \
+          -Ds4u.sign.keyFile=$(pwd)/private.key \
           -Ds4u.sign.keyPassword="${GPG_PASSPHRASE}" \
           -Ds4u.sign.asc=true \
           -Dauto-publish=${{ github.event.inputs.auto_publish }}
-    
+           
     - name: Create and push release tag for archetype
       run: |
         git add .
