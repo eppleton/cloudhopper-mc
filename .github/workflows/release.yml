@@ -268,13 +268,15 @@ jobs:
               <username>\${env.CENTRAL_TOKEN_USERNAME}</username>
               <password>\${env.CENTRAL_TOKEN_PASSWORD}</password>
             </server>
+            <server>
+                <id>sign-key-id</id>
+                <passphrase>\${env.GPG_PASSPHRASE}</passphrase>
+                <privateKey>$(pwd)/private.key</privateKey>
+            </server>
           </servers>
         </settings>
         EOF
    
-    - name: Write GPG private key to file
-      run: echo "${{ secrets.GPG_PRIVATE_KEY }}" > private.key
-
     - name: Configure Git
       run: |
         git config --global user.name "GitHub Actions"
@@ -302,13 +304,9 @@ jobs:
       env:
         CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
         CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       run: |
         mvn clean deploy -Prelease-archetype \
           -DskipTests \
-          -Ds4u.sign.keyFile=$(pwd)/private.key \
-          -Ds4u.sign.keyPassword="${GPG_PASSPHRASE}" \
-          -Ds4u.sign.asc=true \
           -Dauto-publish=${{ github.event.inputs.auto_publish }}
            
     - name: Create and push release tag for archetype
