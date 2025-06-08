@@ -157,7 +157,7 @@ jobs:
           mvn clean deploy -Prelease-core \
             -Ds4u.sign.keyFile=private.key \
             -Ds4u.sign.keyPassword="${GPG_PASSPHRASE}" \
-            -Ds4u.sign.asc=true
+            -Ds4u.sign.asc=true \
             -Dauto-publish=${{ github.event.inputs.auto_publish }}
 
       - name: Create and push release tag for core
@@ -256,23 +256,23 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
           
-      - name: Configure Maven settings for Central Portal
-        run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml << EOF
-          <settings>
-            <servers>
-              <server>
-                <id>central</id>
-                <username>\${env.CENTRAL_TOKEN_USERNAME}</username>
-                <password>\${env.CENTRAL_TOKEN_PASSWORD}</password>
-              </server>
-            </servers>
-          </settings>
-          EOF
+    - name: Configure Maven settings for Central Portal
+      run: |
+        mkdir -p ~/.m2
+        cat > ~/.m2/settings.xml << EOF
+        <settings>
+          <servers>
+            <server>
+              <id>central</id>
+              <username>\${env.CENTRAL_TOKEN_USERNAME}</username>
+              <password>\${env.CENTRAL_TOKEN_PASSWORD}</password>
+            </server>
+          </servers>
+        </settings>
+        EOF
    
-      - name: Write GPG private key to file
-        run: echo "${{ secrets.GPG_PRIVATE_KEY }}" > private.key
+    - name: Write GPG private key to file
+      run: echo "${{ secrets.GPG_PRIVATE_KEY }}" > private.key
 
     - name: Configure Git
       run: |
@@ -297,8 +297,7 @@ jobs:
       working-directory: maven-archetype
       run: mvn -B clean integration-test
 
-
-    - name: Build and deploy core libraries
+    - name: Build and deploy archetype
       env:
         CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
         CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
@@ -307,7 +306,7 @@ jobs:
         mvn clean deploy -Prelease-archetype \
           -Ds4u.sign.keyFile=private.key \
           -Ds4u.sign.keyPassword="${GPG_PASSPHRASE}" \
-          -Ds4u.sign.asc=true
+          -Ds4u.sign.asc=true \
           -Dauto-publish=${{ github.event.inputs.auto_publish }}
     
     - name: Create and push release tag for archetype
