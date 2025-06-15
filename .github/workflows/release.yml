@@ -159,7 +159,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           SIGN_KEY_PASS: ${{ secrets.GPG_PASSPHRASE }}
           SIGN_KEY: ${{ github.workspace }}/private.key
-          SIGN_KEY_ID: ${{ secrests.GPG_KEY_ID }}
+          SIGN_KEY_ID: ${{ secrets.GPG_KEY_ID }}
         run: |
           mvn clean install deploy -Prelease-core \
             -DskipTests \
