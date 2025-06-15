@@ -17,7 +17,12 @@
     <packaging>pom</packaging>
     <name>Cloudhopper Release Parent</name>
     <description>Release-specific configuration for Cloudhopper libraries</description>
-
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <url>https://central.sonatype.com/api/v1/publisher/deployments</url>
+        </repository>
+    </distributionManagement>
     <profiles>
         <profile>
             <id>release-core</id>
