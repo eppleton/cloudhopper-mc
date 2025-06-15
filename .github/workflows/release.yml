@@ -163,11 +163,10 @@ jobs:
         run: |
           mvn clean install deploy -Prelease-core \
             -DskipTests \
-            -X \
             -Dsign.keyFile=$(pwd)/private.key \
             -Dsign.keyPass="${GPG_PASSPHRASE}" \
             -Dsign.asc=true \
-            -Dsign.keyId="${SIGN_KEY_ID}"
+            -Dsign.keyId="${SIGN_KEY_ID}" \
             -Dauto-publish=${{ github.event.inputs.auto_publish }}
             
       - name: Create and push release tag for core
