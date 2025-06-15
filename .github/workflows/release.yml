@@ -90,8 +90,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
           
-    - name: Run build
-      run: mvn clean install -Dmaven.test.skip=true
+    - name: Run build (build tests but skip running them)
+      run: mvn clean install -DskipTests
 
 
   release-core:
@@ -154,7 +154,7 @@ jobs:
           CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          mvn clean deploy -Prelease-core \
+          mvn deploy -Prelease-core \
             -DskipTests \
             -Ds4u.sign.keyFile=$(pwd)/private.key \
             -Ds4u.sign.keyPassword="${GPG_PASSPHRASE}" \
