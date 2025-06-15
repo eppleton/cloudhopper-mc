@@ -58,18 +58,7 @@
         </repository>
     </distributionManagement>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.2</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+
     <profiles>
         <profile>
             <id>release-core</id>
@@ -145,6 +134,11 @@
                         <artifactId>central-publishing-maven-plugin</artifactId>
                         <version>0.7.0</version>
                         <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>publish-to-central</id>
@@ -154,11 +148,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <publishingServerId>central</publishingServerId>
-                            <autoPublish>false</autoPublish>
-                            <waitUntil>published</waitUntil>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -225,6 +214,11 @@
                         <artifactId>central-publishing-maven-plugin</artifactId>
                         <version>0.7.0</version>
                         <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>publish-to-central</id>
@@ -234,11 +228,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <publishingServerId>central</publishingServerId>
-                            <autoPublish>false</autoPublish>
-                            <waitUntil>published</waitUntil>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
