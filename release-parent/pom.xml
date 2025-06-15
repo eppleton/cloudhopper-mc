@@ -4,26 +4,60 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <!-- Inherit from your main parent -->
-    <parent>
-        <groupId>eu.cloudhopper.mc</groupId>
-        <artifactId>cloudhopper-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-
+    <groupId>eu.cloudhopper.mc</groupId>
     <artifactId>cloudhopper-release-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Cloudhopper Release Parent</name>
+    <n>Cloudhopper Release Parent</n>
     <description>Release-specific configuration for Cloudhopper libraries</description>
+    <url>http://cloud-hopper.com</url>
+
+    <!-- Copy essential metadata from parent -->
+    <developers>
+        <developer>
+            <id>eppleton</id>
+            <name>Anton Epple</name>
+            <email>info@eppleton.de</email>
+            <organization>Eppleton IT Consulting</organization>
+            <organizationUrl>http://www.eppleton.de</organizationUrl>
+            <roles>
+                <role>Project-Administrator</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 3 with the Classpath Exception</name>
+            <url>https://www.gnu.org/software/classpath/license.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     
+    <scm>
+        <connection>scm:git:https://github.com/eppleton/cloudhopper-mc.git</connection>
+        <url>https://github.com/eppleton/cloudhopper-mc.git</url>
+        <developerConnection>scm:git:https://github.com/eppleton/cloudhopper-mc.git</developerConnection>
+        <tag>release-${releaseVersion}</tag>
+    </scm>
+
+    <!-- Clean properties without conflicts -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+    </properties>
+
+    <!-- Distribution management for Central Publishing -->
     <distributionManagement>
         <repository>
             <id>central</id>
             <url>https://central.sonatype.com/api/v1/publisher/deployments</url>
         </repository>
     </distributionManagement>
+
     
     <profiles>
         <profile>
@@ -48,73 +82,73 @@
             </modules>
             <build>
                 <plugins>
-                        <!-- Disable the default maven-deploy-plugin -->
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-deploy-plugin</artifactId>
-                            <version>3.1.2</version>
-                            <configuration>
-                                <skip>true</skip>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-source-plugin</artifactId>
-                            <version>3.3.0</version>
-                            <executions>
-                                <execution>
-                                    <id>attach-sources-core</id>
-                                    <phase>verify</phase>
-                                    <goals>
-                                        <goal>jar-no-fork</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>3.6.3</version>
-                            <executions>
-                                <execution>
-                                    <id>attach-javadocs-core</id>
-                                    <phase>verify</phase>
-                                    <goals>
-                                        <goal>jar</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                            <configuration>
-                                <additionalOptions>-Xdoclint:none</additionalOptions>
-                                <additionalJOption>-Xdoclint:none</additionalJOption>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.simplify4u.plugins</groupId>
-                            <artifactId>sign-maven-plugin</artifactId>
-                            <version>1.1.0</version>
-                            <executions>
-                                <execution>
-                                    <id>sign-artifacts-core</id>
-                                    <phase>verify</phase>
-                                    <goals>
-                                        <goal>sign</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.sonatype.central</groupId>
-                            <artifactId>central-publishing-maven-plugin</artifactId>
-                            <version>0.6.0</version>
-                            <extensions>true</extensions>
-                            <configuration>
-                                <publishingServerId>central</publishingServerId>
-                                <autoPublish>false</autoPublish>
-                                <waitUntil>published</waitUntil>
-                            </configuration>
-                        </plugin>
-                    </plugins>
+                    <!-- Disable the default maven-deploy-plugin -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources-core</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.3</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs-core</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <additionalOptions>-Xdoclint:none</additionalOptions>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.simplify4u.plugins</groupId>
+                        <artifactId>sign-maven-plugin</artifactId>
+                        <version>1.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts-core</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.6.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
         
