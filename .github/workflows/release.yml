@@ -147,6 +147,10 @@ jobs:
         run: |
           mvn versions:set -DnewVersion=${{ github.event.inputs.version }}
           mvn versions:commit
+      
+      # Build ALL modules (including test support) to get dependencies right (don't use release profile, which misses some modules)
+      - name: Build all modules with alpha version
+        run: mvn clean install -DskipTests
 
       - name: Build and deploy core libraries
         env:
