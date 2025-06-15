@@ -318,7 +318,7 @@
                         <executions>
                             <execution>
                                 <id>attach-sources-core</id>
-                                <phase>verify</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>jar-no-fork</goal>
                                 </goals>
@@ -332,7 +332,7 @@
                         <executions>
                             <execution>
                                 <id>attach-javadocs-core</id>
-                                <phase>verify</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
