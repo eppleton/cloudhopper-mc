@@ -73,7 +73,17 @@
                             </configuration>
                         </execution>
                     </executions>
-                </plugin>            
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>  
+                <plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>          
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
@@ -318,7 +328,6 @@
                         <executions>
                             <execution>
                                 <id>attach-sources-core</id>
-                                <phase>package</phase>
                                 <goals>
                                     <goal>jar-no-fork</goal>
                                 </goals>
@@ -332,7 +341,6 @@
                         <executions>
                             <execution>
                                 <id>attach-javadocs-core</id>
-                                <phase>package</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
