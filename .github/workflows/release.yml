@@ -157,6 +157,8 @@ jobs:
           CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
           CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          SIGN_KEY_PASS: ${{ secrets.GPG_PASSPHRASE }}
+          SIGN_KEY: ${{ github.workspace }}/private.key
         run: |
           mvn clean install deploy -Prelease-core \
             -DskipTests \
