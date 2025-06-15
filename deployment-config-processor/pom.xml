@@ -12,7 +12,40 @@
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
         <cloud.provider>aws</cloud.provider>
     </properties>
+    <developers>
+        <developer>
+            <id>eppleton</id>
+            <name>Anton Epple</name>
+            <email>info@eppleton.de</email>
+            <organization>Eppleton IT Consulting</organization>
+            <organizationUrl>http://www.eppleton.de</organizationUrl>
+            <roles>
+                <role>Project-Administrator</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
 
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 3 with the Classpath Exception</name>
+            <url>https://www.gnu.org/software/classpath/license.html</url>
+            <distribution>repo</distribution>
+            <comments>
+                This project is licensed under the GPLv3 with the Classpath Exception,
+                allowing generated code to be used in commercial and proprietary applications.
+            </comments>
+        </license>
+    </licenses>
+    
+    <scm>
+        <connection>scm:git:https://github.com/eppleton/cloudhopper-mc.git</connection>
+        <url>https://github.com/eppleton/cloudhopper-mc.git</url>
+        <developerConnection>scm:git:https://github.com/eppleton/cloudhopper-mc.git</developerConnection>
+        <tag>release-${releaseVersion}</tag>
+    </scm>
+    
     <dependencies>
         <dependency>
             <groupId>eu.cloudhopper.mc</groupId>
