@@ -145,6 +145,13 @@
                         <artifactId>central-publishing-maven-plugin</artifactId>
                         <version>0.7.0</version>
                         <extensions>true</extensions>
+                        <execution>
+                            <id>publish-to-central</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>publish</goal>
+                            </goals>
+                        </execution>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>false</autoPublish>
@@ -216,6 +223,13 @@
                         <artifactId>central-publishing-maven-plugin</artifactId>
                         <version>0.7.0</version>
                         <extensions>true</extensions>
+                        <execution>
+                            <id>publish-to-central</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>publish</goal>
+                            </goals>
+                        </execution>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>false</autoPublish>
