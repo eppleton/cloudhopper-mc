@@ -65,7 +65,7 @@ jobs:
           else
             echo "should_release_archetype=false" >> $GITHUB_OUTPUT
           fi
-
+        
   pre-release-tests:
     name: Pre-Release Tests
     runs-on: ubuntu-latest
@@ -151,15 +151,29 @@ jobs:
       # Build ALL modules (including test support) to get dependencies right (don't use release profile, which misses some modules)
       - name: Build all modules with alpha version
         run: mvn clean install -DskipTests
+        
+      - name: Debug GPG setup
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          echo "GPG key file size: $(wc -c < private.key)"
+          echo "GPG key file first line: $(head -1 private.key)"
+          echo "GPG key file last line: $(tail -1 private.key)"
+          # Test if we can sign a simple file
+          echo "test signing" > test.txt
+          gpg --import private.key || echo "GPG import failed"
+          echo "${GPG_PASSPHRASE}" | gpg --batch --yes --passphrase-fd 0 --armor --detach-sign test.txt || echo "GPG signing test failed"
+          ls -la test.txt*
 
-      - name: Build and deploy core libraries
+      - name: Build and deploy with verbose signing
         env:
           CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
           CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          mvn deploy -Prelease-core \
+          mvn clean install deploy -Prelease-core \
             -DskipTests \
+            -X \
             -Ds4u.sign.keyFile=$(pwd)/private.key \
             -Ds4u.sign.keyPassword="${GPG_PASSPHRASE}" \
             -Ds4u.sign.asc=true \
