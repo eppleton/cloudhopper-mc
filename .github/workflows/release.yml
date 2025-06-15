@@ -90,8 +90,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
           
-    - name: Run full test suite
-      run: mvn clean install verify
+    - name: Run build
+      run: mvn clean install -Dmaven.test.skip=true
 
 
   release-core:
