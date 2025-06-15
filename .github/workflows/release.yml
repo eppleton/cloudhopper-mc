@@ -160,7 +160,7 @@ jobs:
           SIGN_KEY_ID: ${{ secrets.GPG_KEY_ID }}
         working-directory: release-parent
         run: |
-          mvn clean org.sonatype.central:central-publishing-maven-plugin:publish \
+          mvn clean deploy \
             -Prelease-core \
             -DskipTests \
             -Dsign.keyFile=$(pwd)/../private.key \
@@ -168,7 +168,6 @@ jobs:
             -Dsign.asc=true \
             -Dsign.keyId="${SIGN_KEY_ID}" \
             -DautoPublish=${{ github.event.inputs.auto_publish }}
-            
       - name: Create and push release tag for core
         run: |
           git add .
