@@ -164,7 +164,7 @@ jobs:
             -DskipTests \
             -X \
             -Dsign.keyFile=$(pwd)/private.key \
-            -Dsign.keyPassword="${GPG_PASSPHRASE}" \
+            -Dsign.keyPass="${GPG_PASSPHRASE}" \
             -Dsign.asc=true \
             -Dauto-publish=${{ github.event.inputs.auto_publish }}
             
