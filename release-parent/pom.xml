@@ -48,7 +48,6 @@
             </modules>
             <build>
                 <plugins>
-                    <plugins>
                         <!-- Disable the default maven-deploy-plugin -->
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
