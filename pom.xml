@@ -251,6 +251,16 @@
                             <autoPublish>false</autoPublish>
                             <waitUntil>published</waitUntil>
                             <excludeArtifacts>
+                                <artifactId>system-tests-generator-aws-terraform</artifactId>
+                                <artifactId>system-tests-generator-azure-terraform</artifactId>
+                                <artifactId>system-tests-generator-gcp-terraform</artifactId>
+                                <artifactId>system-tests-generator-springboot</artifactId>
+                                <artifactId>system-tests-generator-springboot</artifactId>
+                                <artifactId>test-domain</artifactId>
+                                <artifactId>test-functions</artifactId>
+                                <artifactId>test-support</artifactId>
+                                <artifactId>maven-archetype</artifactId>
+                                
                                 <!--                                <module>../deployment-config-api</module>
                                 <module>../deployment-config-processor</module>
                                 <module>../deployment-config-generator-api</module>
@@ -277,36 +287,35 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            <modules>
-                <module>../maven-archetype</module>
-            </modules>
             <build>
                 <plugins>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
                         <version>3.3.0</version>
+                        <extensions>true</extensions>
                         <executions>
                             <execution>
-                                <id>attach-sources-archetype</id>
-                                <phase>verify</phase>
                                 <goals>
-                                    <goal>jar-no-fork</goal>
+                                    <goal>jar</goal>
                                 </goals>
+                                <phase>package</phase>
                             </execution>
                         </executions>
+                        <configuration>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.6.3</version>
+                        <extensions>true</extensions>
                         <executions>
                             <execution>
-                                <id>attach-javadocs-archetype</id>
-                                <phase>verify</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <phase>package</phase>
                             </execution>
                         </executions>
                         <configuration>
@@ -320,7 +329,7 @@
                         <version>1.1.0</version>
                         <executions>
                             <execution>
-                                <id>sign-artifacts-archetype</id>
+                                <id>sign-artifacts-core</id>
                                 <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
@@ -337,6 +346,30 @@
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>false</autoPublish>
                             <waitUntil>published</waitUntil>
+                            <excludeArtifacts>
+                                <artifactId>system-tests-generator-aws-terraform</artifactId>
+                                <artifactId>system-tests-generator-azure-terraform</artifactId>
+                                <artifactId>system-tests-generator-gcp-terraform</artifactId>
+                                <artifactId>system-tests-generator-springboot</artifactId>
+                                <artifactId>system-tests-generator-springboot</artifactId>
+                                <artifactId>test-domain</artifactId>
+                                <artifactId>test-functions</artifactId>
+                                <artifactId>test-support</artifactId>
+                                <artifactId>deployment-config-api</artifactId>
+                                <artifactId>deployment-config-processor</artifactId>
+                                <artifactId>deployment-config-generator-api</artifactId>
+                                <artifactId>deployment-config-generator-api</artifactId>
+                                <artifactId>deployment-config-generator-generic</artifactId>
+                                <artifactId>generator-gcp-terraform</artifactId>
+                                <artifactId>generator-azure-terraform</artifactId>
+                                <artifactId>generator-aws-terraform</artifactId>
+                                <artifactId>generator-springboot</artifactId>
+                                <artifactId>provider-aws</artifactId>
+                                <artifactId>provider-azure</artifactId>
+                                <artifactId>provider-gcp</artifactId>
+                                <artifactId>provider-http</artifactId>
+                                <artifactId>provider-springboot</artifactId>
+                            </excludeArtifacts>
                         </configuration>
                        
                     </plugin>

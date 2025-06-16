@@ -7,6 +7,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>generator-aws-terraform</artifactId>
+    <name>Cloudhopper: Deployment Configuration Generator for AWS</name>
+
     <packaging>jar</packaging>
     <properties>
         <license.header.path>${project.parent.basedir}/src/license/header.txt</license.header.path>
