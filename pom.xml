@@ -108,9 +108,7 @@
                             </configuration>
                         </execution>
                     </executions>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
+
                 </plugin>            
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -195,7 +193,7 @@
             </activation>
             <build>
                 <plugins>
-                   
+              
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
