@@ -236,9 +236,10 @@
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>false</autoPublish>
                             <waitUntil>published</waitUntil>
+                            <excludeArtifacts>
+                            </excludeArtifacts>
                         </configuration>
-                        <excludeArtifacts>
-                        </excludeArtifacts>
+                       
                     </plugin>
                 </plugins>
             </build>
