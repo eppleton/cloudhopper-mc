@@ -49,17 +49,21 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>3.1.2</version>
-        <executions>
-            <execution>
-                <id>default-deploy</id>
-                <phase>none</phase> <!-- This disables default deploy execution -->
-            </execution>
-        </executions>
-    </plugin>
+    <build>
+        <plugins>    
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>none</phase> <!-- This disables default deploy execution -->
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <!-- Distribution management for Central Publishing -->
     <distributionManagement>
         <repository>
