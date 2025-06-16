@@ -160,7 +160,7 @@ jobs:
           SIGN_KEY_ID: ${{ secrets.GPG_KEY_ID }}
         working-directory: release-parent
         run: |
-          mvn clean deploy \
+          mvn deploy \
             -Prelease-core \
             -DskipTests \
             -Dsign.keyFile=$(pwd)/../private.key \
@@ -311,7 +311,7 @@ jobs:
         SIGN_KEY_ID: ${{ secrets.GPG_KEY_ID }}
       working-directory: release-parent
       run: |
-        mvn clean install deploy -Prelease-archetype \
+        mvn deploy -Prelease-archetype \
           -DskipTests \
           -Dsign.keyFile=$(pwd)/../private.key \
           -Dsign.keyPass="${GPG_PASSPHRASE}" \
