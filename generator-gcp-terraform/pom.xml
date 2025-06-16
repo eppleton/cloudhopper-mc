@@ -53,5 +53,4 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-    <name>generator-gcp-terraform</name>
 </project>

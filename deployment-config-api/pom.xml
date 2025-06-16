@@ -53,5 +53,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <name>deployment-config-api</name>
 </project>

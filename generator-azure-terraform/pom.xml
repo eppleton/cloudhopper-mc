@@ -58,5 +58,4 @@
             <version>${com.google.code.gson.version}</version>
         </dependency>
     </dependencies>
-    <name>generator-azure-terraform</name>
 </project>
