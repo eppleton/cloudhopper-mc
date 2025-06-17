@@ -260,20 +260,11 @@
                                 <artifactId>test-functions</artifactId>
                                 <artifactId>test-support</artifactId>
                                 <artifactId>maven-archetype</artifactId>
-                                
-                                <!--                                <module>../deployment-config-api</module>
-                                <module>../deployment-config-processor</module>
-                                <module>../deployment-config-generator-api</module>
-                                <module>../deployment-config-generator-generic</module>
-                                <module>../generator-gcp-terraform</module>
-                                <module>../generator-azure-terraform</module>
-                                <module>../generator-aws-terraform</module>
-                                <module>../generator-springboot</module>
-                                <module>../provider-aws</module>
-                                <module>../provider-azure</module>
-                                <module>../provider-gcp</module>
-                                <module>../provider-http</module>
-                                <module>../provider-springboot</module>-->
+                                <artifactId>test-tck-core</artifactId>
+                                <artifactId>demo</artifactId>
+                                <artifactId>generator-bindings-gcp-terraform</artifactId>
+                                <artifactId>generator-bindings-aws-terraform</artifactId>
+                                <artifactId>generator-bindings-azure-terraform</artifactId>
                             </excludeArtifacts>
                         </configuration>
                        
@@ -355,6 +346,11 @@
                                 <artifactId>test-domain</artifactId>
                                 <artifactId>test-functions</artifactId>
                                 <artifactId>test-support</artifactId>
+                                <artifactId>test-tck-core</artifactId>
+                                <artifactId>demo</artifactId>
+                                <artifactId>generator-bindings-gcp-terraform</artifactId>
+                                <artifactId>generator-bindings-aws-terraform</artifactId>
+                                <artifactId>generator-bindings-azure-terraform</artifactId>
                                 <artifactId>deployment-config-api</artifactId>
                                 <artifactId>deployment-config-processor</artifactId>
                                 <artifactId>deployment-config-generator-api</artifactId>
