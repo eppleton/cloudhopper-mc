@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.cloudhopper.mc</groupId>
         <artifactId>cloudhopper-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-alpha2</version>
     </parent>
     <artifactId>deployment-config-api</artifactId>
     <name>Cloudhopper: Deployment Configuration API</name>
