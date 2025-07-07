@@ -30,9 +30,38 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Container annotation for repeating {@link Extension} annotations.
+ *
+ * <p>This annotation is used internally by the Java compiler to support
+ * multiple {@link Extension} declarations on a single element. It is not
+ * intended for direct use in application code.</p>
+ *
+ * <p>Instead of using this annotation directly, developers should declare
+ * multiple {@code @Extension} annotations using Java's {@link java.lang.annotation.Repeatable}
+ * syntax. The compiler automatically wraps them in this container.</p>
+ *
+ * <p>Example usage:</p>
+ * <pre>{@code
+ * @Function(
+ *     name = "myFunc",
+ *     extensions = {
+ *         @Extension(name = "aws:architecture", value = "arm64"),
+ *         @Extension(name = "gcp:timeout", value = "60s")
+ *     }
+ * )
+ * }</pre>
+ *
+ * @see Extension
+ */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface Extensions {
 
+    /**
+     * The array of {@link Extension} annotations grouped together.
+     *
+     * @return the extension annotations
+     */
     Extension[] value();
 }

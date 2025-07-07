@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package eu.cloudhopper.mc.annotations;
 
 /*-
@@ -34,11 +30,50 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 
+/**
+ * Declares a vendor-specific or custom extension attribute for a {@link Function}.
+ *
+ * <p>This annotation can be used to specify additional deployment metadata that
+ * is not covered by the standard {@link Function} attributes. Examples include
+ * cloud provider-specific configuration keys such as {@code "aws:architecture"} or
+ * {@code "gcp:timeout"}.</p>
+ *
+ * <p>This annotation is {@linkplain java.lang.annotation.Repeatable repeatable}
+ * via the {@link Extensions} container annotation and is only retained in source
+ * code for processing during code generation.</p>
+ *
+ * <p>Example usage:</p>
+ * <pre>{@code
+ * @Function(
+ *     name = "hello",
+ *     extensions = {
+ *         @Extension(name = "gcp:timeout", value = "60s"),
+ *         @Extension(name = "aws:architecture", value = "arm64")
+ *     }
+ * )
+ * }</pre>
+ *
+ * @see Extensions
+ * @see Function#extensions()
+ */
 @Repeatable(Extensions.class)
 @Retention(RetentionPolicy.SOURCE)
 public @interface Extension {
-    /** e.g. "aws:architecture" or "gcp:timeout" */
+    /**
+     * The name of the extension attribute.
+     * <p>Use a colon-separated namespace to indicate vendor-specific keys,
+     * e.g. {@code "aws:architecture"} or {@code "gcp:timeout"}.</p>
+     *
+     * @return the attribute name
+     */
     String name();
-    /** e.g. "arm64" or "60s" */
+
+    /**
+     * The value associated with the extension attribute.
+     * <p>Interpretation depends on the attribute name, e.g. {@code "arm64"} for
+     * {@code "aws:architecture"} or {@code "60s"} for {@code "gcp:timeout"}.</p>
+     *
+     * @return the attribute value
+     */
     String value();
 }

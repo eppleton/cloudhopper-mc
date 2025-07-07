@@ -25,29 +25,68 @@ package eu.cloudhopper.mc.annotations;
  * #L%
  */
 
-
+/**
+ * Defines well-known extension keys and allowed values for use with {@link eu.cloudhopper.mc.annotations.Extension}.
+ *
+ * <p>This utility class provides a structured and type-safe way to reference cloud provider–specific
+ * extension keys, such as AWS architecture identifiers, to avoid hardcoding strings in annotations.</p>
+ *
+ * <p>These constants can be used in {@link eu.cloudhopper.mc.annotations.Function#extensions()} to configure
+ * deployment-specific parameters, for example:</p>
+ *
+ * <pre>{@code
+ * @Function(
+ *     name = "hello",
+ *     extensions = {
+ *         @Extension(
+ *             name = ExtensionKeys.Aws.Architecture.KEY,
+ *             value = ExtensionKeys.Aws.Architecture.Values.ARM64
+ *         )
+ *     }
+ * )
+ * }</pre>
+ *
+ * <p>This class is not intended to be instantiated or extended.</p>
+ */
 public final class ExtensionKeys {
+
     private ExtensionKeys() { /* no-instantiation */ }
 
-    /** AWS-specific extensions */
+    /**
+     * AWS-specific extension keys.
+     */
     public static final class Aws {
         private Aws() {}
 
-        /** x-aws-architecture */
+        /**
+         * Extension key for specifying the target CPU architecture on AWS platforms.
+         *
+         * <p>Key: {@code x-aws-architecture}</p>
+         *
+         * <p>Used to specify whether the function should run on {@code arm64} or {@code x86_64}
+         * hardware.</p>
+         */
         public static final class Architecture {
             private Architecture() {}
 
-            /** The extension key */
+            /**
+             * The key for specifying AWS function architecture:
+             * {@code "x-aws-architecture"}
+             */
             public static final String KEY = "x-aws-architecture";
 
-            /** Allowed values for this key */
+            /**
+             * Allowed values for {@link #KEY}.
+             */
             public static final class Values {
                 private Values() {}
-                public static final String ARM64   = "arm64";
-                public static final String X86_64  = "x86_64";
+
+                /** ARM 64-bit architecture */
+                public static final String ARM64 = "arm64";
+
+                /** x86 64-bit architecture */
+                public static final String X86_64 = "x86_64";
             }
         }
-
     }
-
 }

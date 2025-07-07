@@ -31,61 +31,64 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 import java.lang.annotation.Target;
 
 /**
- * Declares that the annotated function should be triggered on a schedule.
- * <p>
- * Can be combined with {@link Function} to define a time-based trigger using a cron expression.
+ * Declares that the annotated function should be executed on a schedule.
+ *
+ * <p>This annotation can be used in combination with {@link Function} to define
+ * time-based triggers using cron expressions. It enables the generation of scheduled
+ * tasks for serverless platforms that support them (e.g. AWS EventBridge, GCP Cloud Scheduler).</p>
  *
  * <h2>Example</h2>
  * <pre>{@code
- @Function(name = "dailyTask")
- @ScheduledTrigger(cron = "0 0 * * *")
- public class DailyJob implements CloudRequestHandler<Void, Void> {
-     public Void handleRequest(Void input, HandlerContext context) {
-         // do something daily
-         return null;
-     }
- }
- }</pre>
+ * @Function(name = "dailyTask")
+ * @ScheduledTrigger(cron = "0 0 * * *", timezone = "Europe/Berlin")
+ * public Void runDailyTask() {
+ *     // perform daily task
+ *     return null;
+ * }
+ * }</pre>
+ *
  */
 @Retention(SOURCE)
 @Target(ElementType.METHOD)
 public @interface ScheduledTrigger {
 
     /**
-     * A cron expression defining the schedule at which the function should run.
-     * Uses standard cron syntax (e.g., "0 0 * * *" for daily at midnight).
+     * A cron expression defining when the function should run.
+     * <p>Uses standard Unix cron syntax (e.g., {@code "0 0 * * *"} for daily at midnight).</p>
      *
      * @return cron expression
      */
     String cron();
 
     /**
-     * The timezone to interpret the cron expression in.
-     * Defaults to UTC.
+     * The IANA time zone in which the cron expression should be evaluated.
+     * <p>Defaults to {@code "UTC"} if not specified.</p>
      *
-     * @return IANA timezone identifier (e.g., "UTC", "Europe/Berlin")
+     * @return time zone ID (e.g., "UTC", "Europe/Berlin")
      */
     String timezone() default "UTC";
-    
-    
+
     /**
-     * Constants representing the attribute names of {@link Function}.These are intended for use by generator implementors when declaring which
- attributes their generator supports in {see: eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
+     * Constants representing attribute names of {@link ScheduledTrigger}.
      *
-     * Example usage:
- <pre>{@code
- @GeneratorFeature(
-     supportedAnnotation = ScheduledTrigger.class,
-     supportedAttributes = {
-         ScheduleAttribute.CRON,
-     }
- )
- }</pre>
+     * <p>These are intended for use by code generators when declaring which
+     * attributes they support via {@code @GeneratorFeature}.</p>
      *
-     * This class is not relevant for application developers and may be ignored
-     * in function code.
+     * <h3>Example usage:</h3>
+     * <pre>{@code
+     * @GeneratorFeature(
+     *     supportedAnnotation = ScheduledTrigger.class,
+     *     supportedAttributes = {
+     *         ScheduleAttribute.CRON,
+     *         ScheduleAttribute.TIMEZONE
+     *     }
+     * )
+     * }</pre>
+     *
+     * <p>This class is not intended for application developers and can be ignored
+     * in function code.</p>
      */
-    public static class ScheduleAttribute{
+    class ScheduleAttribute {
         public static final String CRON = "cron";
         public static final String TIMEZONE = "timezone";
     }

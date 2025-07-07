@@ -34,7 +34,6 @@ import eu.cloudhopper.mc.generator.generic.internal.GeneratorConfigLoader;
 import eu.cloudhopper.mc.generator.generic.internal.TemplateDescriptor;
 import eu.cloudhopper.mc.generator.generic.internal.TemplateRenderer;
 import com.github.javaparser.quality.Nullable;
-import io.swagger.v3.oas.annotations.Parameter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

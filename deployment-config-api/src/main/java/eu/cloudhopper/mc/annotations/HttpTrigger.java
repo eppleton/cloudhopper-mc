@@ -1,5 +1,10 @@
 package eu.cloudhopper.mc.annotations;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /*-
  * #%L
  * deployment-config-api - a library from the "Cloudhopper" project.
@@ -25,36 +30,37 @@ package eu.cloudhopper.mc.annotations;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * Provides metadata about an HTTP-accessible function for API gateway integration.
- * <p>
- * This annotation defines API-related properties such as the HTTP path, method,
- * operation ID, summary, description, and parameters. It is used by generators
- * to configure platform-specific API gateway resources or routing rules.
- * <p>
- * Each generator may use this metadata differently depending on platform capabilities
- * (e.g., API Gateway routing in AWS, or HTTP trigger configuration in GCP).
+ * Declares that a function should be exposed via an HTTP endpoint.
+ *
+ * <p>This annotation provides HTTP metadata such as method, path, summary, and operation ID,
+ * which can be used by code generators to configure API gateways or HTTP routing
+ * (e.g., AWS API Gateway, GCP Cloud Functions, Azure HTTP Triggers).</p>
+ *
+ * <p>It is typically used in combination with {@link eu.cloudhopper.mc.annotations.Function}
+ * to describe the HTTP-facing contract of a function.</p>
+ *
  * <h2>Example</h2>
  * <pre>{@code
- @Function(name = "hello")
- @HttpTrigger(
-     method = "GET",
-     path = "/hello/{name}",
-     summary = "Says hello",
-     description = "Returns a greeting using the given name",
-     operationId = "sayHello",
- )
- public class HelloFunction implements CloudRequestHandler<Void, String> {
-     public String handleRequest(Void input, HandlerContext context) {
-         return "Hello!";
-     }
- }
- }</pre>
+ * @Function(name = "hello")
+ * @HttpTrigger(
+ *     method = "GET",
+ *     path = "/hello/{name}",
+ *     summary = "Says hello",
+ *     description = "Returns a greeting using the given name",
+ *     operationId = "sayHello"
+ * )
+ * public String handleRequest(@PathParam("name") String name) {
+ *     return "Hello, " + name + "!";
+ * }
+ * }</pre>
+ *
+ * <p>Code generators may use this information to:</p>
+ * <ul>
+ *     <li>Generate OpenAPI documentation</li>
+ *     <li>Configure routing rules in serverless platforms</li>
+ *     <li>Generate client SDKs</li>
+ * </ul>
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
@@ -62,7 +68,7 @@ public @interface HttpTrigger {
 
     /**
      * A short summary of the operation.
-     * This may be used for documentation or API descriptions.
+     * <p>Typically used in generated documentation.</p>
      *
      * @return summary string
      */
@@ -70,40 +76,40 @@ public @interface HttpTrigger {
 
     /**
      * A longer, detailed description of the operation.
-     * Useful for documentation or OpenAPI generation.
+     * <p>Useful for API documentation or developer portals.</p>
      *
      * @return description string
      */
     String description() default "";
 
     /**
-     * A unique identifier for the operation (e.g. "sayHello").
-     * This may be used for client code generation or internal mapping.
+     * A unique identifier for the operation.
+     * <p>This may be used for client SDK generation or route mapping.</p>
      *
      * @return operation ID
      */
     String operationId() default "";
 
     /**
-     * The relative path for the function’s HTTP endpoint (e.g. "/hello/{name}").
+     * The HTTP path to which the function is bound (e.g., {@code "/hello/{name}"}).
+     * <p>Supports path parameters enclosed in braces.</p>
      *
      * @return endpoint path
      */
     String path() default "";
 
     /**
-     * The HTTP method for the endpoint (e.g. "GET", "POST").
+     * The HTTP method to use (e.g., {@code "GET"}, {@code "POST"}).
      *
      * @return HTTP method
      */
     String method() default "";
 
-
     /**
-     * Constants representing attribute names of this annotation.
-     * <p>
-     * Intended for use by generator implementors to declare support for individual attributes
-     * in {see: eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
+     * Constants representing attribute names of {@link HttpTrigger}.
+     *
+     * <p>These can be used by generator implementations to declare
+     * support for specific attributes.</p>
      */
     class HttpTriggerAttribute {
         public static final String SUMMARY = "summary";

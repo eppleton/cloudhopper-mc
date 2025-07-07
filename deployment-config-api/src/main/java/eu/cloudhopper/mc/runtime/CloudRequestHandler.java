@@ -29,27 +29,50 @@ import java.util.Map;
  */
 
 /**
- * A user-defined function handler for processing cloud function requests.
- * <p>
- * Each function must implement this interface to define how input is handled
- * and output is returned. The runtime platform is responsible for invoking
- * {@link #handleRequest(Object, HandlerContext)} with the appropriate input and context.
+ * Handler interface for user-defined cloud functions.
  *
- * @param <I> The input type (e.g., deserialized JSON request body)
- * @param <O> The output type (e.g., response body)
+ * <p>This interface defines the contract for processing function invocations. It is used by the
+ * runtime to delegate the execution of a function with deserialized input and request context.</p>
+ *
+ * <p><strong>Note:</strong> Implementing this interface manually is no longer required in most cases.
+ * If a method is annotated with {@link eu.cloudhopper.mc.annotations.Function}, a corresponding
+ * implementation of this interface will be generated automatically during annotation processing.</p>
+ *
+ * <p>Advanced users may still implement this interface directly to provide custom invocation logic
+ * or to bypass the code generation step.</p>
+ *
+ * @param <I> the input type (e.g., deserialized JSON request body)
+ * @param <O> the output type (e.g., response body)
+ *
+ * @see eu.cloudhopper.mc.annotations.Function
+ * @see HandlerContext
  */
 public interface CloudRequestHandler<I, O> {
 
     /**
-     * Handles an incoming request.
+     * Handles a simplified function invocation with only input and context.
+     *
+     * <p>This default method delegates to the full handler method with empty path and query parameter maps.</p>
      *
      * @param input   the deserialized input object
      * @param context runtime context information about the invocation
-     * @return a response object
+     * @return the response object
      */
-     default O handleRequest(I input, HandlerContext context) {
+    default O handleRequest(I input, HandlerContext context) {
         return handleRequest(input, Collections.emptyMap(), Collections.emptyMap(), context);
     }
 
+    /**
+     * Handles an incoming request with full request metadata.
+     *
+     * <p>This method provides access to HTTP path and query parameters in addition to the input and context.
+     * It is typically invoked by the generated infrastructure code.</p>
+     *
+     * @param input       the deserialized input object (e.g., request body)
+     * @param pathParams  map of path parameters extracted from the request URL
+     * @param queryParams map of query parameters
+     * @param context     runtime context information about the invocation
+     * @return the response object
+     */
     O handleRequest(I input, Map<String, String> pathParams, Map<String, String> queryParams, HandlerContext context);
 }
