@@ -39,8 +39,8 @@ To use this generator in your own project, configure the following:
   <artifactId>maven-compiler-plugin</artifactId>
   <version>3.8.1</version>
   <configuration>
-    <source>11</source>
-    <target>11</target>
+    <source>21</source>
+    <target>21</target>
     <encoding>UTF-8</encoding>
     <annotationProcessors>
       <annotationProcessor>
@@ -50,7 +50,7 @@ To use this generator in your own project, configure the following:
     <compilerArgs>
       <arg>-Acloudprovider=azure</arg>
       <arg>-AgeneratorId=azure-terraform</arg>
-      <arg>-AconfigOutputDir=${project.build.directory}/deployment/azure</arg>
+      <arg>-AconfigOutputDir=${project.build.directory}/deployment/azure-terraform</arg>
       <arg>-AtargetDir=${project.build.directory}</arg>
       <arg>-AartifactId=${project.artifactId}</arg>
       <arg>-Aversion=${project.version}</arg>
@@ -135,14 +135,15 @@ This plugin is used to **package and deploy** the generated Azure function handl
 Templates are located under:
 
 ```
-src/main/resources/templates/azure/
+src/main/resources/templates/azure-terraform/
 ```
 
 | Template                 | Output Type | Purpose                                            |
 |--------------------------|-------------|----------------------------------------------------|
-| `apiIntegrationClass.ftl` | Java        | Entry class for API functions                      |
 | `function.ftl`           | Java        | HTTP function handler                              |
-| `schedule.ftl`           | Java        | Scheduled function handler                         |
+| `apiIntegrationClass.ftl` | Java        | Entry class for API functions                      |
+| `output.ftl`             | Terraform   | Outputs the URLs used to call the functions        |
+| `schedule.ftl`           | Java        | Scheduled function handler (`@TimerTrigger`)       |
 | `shared.ftl`             | Terraform   | Base infrastructure setup (Function App, etc.)     |
 
 ---
@@ -153,14 +154,19 @@ src/main/resources/templates/azure/
 @TemplateRegistration(
   generatorId = "azure-terraform",
   templates = {
-    @Template(name = "function", phase = GenerationPhase.SOURCES),
-    @Template(name = "schedule", phase = GenerationPhase.SOURCES),
-    @Template(name = "apiIntegrationClass", phase = GenerationPhase.SOURCES),
-    @Template(name = "shared", phase = GenerationPhase.DEPLOYMENT)
+    @Template(phase = GenerationPhase.SHARED,   templateName = "shared.ftl",             outputFileExtension = "tf",   javaFile = false),
+    @Template(phase = GenerationPhase.FUNCTION, templateName = "function.ftl",           outputFileExtension = "java", outputSubDirectory = "generated", javaFile = true),
+    @Template(phase = GenerationPhase.API,      templateName = "apiIntegrationClass.ftl",outputFileExtension = "java", javaFile = true),
+    @Template(phase = GenerationPhase.API,      templateName = "output.ftl",             outputFileExtension = "tf",   javaFile = false),
+    @Template(phase = GenerationPhase.SCHEDULE, templateName = "schedule.ftl",           outputFileExtension = "java", javaFile = true)
   }
 )
 public class AzureTerraformJava21TemplateRegistration { ... }
 ```
+
+> `@Template` uses `templateName` (the `.ftl` file), `phase` (one of
+> `FUNCTION`, `API`, `SCHEDULE`, `FINALIZE`, `SHARED`), `outputFileExtension`,
+> optional `outputSubDirectory`, and `javaFile`.
 
 ---
 
@@ -168,8 +174,8 @@ public class AzureTerraformJava21TemplateRegistration { ... }
 
 | Artifact                       | Location                                |
 |--------------------------------|-----------------------------------------|
-| Java handler classes           | `target/generated-sources/azure/`       |
-| Terraform infrastructure       | `target/deployment/azure/shared.tf`     |
+| Java handler classes           | `target/generated-sources/azure-terraform/`       |
+| Terraform infrastructure       | `target/deployment/azure-terraform/shared.tf`     |
 | Deployment metadata            | `target/classes/META-INF/cloudhopper/`  |
 | Deployment ZIP (optional)      | `target/${artifactId}-${version}-azure.zip` |
 

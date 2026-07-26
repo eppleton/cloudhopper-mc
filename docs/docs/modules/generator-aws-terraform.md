@@ -35,8 +35,8 @@ To enable this generator in your own project, you need to:
   <artifactId>maven-compiler-plugin</artifactId>
   <version>3.8.1</version>
   <configuration>
-    <source>17</source>
-    <target>17</target>
+    <source>21</source>
+    <target>21</target>
     <encoding>UTF-8</encoding>
     <annotationProcessors>
       <annotationProcessor>
@@ -46,7 +46,7 @@ To enable this generator in your own project, you need to:
     <compilerArgs>
       <arg>-Acloudprovider=aws</arg>
       <arg>-AgeneratorId=aws-terraform</arg>
-      <arg>-AconfigOutputDir=${project.build.directory}/deployment/aws</arg>
+      <arg>-AconfigOutputDir=${project.build.directory}/deployment/aws-terraform</arg>
       <arg>-AtargetDir=${project.build.directory}</arg>
       <arg>-AartifactId=${project.artifactId}</arg>
       <arg>-Aversion=${project.version}</arg>
@@ -65,17 +65,16 @@ This setup enables Cloudhopper to generate AWS-specific Terraform and handler co
 Templates used by this generator are located under:
 
 ```
-src/main/resources/templates/aws/
+src/main/resources/templates/aws-terraform/
 ```
 
 | Template               | Output Type     | Purpose                                                         |
 |------------------------|------------------|-----------------------------------------------------------------|
-| `api.ftl`              | Terraform        | API Gateway integration resource                                |
-| `apiIntegrationClass.ftl` | Java           | API handler implementation                                      |
-| `function.ftl`         | Terraform        | Lambda function resource                                        |
 | `handler.ftl`          | Java             | Entry class using `AwsLambdaRequestHandler`                     |
+| `function.ftl`         | Terraform        | Lambda function resource                                        |
 | `integration.ftl`      | Terraform        | API Gateway/Lambda integration resource                         |
-| `schedule.ftl`         | Terraform        | Scheduled (CloudWatch Event) trigger                            |
+| `api.ftl`              | Terraform        | OpenAPI definition for API Gateway                              |
+| `schedule.ftl`         | Terraform        | Scheduled (EventBridge/CloudWatch) trigger                      |
 | `shared.ftl`           | Terraform        | Shared infrastructure (IAM roles, Lambda layer, etc.)           |
 
 ---
@@ -88,17 +87,20 @@ The generator is registered via:
 @TemplateRegistration(
     generatorId = "aws-terraform",
     templates = {
-        @Template(name = "handler", phase = GenerationPhase.SOURCES),
-        @Template(name = "apiIntegrationClass", phase = GenerationPhase.SOURCES),
-        @Template(name = "function", phase = GenerationPhase.DEPLOYMENT),
-        @Template(name = "api", phase = GenerationPhase.DEPLOYMENT),
-        @Template(name = "integration", phase = GenerationPhase.DEPLOYMENT),
-        @Template(name = "schedule", phase = GenerationPhase.DEPLOYMENT),
-        @Template(name = "shared", phase = GenerationPhase.DEPLOYMENT)
+        @Template(phase = GenerationPhase.SHARED,   templateName = "shared.ftl",     outputFileExtension = "tf",   javaFile = false),
+        @Template(phase = GenerationPhase.FUNCTION, templateName = "handler.ftl",    outputFileExtension = "java", outputSubDirectory = "generated", javaFile = true),
+        @Template(phase = GenerationPhase.FUNCTION, templateName = "function.ftl",   outputFileExtension = "tf",   javaFile = false),
+        @Template(phase = GenerationPhase.API,      templateName = "integration.ftl",outputFileExtension = "tf",   javaFile = false),
+        @Template(phase = GenerationPhase.FINALIZE, templateName = "api.ftl",        outputFileExtension = "tf",   javaFile = false),
+        @Template(phase = GenerationPhase.SCHEDULE, templateName = "schedule.ftl",   outputFileExtension = "tf",   javaFile = false)
     }
 )
 public class AwsTerraformOpenApiJava21TemplateRegistration { ... }
 ```
+
+> `@Template` uses `templateName` (the `.ftl` file), `phase` (one of
+> `FUNCTION`, `API`, `SCHEDULE`, `FINALIZE`, `SHARED`), `outputFileExtension`,
+> optional `outputSubDirectory`, and `javaFile`.
 
 Cloudhopper uses Java’s ServiceLoader (SPI) mechanism to discover and apply this registration.
 
@@ -108,8 +110,8 @@ Cloudhopper uses Java’s ServiceLoader (SPI) mechanism to discover and apply th
 
 | Artifact                       | Location                                 |
 |--------------------------------|------------------------------------------|
-| Java handler classes           | `target/generated-sources/aws/`          |
-| Terraform configuration        | `target/deployment/aws/*.tf`             |
+| Java handler classes           | `target/generated-sources/aws-terraform/`          |
+| Terraform configuration        | `target/deployment/aws-terraform/*.tf`             |
 | Metadata (`handler-info.properties`) | `target/classes/META-INF/cloudhopper/` |
 | Shaded JAR or ZIP              | `target/${artifactId}-${version}-aws.jar` or `.zip` |
 
@@ -119,7 +121,7 @@ Cloudhopper uses Java’s ServiceLoader (SPI) mechanism to discover and apply th
 
 - Handler classes extend `AwsLambdaRequestHandler` from the `provider-aws` module
 - The generated infrastructure assumes the use of Terraform to deploy Lambda, IAM, and API Gateway resources
-- You can override templates or inject additional files into the deployment directory by placing them in `src/main/resources/deployment/aws/`
+- You can override templates or inject additional files into the deployment directory by placing them in `src/main/resources/deployment/aws-terraform/`
 
 ---
 
