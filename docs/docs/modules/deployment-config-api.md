@@ -22,30 +22,36 @@ This module is **used by developers**, **referenced by integrators**, and **cons
 
 | Package                             | Description                                                  |
 |-------------------------------------|--------------------------------------------------------------|
-| `eu.cloudhopper.mc.annotations`    | Core annotations like `@Function`, `@ScheduledTrigger`, `@HttpTrigger` |
-| `eu.cloudhopper.mc.runtime`        | Runtime interfaces such as `CloudRequestHandler`, `HandlerContext` |
+| `eu.cloudhopper.mc.annotations`    | Function/trigger annotations (`@Function`, `@ScheduledTrigger`, `@HttpTrigger`), parameter-binding annotations (`@RequestBody`, `@PathParam`, `@QueryParam`, `@HeaderParam`) and vendor extensions (`@Extension`, `ExtensionKeys`) |
+| `eu.cloudhopper.mc.runtime`        | Runtime types such as `HandlerContext`, `CloudRequestHandler`, `ParamConverters` |
 
 ---
 
 ## 🧩 Key Annotations
 
 ### `@Function`
-Defines a deployable cloud function.
+Marks a **method** as a deployable cloud function. The processor generates the
+provider handler for it &mdash; you do not implement any interface.
 
 ~~~java
 @Function(name = "hello")
-public class HelloFunction  {
-    public String handleRequest(String input) {
-        return "Hello, " + input;
-    }
+@HttpTrigger(method = "GET", path = "/hello/{name}")
+public String hello(@PathParam("name") String name) {
+    return "Hello, " + name;
 }
 ~~~
 
+Optional attributes: `memory` (MB, default 128), `timeout` (seconds, default 30),
+`minInstances` (default 0), and `extensions` for vendor-specific keys.
+
 ### `@ScheduledTrigger`
-Optional trigger to invoke a function on a regular schedule.
+Invokes a function on a cron schedule. A scheduled function typically takes no
+parameters and returns `void`.
 
 ~~~java
-@ScheduledTrigger(cron = "0 0 * * *")
+@Function(name = "nightly")
+@ScheduledTrigger(cron = "0 0 * * *", timezone = "UTC")
+public void run() { ... }
 ~~~
 
 ### `@HttpTrigger`
@@ -57,37 +63,44 @@ Declares HTTP API metadata used to configure gateway routes.
 
 ---
 
-## 🧪 Implementing a Handler
+## 🔌 Binding request data
 
-All functions must implement `CloudRequestHandler<I, O>`:
+Instead of implementing a handler interface, you declare exactly the parameters
+your method needs and annotate them. The processor deserializes and converts
+each value before invoking your method:
+
+| Annotation | Binds to |
+|------------|----------|
+| `@RequestBody` | the deserialized request payload (at most one per method) |
+| `@PathParam("id")` | a URI path template variable; blank value falls back to the parameter name |
+| `@QueryParam("q")` | a query string parameter; blank value falls back to the parameter name |
+| `@HeaderParam("X-Token")` | an HTTP request header; the header name is required |
+
+A parameter of type `HandlerContext` is recognized automatically (no annotation
+needed) and receives the runtime context. Any unannotated, non-context
+parameter is treated as the request body.
 
 ~~~java
-public interface CloudRequestHandler<I, O> {
-    O handleRequest(I input, HandlerContext context);
+@Function(name = "updatePlayer")
+@HttpTrigger(method = "PUT", path = "/player/{id}")
+public Player update(@RequestBody Player input,
+                     @PathParam Integer id,
+                     HandlerContext context) {
+    ...
 }
 ~~~
-
-You will receive an implementation of `HandlerContext` at runtime with request-specific metadata (e.g. request ID, region, etc.).
 
 ---
 
 ## ⚙️ Runtime Interfaces
 
-These are the interfaces you implement or receive at runtime when writing Cloudhopper functions.
+These types live in `eu.cloudhopper.mc.runtime`.
 
 ### `CloudRequestHandler<I, O>`
 
-Defines the signature of a deployable cloud function.
-
-~~~java
-public interface CloudRequestHandler<I, O> {
-    O handleRequest(I input, HandlerContext context);
-}
-~~~
-
-You implement this interface to define the logic of your function. It receives:
-- `input`: your deserialized request payload
-- `context`: runtime metadata provided by the platform
+The integration interface that the **generated** handler implements to adapt
+your annotated method to the platform. You normally never implement or
+reference it directly &mdash; it is generated during annotation processing.
 
 ### `HandlerContext`
 
