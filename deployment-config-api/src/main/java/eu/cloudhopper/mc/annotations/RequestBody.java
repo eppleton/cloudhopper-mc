@@ -31,8 +31,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method parameter as the request body.
- * Usage: public MyResponse foo(@RequestBody MyRequest body) {...}
+ * Marks a method parameter as the deserialized request body. The incoming
+ * payload is converted to the parameter's declared type before the
+ * {@link Function}-annotated method is invoked. At most one parameter per
+ * method may carry this annotation.
+ *
+ * <p>Usage:
+ * <pre>{@code
+ * public MyResponse handle(@RequestBody MyRequest body) { ... }
+ * }</pre>
+ *
+ * @see Function
+ * @see HttpTrigger
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.SOURCE)

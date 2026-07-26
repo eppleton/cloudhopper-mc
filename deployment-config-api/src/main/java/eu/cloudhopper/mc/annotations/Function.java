@@ -30,13 +30,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a class as a deployable cloud function.
+ * Marks a method as a deployable cloud function.
  *
- * This annotation is used to indicate that the class should be discovered and
- * processed during code generation. It defines properties such as the
- * function's name and optional trigger configuration.
+ * <p>The annotated method is discovered during annotation processing, which
+ * generates the provider-specific
+ * {@link eu.cloudhopper.mc.runtime.CloudRequestHandler} and the deployment
+ * artifacts for it &mdash; you no longer implement that interface yourself.
+ * Combine {@code @Function} with a trigger such as {@link HttpTrigger} or
+ * {@link ScheduledTrigger}, and bind the method parameters with
+ * {@link RequestBody}, {@link PathParam}, {@link QueryParam} or
+ * {@link HeaderParam}.
  *
- * Example usage:
+ * <p>Example:
+ * <pre>{@code
+ * @Function(name = "hello")
+ * @HttpTrigger(method = "GET", path = "/hello/{name}")
+ * public String hello(@PathParam("name") String name) {
+ *     return "Hello, " + name;
+ * }
+ * }</pre>
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
@@ -46,8 +58,8 @@ public @interface Function {
      * Constants representing the attribute names of {@link Function}.
      *
      * These are intended for use by generator implementors when declaring which
-     * attributes their generator supports in {see:
-     * eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
+     * attributes their generator supports in
+     * {@link eu.cloudhopper.mc.generator.api.annotations.GeneratorFeature}.
      *
      * Example usage:
      * <pre>{@code
@@ -106,7 +118,8 @@ public @interface Function {
     /**
      * Register extension attributes, for example vendor specific extensions
      * or unsupported attributes you need for your generator.
-     * @return 
+     *
+     * @return the extension attributes, or an empty array if none
      */
     Extension[] extensions() default {};
 

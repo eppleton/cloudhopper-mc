@@ -31,11 +31,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Binds a method parameter to an HTTP header value.
- * Usage: public String foo(@HeaderParam("X-Auth-Token") String token) {...}
+ * Binds a method parameter to an HTTP request header value. The value is
+ * converted from its string form to the parameter's declared type.
+ *
+ * <p>Usage:
+ * <pre>{@code
+ * public String handle(@HeaderParam("X-Auth-Token") String token) { ... }
+ * }</pre>
+ *
+ * @see HttpTrigger
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.SOURCE)
 public @interface HeaderParam {
+
+    /**
+     * The name of the HTTP header to bind. Unlike {@link PathParam} and
+     * {@link QueryParam}, this is required &mdash; header names are rarely
+     * valid Java identifiers, so there is no fallback to the parameter name.
+     *
+     * @return the header name
+     */
     String value();
 }

@@ -31,11 +31,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Binds a method parameter to a query string parameter.
- * Usage: public String foo(@QueryParam("q") String query) {...}
+ * Binds a method parameter to a query string parameter. The value is converted
+ * from its string form to the parameter's declared type.
+ *
+ * <p>Usage:
+ * <pre>{@code
+ * public String search(@QueryParam("q") String query) { ... }
+ * }</pre>
+ *
+ * @see HttpTrigger
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.SOURCE)
 public @interface QueryParam {
+
+    /**
+     * The name of the query parameter to bind. When left blank, the method
+     * parameter's own name is used.
+     *
+     * @return the query parameter name, or {@code ""} to use the parameter name
+     */
     String value() default "";
-}   
+}

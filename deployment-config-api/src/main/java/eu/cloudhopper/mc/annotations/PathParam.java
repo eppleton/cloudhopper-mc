@@ -32,12 +32,28 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Binds a method parameter to a URI path template variable.
- * Usage: public String foo(@PathParam("id") String id) {...}
+ * Binds a method parameter to a URI path template variable declared in the
+ * {@link HttpTrigger#path()} (e.g. {@code /player/{id}}). The value is
+ * converted from its string form to the parameter's declared type.
+ *
+ * <p>Usage:
+ * <pre>{@code
+ * public String get(@PathParam("id") Integer id) { ... }
+ * }</pre>
+ *
+ * @see HttpTrigger
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.SOURCE)
 public @interface PathParam {
+
+    /**
+     * The name of the path template variable to bind. When left blank, the
+     * method parameter's own name is used, so {@code @PathParam Integer id}
+     * binds the {@code {id}} variable.
+     *
+     * @return the path variable name, or {@code ""} to use the parameter name
+     */
     String value() default "";
 }
 

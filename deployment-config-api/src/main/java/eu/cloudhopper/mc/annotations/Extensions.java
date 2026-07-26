@@ -46,13 +46,15 @@ import java.lang.annotation.Target;
  * @Function(
  *     name = "myFunc",
  *     extensions = {
- *         @Extension(name = "aws:architecture", value = "arm64"),
- *         @Extension(name = "gcp:timeout", value = "60s")
+ *         @Extension(
+ *             name = ExtensionKeys.Aws.Architecture.KEY,
+ *             value = ExtensionKeys.Aws.Architecture.Values.ARM64)
  *     }
  * )
  * }</pre>
  *
  * @see Extension
+ * @see ExtensionKeys
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.ANNOTATION_TYPE)
