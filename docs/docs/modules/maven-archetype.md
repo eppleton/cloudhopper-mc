@@ -53,7 +53,7 @@ You can specify one or more `generatorIds` (comma-separated) to activate support
 
 ---
 
-## 🧪 Terraform Support
+## 🧪 Terraform Support {#terraform-support}
 
 If `includeTerraformProfile=true`, the generated project will include a `deploy-with-terraform` Maven profile that executes:
 
