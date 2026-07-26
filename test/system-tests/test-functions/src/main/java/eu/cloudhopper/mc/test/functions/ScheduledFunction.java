@@ -25,9 +25,6 @@ package eu.cloudhopper.mc.test.functions;
  * #L%
  */
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
-import eu.cloudhopper.mc.runtime.HandlerContext;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import eu.cloudhopper.mc.annotations.ScheduledTrigger;

@@ -27,11 +27,7 @@ package eu.cloudhopper.mc.test.functions;
 
 
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
-import eu.cloudhopper.mc.runtime.HandlerContext;
 import eu.cloudhopper.mc.test.domain.Player;
-
-import java.util.Map;
 import eu.cloudhopper.mc.annotations.HttpTrigger;
 import eu.cloudhopper.mc.annotations.PathParam;
 

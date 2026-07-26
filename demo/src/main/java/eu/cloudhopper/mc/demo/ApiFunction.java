@@ -27,9 +27,6 @@ package eu.cloudhopper.mc.demo;
 import eu.cloudhopper.mc.annotations.Extension;
 import eu.cloudhopper.mc.annotations.ExtensionKeys;
 import eu.cloudhopper.mc.annotations.Function;
-import eu.cloudhopper.mc.runtime.CloudRequestHandler;
-import eu.cloudhopper.mc.runtime.HandlerContext;
-import java.util.Map;
 import eu.cloudhopper.mc.annotations.HttpTrigger;
 import eu.cloudhopper.mc.annotations.RequestBody;
 
