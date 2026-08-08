@@ -25,6 +25,7 @@ docker run --rm \
   -e ARM_CLIENT_ID \
   -e ARM_CLIENT_SECRET \
   -e ARM_TENANT_ID \
+  -e TF_VAR_azure_region="$AZURE_REGION" \
   cloudhopper-tck-azure bash -c "
     echo '🔍 Recompiling only system tests...'
     mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-azure-terraform &&
