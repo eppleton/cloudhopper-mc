@@ -12,6 +12,7 @@ const sidebars = {
             collapsed: false,
             items: [
                 'guides/quickstart',
+                'guides/writing-functions',
                 'modules/maven-archetype',
                 {
                     type: 'category',

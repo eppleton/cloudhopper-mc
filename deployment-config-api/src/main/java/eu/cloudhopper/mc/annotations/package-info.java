@@ -17,12 +17,26 @@
 /**
  * Provides annotations for declaring cloud functions and API metadata.
  * <p>
- * These annotations are used by application developers to describe how
- * their functions should be deployed and integrated with external platforms.
+ * Application developers annotate plain methods to describe how their
+ * functions should be deployed and integrated; the annotation processor
+ * generates the provider-specific handlers and deployment artifacts.
+ * <p>
+ * Function and trigger annotations (applied to a method):
  * <ul>
- *   <li>{@link eu.cloudhopper.mc.annotations.Function} - marks a class as a deployable function</li>
- *   <li>{@link eu.cloudhopper.mc.annotations.ScheduledTrigger} - defines time-based triggers</li>
+ *   <li>{@link eu.cloudhopper.mc.annotations.Function} - marks a method as a deployable function</li>
+ *   <li>{@link eu.cloudhopper.mc.annotations.ScheduledTrigger} - defines a time-based (cron) trigger</li>
  *   <li>{@link eu.cloudhopper.mc.annotations.HttpTrigger} - adds HTTP metadata for API gateway integration</li>
+ * </ul>
+ * Parameter-binding annotations (applied to a method parameter):
+ * <ul>
+ *   <li>{@link eu.cloudhopper.mc.annotations.RequestBody} - binds the deserialized request body</li>
+ *   <li>{@link eu.cloudhopper.mc.annotations.PathParam} - binds a URI path template variable</li>
+ *   <li>{@link eu.cloudhopper.mc.annotations.QueryParam} - binds a query string parameter</li>
+ *   <li>{@link eu.cloudhopper.mc.annotations.HeaderParam} - binds an HTTP request header</li>
+ * </ul>
+ * Vendor extensions:
+ * <ul>
+ *   <li>{@link eu.cloudhopper.mc.annotations.Extension} / {@link eu.cloudhopper.mc.annotations.Extensions} - attach provider-specific attributes (see {@link eu.cloudhopper.mc.annotations.ExtensionKeys})</li>
  * </ul>
  */
 package eu.cloudhopper.mc.annotations;

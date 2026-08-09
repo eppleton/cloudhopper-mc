@@ -34,9 +34,9 @@ import java.lang.annotation.RetentionPolicy;
  * Declares a vendor-specific or custom extension attribute for a {@link Function}.
  *
  * <p>This annotation can be used to specify additional deployment metadata that
- * is not covered by the standard {@link Function} attributes. Examples include
- * cloud provider-specific configuration keys such as {@code "aws:architecture"} or
- * {@code "gcp:timeout"}.</p>
+ * is not covered by the standard {@link Function} attributes. Predefined keys
+ * are available as constants in {@link ExtensionKeys}, for example
+ * {@link ExtensionKeys.Aws.Architecture#KEY} ({@code "x-aws-architecture"}).</p>
  *
  * <p>This annotation is {@linkplain java.lang.annotation.Repeatable repeatable}
  * via the {@link Extensions} container annotation and is only retained in source
@@ -47,13 +47,15 @@ import java.lang.annotation.RetentionPolicy;
  * @Function(
  *     name = "hello",
  *     extensions = {
- *         @Extension(name = "gcp:timeout", value = "60s"),
- *         @Extension(name = "aws:architecture", value = "arm64")
+ *         @Extension(
+ *             name = ExtensionKeys.Aws.Architecture.KEY,
+ *             value = ExtensionKeys.Aws.Architecture.Values.ARM64)
  *     }
  * )
  * }</pre>
  *
  * @see Extensions
+ * @see ExtensionKeys
  * @see Function#extensions()
  */
 @Repeatable(Extensions.class)
@@ -61,8 +63,9 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Extension {
     /**
      * The name of the extension attribute.
-     * <p>Use a colon-separated namespace to indicate vendor-specific keys,
-     * e.g. {@code "aws:architecture"} or {@code "gcp:timeout"}.</p>
+     * <p>Vendor-specific keys follow the OpenAPI {@code x-} prefix convention,
+     * e.g. {@code "x-aws-architecture"}. Prefer the constants in
+     * {@link ExtensionKeys} over string literals where one exists.</p>
      *
      * @return the attribute name
      */
@@ -71,7 +74,7 @@ public @interface Extension {
     /**
      * The value associated with the extension attribute.
      * <p>Interpretation depends on the attribute name, e.g. {@code "arm64"} for
-     * {@code "aws:architecture"} or {@code "60s"} for {@code "gcp:timeout"}.</p>
+     * {@link ExtensionKeys.Aws.Architecture#KEY}.</p>
      *
      * @return the attribute value
      */

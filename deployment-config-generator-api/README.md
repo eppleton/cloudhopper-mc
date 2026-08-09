@@ -59,8 +59,20 @@ This module is intended for:
         )
     }
 )
-public class AwsTemplateRegistration implements TemplateRegistration {
-    ...
+@TemplateRegistration(
+    generatorId = "aws-terraform",
+    templates = {
+        @Template(
+            phase = GenerationPhase.FUNCTION,
+            templateName = "handler.ftl",
+            outputFileExtension = "java",
+            outputSubDirectory = "generated",
+            javaFile = true
+        )
+    }
+)
+public class AwsTemplateRegistration {
+    // This class is solely for generator feature and template registration
 }
 ~~~
 

@@ -13,7 +13,7 @@ Before you can build and deploy the demo project, make sure the following tools 
 
 | Tool   | Required Version | Notes |
 |--------|------------------|-------|
-| **JDK** | 17 or later       | Ensure `java -version` points to a compatible JDK |
+| **JDK** | 21 or later       | The project targets Java 21; ensure `java -version` points to a compatible JDK |
 | **Maven** | 3.8 or later     | Used to compile, run annotation processors, and package deployments |
 
 To verify:
@@ -48,11 +48,14 @@ Depending on the active Maven profile, you’ll need CLI tools for the cloud pro
 #### Spring Boot (no Terraform)
 
 ~~~
-mvn clean install -Pspringboot
+mvn clean install -Pspringboot-http
 ~~~
 
 This generates a simple springboot project.
 
+> The profile IDs are `aws-terraform`, `gcp-terraform`, `azure-terraform` and
+> `springboot-http` &mdash; each matches the `{generator.id}` used for the
+> generated output directories below.
 
 #### AWS 
 
@@ -102,15 +105,15 @@ This ensures compatibility with local setups like Homebrew on macOS.
 To compile the project and run the annotation processor:
 
 ~~~
-mvn clean install -Paws
+mvn clean install -Paws-terraform
 ~~~
 
 You can switch providers using:
 
 ~~~
-mvn clean install -Pgcp
-mvn clean install -Pazure
-mvn clean install -Pspringboot
+mvn clean install -Pgcp-terraform
+mvn clean install -Pazure-terraform
+mvn clean install -Pspringboot-http
 ~~~
 
 Generated resources will be placed in the following directories based on the active profile:
@@ -128,12 +131,14 @@ Generated resources will be placed in the following directories based on the act
 
 ### 📁 `target/generated-sources/{generator.id}`
 
-Contains provider-specific **function handlers** that delegate to your annotated classes. Example (AWS):
+Contains provider-specific **function handlers** that wrap your annotated methods. For each `@Function` method the processor generates a core `<Class>_<method>_Handler` plus a provider wrapper. Example (AWS):
 
 ~~~
-target/generated-sources/aws-terraform/com/cloudhopper/mc/demo/
-  ├── AwsLambdaApiFunctionHandler.java
-  └── AwsLambdaScheduledFunctionHandler.java
+target/generated-sources/aws-terraform/eu/cloudhopper/mc/demo/
+  ├── ApiFunction_handleRequest_Handler.java
+  ├── AwsLambdaApiFunction_handleRequest_HandlerHandler.java
+  ├── ScheduledFunction_handleRequest_Handler.java
+  └── AwsLambdaScheduledFunction_handleRequest_HandlerHandler.java
 ~~~
 
 These are compiled and included in the shaded JAR for deployment.
@@ -152,11 +157,13 @@ Example (AWS):
 
 ~~~
 target/deployment/aws-terraform/
-  ├── api.tf
-  ├── hello_world_2.tf
-  ├── scheduledfunction.tf
-  ├── shared-resources.tf
   ├── main.tf
+  ├── api_api.tf
+  ├── hello_world_2_function.tf
+  ├── hello_world_2_api_integration.tf
+  ├── scheduledfunction_function.tf
+  ├── scheduledfunction_schedule_schedule.tf
+  ├── shared-resources_shared.tf
   └── META-INF/handler-info.properties
 ~~~
 
@@ -177,36 +184,48 @@ Use this to:
 
 ## Function Examples
 
+You write plain methods and annotate them &mdash; there is no interface to
+implement. The annotation processor generates the provider-specific handler.
+
 ### HTTP-triggered function
 
 ```java
-public class ApiFunction implements CloudRequestHandler<Integer, String> {
+public class ApiFunction {
 
-    @Function(name = "hello_world_2")
     @HttpTrigger(
         operationId = "helloworld2",
-        method = "GET",
+        method = "POST",
         path = "/hello2/{id}",
         summary = "bla",
         description = "dummy description"
     )
-    @Override
-    public String handleRequest(Integer input, HandlerContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    @Function(
+        name = "hello_world_2",
+        extensions = {
+            @Extension(
+                name = ExtensionKeys.Aws.Architecture.KEY,
+                value = ExtensionKeys.Aws.Architecture.Values.ARM64)
+        })
+    public String handleRequest(@RequestBody Integer input) {
+        return "Hallo " + input;
     }
 }
 ```
 
+The request body is bound with `@RequestBody`; use `@PathParam`, `@QueryParam`
+or `@HeaderParam` to bind other parts of the request.
+
 ### Scheduled function
 
+A scheduled function needs no input or output &mdash; a plain `void` method is enough.
+
 ```java
-public class ScheduledFunction implements CloudRequestHandler<Integer, String> {
+public class ScheduledFunction {
 
     @Function(name = "ScheduledFunction")
-    @ScheduledTrigger(cron = "0 2 * * *")
-    @Override
-    public String handleRequest(Integer input, HandlerContext context) {
-        return "Hello";
+    @ScheduledTrigger(cron = "0 0 * * *")
+    public void handleRequest() {
+        System.out.println("scheduled action is performed");
     }
 }
 ```
@@ -214,7 +233,7 @@ public class ScheduledFunction implements CloudRequestHandler<Integer, String> {
 ---
 ## ⚙️ How Code Generation Works
 
-Cloudhopper uses annotation processors at **build time** to scan your Java classes for specific annotations (e.g. `@Function`, `@Schedule`) and generate deployment metadata using pre-defined **Freemarker templates**.
+Cloudhopper uses annotation processors at **build time** to scan your Java classes for specific annotations (e.g. `@Function`, `@ScheduledTrigger`) and generate deployment metadata using pre-defined **Freemarker templates**.
 
 ### 🧩 Annotation Processor Setup
 
@@ -271,7 +290,7 @@ Examples:
   → `GcpTerraformJava21TemplateRegistration`
 
 - `generator-aws-terraform`  
-  → `AwsTerraformJava21TemplateRegistration`
+  → `AwsTerraformOpenApiJava21TemplateRegistration`
 
 - `generator-azure-terraform`  
   → `AzureTerraformJava21TemplateRegistration`

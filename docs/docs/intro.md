@@ -31,7 +31,7 @@ Cloudhopper makes it easy to offer both cloud and on-prem options — from the s
 Just use our simple Java API and add a few annotations.  
 Cloudhopper takes care of:
 - Generating the provider specific integration classes
-- Generating infrastructure as code (terraform, saml, OpenAPI)
+- Generating infrastructure as code (Terraform, OpenAPI)
 - Handling cloud-specific quirks
 - Keeping your deployments repeatable, reliable, and boring
 
@@ -39,4 +39,4 @@ No boilerplate. No endless YAML. No regrets.
 
 ## Get Started
 
-👉 [Quickstart Guide](https://eppleton.github.io/cloudhopper-mc/)  
+👉 [Quickstart Guide](guides/quickstart)  

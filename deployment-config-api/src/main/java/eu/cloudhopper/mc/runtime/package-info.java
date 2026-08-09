@@ -4,8 +4,9 @@
  * <p>
  * These types are implemented or consumed at function invocation time.
  * <ul>
- *   <li>{@link eu.cloudhopper.mc.runtime.CloudRequestHandler} - integration interface an implemnetation is generated during annotation processing</li>
+ *   <li>{@link eu.cloudhopper.mc.runtime.CloudRequestHandler} - integration interface; an implementation is generated during annotation processing</li>
  *   <li>{@link eu.cloudhopper.mc.runtime.HandlerContext} - platform-provided runtime context</li>
+ *   <li>{@link eu.cloudhopper.mc.runtime.ParamConverters} - converts path/query/header strings to typed parameter values</li>
  * </ul>
  */
 package eu.cloudhopper.mc.runtime;
