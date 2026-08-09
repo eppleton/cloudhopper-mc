@@ -92,6 +92,7 @@ jobs:
         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        TF_VAR_azure_region: ${{ secrets.AZURE_REGION }}
       with:
         image: cloudhopper-tck-azure:latest
         options: |
@@ -102,6 +103,7 @@ jobs:
           -e ARM_CLIENT_ID
           -e ARM_CLIENT_SECRET
           -e ARM_TENANT_ID
+          -e TF_VAR_azure_region
         run: |
           echo '🔍 Recompiling only system tests...'
           mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-azure-terraform &&
