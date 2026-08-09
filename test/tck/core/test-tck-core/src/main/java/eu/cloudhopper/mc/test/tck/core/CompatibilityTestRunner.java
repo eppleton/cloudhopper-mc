@@ -75,30 +75,51 @@ public class CompatibilityTestRunner {
         }
 
         List<TestResult> results = new ArrayList<>();
-        System.out.println("\n\uD83D\uDE80 Deploying test functions...");
-        context.deployTestFunctions();
-        System.out.println("⏳ Waiting 20s for API Gateway to stabilize...");
-        Thread.sleep(20000);
 
-        for (CompatibilityTest test : selectedTests) {
-            String name = test.getClass().getSimpleName();
-            List<RequiredFeature> tested = test instanceof FeatureAwareTest fat ? fat.requiredFeatures() : List.of();
-            System.out.println("\n▶ Running test: " + name);
-            try {
-                test.run(context);
-                System.out.println("✅ " + name + " PASSED");
-                results.add(new TestResult(name, true, null, tested));
-            } catch (Throwable t) {
-                System.out.println("❌ " + name + " FAILED");
-                t.printStackTrace();
-                results.add(new TestResult(name, false, t, tested));
-            }
+        // Best-effort pre-deploy cleanup: remove any leftovers a previous run may
+        // have left behind (e.g. resources created before a mid-apply failure).
+        // Only effective when the Terraform state survived; harmless otherwise.
+        System.out.println("\n\uD83E\uDDF9 Pre-deploy cleanup (removing any leftovers from a previous run)...");
+        try {
+            context.cleanupTestFunctions();
+        } catch (Exception preCleanup) {
+            System.out.println("\u2139\uFE0F Nothing to pre-clean, or pre-cleanup failed (usually fine): " + preCleanup.getMessage());
         }
 
-        System.out.println("\n🧹 Cleaning up deployed functions...");
-        System.out.println("⏳ Waiting 20s for log streams to stabilize...");
-        Thread.sleep(20000);
-        context.cleanupTestFunctions();
+        try {
+            System.out.println("\n\uD83D\uDE80 Deploying test functions...");
+            context.deployTestFunctions();
+            System.out.println("\u23F3 Waiting 20s for API Gateway to stabilize...");
+            Thread.sleep(20000);
+
+            for (CompatibilityTest test : selectedTests) {
+                String name = test.getClass().getSimpleName();
+                List<RequiredFeature> tested = test instanceof FeatureAwareTest fat ? fat.requiredFeatures() : List.of();
+                System.out.println("\n\u25B6 Running test: " + name);
+                try {
+                    test.run(context);
+                    System.out.println("\u2705 " + name + " PASSED");
+                    results.add(new TestResult(name, true, null, tested));
+                } catch (Throwable t) {
+                    System.out.println("\u274C " + name + " FAILED");
+                    t.printStackTrace();
+                    results.add(new TestResult(name, false, t, tested));
+                }
+            }
+
+            System.out.println("\u23F3 Waiting 20s for log streams to stabilize...");
+            Thread.sleep(20000);
+        } finally {
+            // Always tear down, even if the deploy itself failed, so a failed
+            // run does not leak cloud resources that block the next run.
+            System.out.println("\n\uD83E\uDDF9 Cleaning up deployed functions...");
+            try {
+                context.cleanupTestFunctions();
+            } catch (Exception cleanup) {
+                System.err.println("\u26A0\uFE0F Cleanup failed - leftover resources may need to be removed manually: " + cleanup.getMessage());
+                cleanup.printStackTrace();
+            }
+        }
 
         long passed = results.stream().filter(TestResult::passed).count();
         long failed = results.size() - passed;

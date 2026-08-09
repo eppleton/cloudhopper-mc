@@ -55,6 +55,10 @@ public class TerraformDeployer {
     }
 
     public void destroy() throws IOException, InterruptedException {
+        // Run init first so destroy also works when called standalone (e.g. a
+        // pre-deploy cleanup, or cleanup after a deploy that failed during init).
+        // terraform init is idempotent, so this is safe to repeat.
+        init();
         run("destroy", "-auto-approve");
     }
 
