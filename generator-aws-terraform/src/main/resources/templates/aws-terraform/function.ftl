@@ -23,10 +23,10 @@ resource "aws_lambda_function" "${handlerInfo.functionId}" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "${handlerInfo.functionId}_log_group" {
-  name              = "/aws/lambda/${handlerInfo.functionId}"
-  retention_in_days = 7
-}
-
+# The CloudWatch log group "/aws/lambda/${handlerInfo.functionId}" is intentionally
+# NOT managed by Terraform. AWS Lambda creates it automatically on first invocation
+# (the execution role has the AWSLambdaBasicExecutionRole logs permissions). Managing
+# it here caused "already exists" conflicts, because Lambda re-creates the group
+# outside of Terraform's state whenever the function runs.
 
 
